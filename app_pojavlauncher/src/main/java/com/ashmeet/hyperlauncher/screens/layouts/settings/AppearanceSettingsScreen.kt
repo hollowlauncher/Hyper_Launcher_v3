@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ViewSidebar
 import androidx.compose.material.icons.filled.Animation
+import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.rounded.AddPhotoAlternate
 import androidx.compose.material.icons.rounded.AspectRatio
@@ -28,18 +29,18 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
+import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences
 import com.ashmeet.hyperlauncher.screens.layouts.settings.layouts.CardPosition
 import com.ashmeet.hyperlauncher.screens.layouts.settings.layouts.SettingsCard
 import com.ashmeet.hyperlauncher.screens.layouts.settings.layouts.SettingsScreenWrapper
+import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.PointerHotspotPickerDialog
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.PreferenceCategory
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SettingsActionItem
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SettingsSliderItem
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SettingsSwitchItem
-import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.PointerHotspotPickerDialog
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SingleChoiceDialog
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.Tools
-import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences
 import net.kdt.pojavlaunch.colorselector.ColorSelector
 import java.io.File
 import java.io.FileOutputStream
@@ -62,6 +63,7 @@ fun AppearanceSettingsScreen(
 
     var screenTransition by remember { mutableStateOf(LauncherPreferences.PREF_SCREEN_TRANSITION) }
     var appTheme by remember { mutableStateOf(LauncherPreferences.PREF_THEME) }
+    var appLanguage by remember { mutableStateOf(LauncherPreferences.PREF_LANGUAGE) }
     var isCustomTheme by remember { mutableStateOf(LauncherPreferences.PREF_CUSTOM_THEME) }
     var themeColor by remember { mutableIntStateOf(LauncherPreferences.PREF_THEME_COLOR) }
     var hideSidebar by remember { mutableStateOf(LauncherPreferences.PREF_HIDE_SIDEBAR) }
@@ -82,6 +84,7 @@ fun AppearanceSettingsScreen(
     val context = LocalContext.current
     var showTransitionDialog by remember { mutableStateOf(false) }
     var showThemeDialog by remember { mutableStateOf(false) }
+    var showLanguageDialog by remember { mutableStateOf(false) }
     var showHotspotDialog by remember { mutableStateOf(false) }
 
     val transitionOptions = listOf("none", "fade", "bounce")
@@ -104,6 +107,22 @@ fun AppearanceSettingsScreen(
         }
     }
 
+    val languageOptions = listOf("system", "en", "es", "fr", "de", "it", "ja", "zh", "ru")
+    val languageOptionNames = languageOptions.map { id ->
+        when (id) {
+            "system" -> stringResource(R.string.preference_language_system)
+            "en" -> stringResource(R.string.preference_language_english)
+            "es" -> stringResource(R.string.preference_language_spanish)
+            "fr" -> stringResource(R.string.preference_language_french)
+            "de" -> stringResource(R.string.preference_language_german)
+            "it" -> stringResource(R.string.preference_language_italian)
+            "ja" -> stringResource(R.string.preference_language_japanese)
+            "zh" -> stringResource(R.string.preference_language_chinese)
+            "ru" -> stringResource(R.string.preference_language_russian)
+            else -> id
+        }
+    }
+
     SettingsScreenWrapper(
         title = stringResource(R.string.preference_appearance_title),
         onBack = onBack,
@@ -116,6 +135,15 @@ fun AppearanceSettingsScreen(
                     summary = themeOptionNames[themeOptions.indexOf(appTheme).coerceAtLeast(0)],
                     icon = Icons.Default.Palette,
                     onClick = { showThemeDialog = true }
+                )
+            }
+
+            SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
+                SettingsActionItem(
+                    title = stringResource(R.string.preference_language_title),
+                    summary = languageOptionNames[languageOptions.indexOf(appLanguage).coerceAtLeast(0)],
+                    icon = Icons.Default.Language,
+                    onClick = { showLanguageDialog = true }
                 )
             }
 
@@ -146,6 +174,7 @@ fun AppearanceSettingsScreen(
                                     themeColor = color
                                     LauncherPreferences.prefs.edit { putInt("app_theme_color", color) }
                                     LauncherPreferences.PREF_THEME_COLOR = color
+                                    LauncherPreferences.loadPreferences(context)
                                 }
                                 colorSelector.setAlphaEnabled(false)
                                 colorSelector.show(true, themeColor)
@@ -367,6 +396,21 @@ fun AppearanceSettingsScreen(
                 LauncherPreferences.loadPreferences(context)
             },
             onDismiss = { showThemeDialog = false }
+        )
+    }
+
+    if (showLanguageDialog) {
+        SingleChoiceDialog(
+            title = stringResource(R.string.preference_language_title),
+            options = languageOptionNames,
+            optionValues = languageOptions,
+            selectedValue = appLanguage,
+            onValueChange = { newValue ->
+                appLanguage = newValue
+                LauncherPreferences.prefs.edit { putString("app_language", newValue) }
+                LauncherPreferences.loadPreferences(context)
+            },
+            onDismiss = { showLanguageDialog = false }
         )
     }
 

@@ -49,7 +49,7 @@ import com.google.gson.Gson
 import net.kdt.pojavlaunch.PojavApplication
 import net.kdt.pojavlaunch.instances.DisplayInstance
 import net.kdt.pojavlaunch.instances.Instances
-import com.ashmeet.hyperlauncher.components.InstanceNavigationRail
+import com.ashmeet.hyperlauncher.components.SideRail
 import com.ashmeet.hyperlauncher.compose.InstanceListItem
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 import java.io.File
@@ -134,7 +134,7 @@ private fun InstanceSelectionContent(
         color = MaterialTheme.colorScheme.background
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
-            InstanceNavigationRail(
+            SideRail(
                 onCreateNew = onCreateNew,
                 onRefresh = onRefresh,
                 onImportModpack = onImportModpack,

@@ -60,15 +60,28 @@ fun MineButton(
     val isLightMode = MaterialTheme.colorScheme.surface.luminance() > 0.5f
     val contentColor = if (isCustomTheme) {
         if (isLightMode) {
-            Color.White
-        } else {
-
             Color(
                 red = primaryColor.red * 0.3f,
                 green = primaryColor.green * 0.3f,
                 blue = primaryColor.blue * 0.3f,
                 alpha = 1f
             )
+        } else {
+            if (primaryColor.luminance() > 0.5f) {
+                Color(
+                    red = primaryColor.red * 0.3f,
+                    green = primaryColor.green * 0.3f,
+                    blue = primaryColor.blue * 0.3f,
+                    alpha = 1f
+                )
+            } else {
+                Color(
+                    red = primaryColor.red * 0.2f + 0.8f,
+                    green = primaryColor.green * 0.2f + 0.8f,
+                    blue = primaryColor.blue * 0.2f + 0.8f,
+                    alpha = 1f
+                )
+            }
         }
     } else {
         MaterialTheme.colorScheme.onPrimary
@@ -102,7 +115,29 @@ fun SidebarRailButton(
 ) {
     val isCustomTheme = remember { LauncherPreferences.PREF_CUSTOM_THEME }
     val isLightMode = MaterialTheme.colorScheme.surface.luminance() > 0.5f
-    val finalContentColor = if (isCustomTheme && isLightMode) Color.White else contentColor
+    val primaryColor = MaterialTheme.colorScheme.primary
+    val darkenedPrimary = Color(
+        red = primaryColor.red * 0.3f,
+        green = primaryColor.green * 0.3f,
+        blue = primaryColor.blue * 0.3f,
+        alpha = 1f
+    )
+    val lightenedPrimary = Color(
+        red = primaryColor.red * 0.2f + 0.8f,
+        green = primaryColor.green * 0.2f + 0.8f,
+        blue = primaryColor.blue * 0.2f + 0.8f,
+        alpha = 1f
+    )
+    
+    val finalContentColor = if (isCustomTheme) {
+        if (isLightMode) {
+            if (containerColor == Color.Transparent) darkenedPrimary else contentColor
+        } else {
+            if (containerColor == Color.Transparent) lightenedPrimary else contentColor
+        }
+    } else {
+        contentColor
+    }
 
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()

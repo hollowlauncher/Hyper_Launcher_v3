@@ -29,8 +29,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Warning
@@ -39,12 +37,11 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
@@ -65,7 +62,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ashmeet.hyperlauncher.components.SidebarRailButton
+import com.ashmeet.hyperlauncher.components.SideRail
 import com.ashmeet.hyperlauncher.screens.layouts.installer.components.ProjectDetailsSidebar
 import com.ashmeet.hyperlauncher.screens.layouts.installer.components.ProjectItemView
 import com.ashmeet.hyperlauncher.screens.layouts.installer.components.SearchFiltersSidebar
@@ -186,61 +183,28 @@ fun ContentInstallerScreen(
         color = MaterialTheme.colorScheme.background
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
-            NavigationRail(
-                containerColor = Color.Transparent,
-                modifier = Modifier.fillMaxHeight(),
-                header = {
-                    SidebarRailButton(
-                        icon = Icons.AutoMirrored.Rounded.ArrowBack,
-                        label = "Back",
-                        onClick = {
-                            if (isSearchActive) {
-                                isSearchActive = false
-                                searchQuery = ""
-                                onSearch(
-                                    "",
-                                    selectedType,
-                                    selectedVersion,
-                                    selectedLoader,
-                                    selectedSource
-                                )
-                            } else if (viewingProject != null) {
-                                onBackToProjects()
-                            } else {
-                                onBack()
-                            }
-                        }
-                    )
+            SideRail(
+                onCreateNew = onImportModpack,
+                onRefresh = onRefresh,
+                onImportModpack = { isSearchActive = !isSearchActive },
+                onBack = {
+                    if (isSearchActive) {
+                        isSearchActive = false
+                        searchQuery = ""
+                        onSearch(
+                            "",
+                            selectedType,
+                            selectedVersion,
+                            selectedLoader,
+                            selectedSource
+                        )
+                    } else if (viewingProject != null) {
+                        onBackToProjects()
+                    } else {
+                        onBack()
+                    }
                 }
-            ) {
-                Spacer(modifier = Modifier.weight(1f))
-
-                SidebarRailButton(
-                    icon = Icons.Rounded.Add,
-                    label = "New",
-                    onClick = onImportModpack,
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                SidebarRailButton(
-                    icon = Icons.Rounded.Refresh,
-                    label = "Refresh",
-                    onClick = onRefresh
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                SidebarRailButton(
-                    icon = Icons.Rounded.Search,
-                    label = "Search",
-                    onClick = { isSearchActive = !isSearchActive }
-                )
-
-                Spacer(modifier = Modifier.height(24.dp))
-            }
+            )
 
             Surface(
                 modifier = Modifier
@@ -297,9 +261,10 @@ fun ContentInstallerScreen(
                                 )
                             )
                         } else {
-                            TabRow(
+                            ScrollableTabRow(
                                 selectedTabIndex = ContentInstallerType.entries.indexOf(selectedType),
                                 containerColor = Color.Transparent,
+                                edgePadding = 16.dp,
                                 divider = {},
                                 indicator = { tabPositions ->
                                     val index = ContentInstallerType.entries.indexOf(selectedType)
@@ -318,7 +283,8 @@ fun ContentInstallerScreen(
                                         onClick = {
                                             if (selectedType != type) {
                                                 if (viewingProject != null) onBackToProjects()
-                                                onSearch(searchQuery, type, selectedVersion, selectedLoader, selectedSource)
+                                                val newSource = if (type == ContentInstallerType.WORLDS) ContentSource.CURSEFORGE else ContentSource.MODRINTH
+                                                onSearch(searchQuery, type, selectedVersion, selectedLoader, newSource)
                                             }
                                         },
                                         interactionSource = remember { MutableInteractionSource() },

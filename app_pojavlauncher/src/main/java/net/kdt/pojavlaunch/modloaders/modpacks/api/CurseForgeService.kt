@@ -20,6 +20,9 @@ object CurseForgeService {
     private const val CURSEFORGE_MC_GAME_ID = 432
     private const val CURSEFORGE_MODPACK_CLASS_ID = 4471
     private const val CURSEFORGE_MOD_CLASS_ID = 6
+    private const val CURSEFORGE_RESOURCEPACK_CLASS_ID = 12
+    private const val CURSEFORGE_WORLDS_CLASS_ID = 17
+    private const val CURSEFORGE_CUSTOMIZATION_CLASS_ID = 4546
     private const val SORT_RELEVANCE = 1
     private val sMcVersionPattern = Pattern.compile("([0-9]+)\\.([0-9]+)\\.?([0-9]+)?")
     
@@ -74,7 +77,13 @@ object CurseForgeService {
         
         val params = hashMapOf<String, Any>()
         params["gameId"] = CURSEFORGE_MC_GAME_ID
-        params["classId"] = if (type == ContentInstallerType.MODPACKS) CURSEFORGE_MODPACK_CLASS_ID else CURSEFORGE_MOD_CLASS_ID
+        params["classId"] = when (type) {
+            ContentInstallerType.MODPACKS -> CURSEFORGE_MODPACK_CLASS_ID
+            ContentInstallerType.RESOURCEPACKS -> CURSEFORGE_RESOURCEPACK_CLASS_ID
+            ContentInstallerType.SHADERS -> CURSEFORGE_CUSTOMIZATION_CLASS_ID
+            ContentInstallerType.WORLDS -> CURSEFORGE_WORLDS_CLASS_ID
+            else -> CURSEFORGE_MOD_CLASS_ID
+        }
         if (query.isNotBlank()) {
             params["searchFilter"] = query
         }

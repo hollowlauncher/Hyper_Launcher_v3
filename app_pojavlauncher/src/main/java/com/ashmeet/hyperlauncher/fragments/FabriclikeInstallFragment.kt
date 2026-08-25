@@ -116,6 +116,7 @@ abstract class FabriclikeInstallFragment(
                     if (isHyperClientEnabled && mFabriclikeUtils.name.lowercase() == "fabric") {
                         i.name = "Hyper Client"
                         i.icon = "default"
+                        i.hyperClientVersion = hyperClientVersionId
                     } else {
                         i.name = mFabriclikeUtils.name
                         i.icon = mFabriclikeUtils.iconName

@@ -5,6 +5,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Extension
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Inventory2
+import androidx.compose.material.icons.filled.Public
 import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.ui.graphics.vector.ImageVector
 import net.ashmeet.hyperlauncher.R
@@ -13,7 +14,8 @@ enum class ContentInstallerType(val labelRes: Int, val iconRes: ImageVector) {
     MODS(R.string.global_mods, Icons.Default.Extension),
     MODPACKS(R.string.global_modpacks, Icons.Default.Inventory2),
     RESOURCEPACKS(R.string.global_resourcepacks, Icons.Default.Image),
-    SHADERS(R.string.global_shaders, Icons.Default.WbSunny)
+    SHADERS(R.string.global_shaders, Icons.Default.WbSunny),
+    WORLDS(R.string.global_worlds, Icons.Default.Public)
 }
 
 enum class ContentSource(val displayName: String) {

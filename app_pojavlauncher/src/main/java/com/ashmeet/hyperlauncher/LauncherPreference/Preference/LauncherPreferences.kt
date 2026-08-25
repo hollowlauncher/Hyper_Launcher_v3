@@ -161,6 +161,9 @@ object LauncherPreferences {
     var PREF_THEME = "system"
 
     @JvmField
+    var PREF_LANGUAGE = "en"
+
+    @JvmField
     var PREF_CUSTOM_THEME = false
 
     @JvmField
@@ -259,6 +262,7 @@ object LauncherPreferences {
         PREF_ALSOFT_FORCE_OPENSL = pref.getBoolean("alsoftForceOpenSL", false)
         PREF_SCREEN_TRANSITION = pref.getString("screen_transition", "none") ?: "none"
         PREF_THEME = pref.getString("app_theme", "system") ?: "system"
+        PREF_LANGUAGE = pref.getString("app_language", "en") ?: "en"
         PREF_CUSTOM_THEME = pref.getBoolean("app_custom_theme", false)
 
         if ("custom" == PREF_THEME) {

@@ -277,6 +277,8 @@ class ContentInstallerFragment : Fragment() {
                                             Toast.makeText(requireContext(), "Modpack install failed: ${e.message}", Toast.LENGTH_LONG).show()
                                         }
                                     }
+                                } else if (selectedType == ContentInstallerType.WORLDS) {
+                                    installWorld(version, instance, progressKey)
                                 } else {
                                     performDirectDownload(version, instance, selectedType, progressKey)
                                 }
@@ -307,6 +309,99 @@ class ContentInstallerFragment : Fragment() {
                         }
                     )
                 }
+            }
+        }
+    }
+
+    private suspend fun installWorld(version: ModrinthVersion, instance: Instance, progressKey: String) {
+        try {
+            val savesFolder = File(instance.gameDirectory, "saves")
+            savesFolder.mkdirs()
+            val fileName = version.downloadUrl.substringAfterLast("/")
+            val tempZip = File(instance.gameDirectory, "temp_world.zip")
+
+            ProgressKeeper.submitProgress(progressKey, 0, -1, "Downloading $fileName...")
+
+            withContext(Dispatchers.IO) {
+                val url = URL(version.downloadUrl)
+                val connection = url.openConnection()
+                connection.connect()
+                val totalSize = connection.contentLength.toLong()
+
+                connection.getInputStream().use { input ->
+                    tempZip.outputStream().use { output ->
+                        var bytesCopied = 0L
+                        val buffer = ByteArray(8192)
+                        var bytes = input.read(buffer)
+                        while (bytes >= 0) {
+                            output.write(buffer, 0, bytes)
+                            bytesCopied += bytes
+                            if (totalSize > 0) {
+                                val progress = ((bytesCopied * 100) / totalSize).toInt()
+                                ProgressKeeper.submitProgress(progressKey, progress, -1, "Downloading $fileName...")
+                            }
+                            bytes = input.read(buffer)
+                        }
+                    }
+                }
+
+                ProgressKeeper.submitProgress(progressKey, 100, -1, "Extracting world...")
+
+                java.util.zip.ZipFile(tempZip).use { zip ->
+                    val entries = zip.entries()
+                    var levelDatEntry: java.util.zip.ZipEntry? = null
+                    while (entries.hasMoreElements()) {
+                        val entry = entries.nextElement()
+                        if (entry.name.endsWith("level.dat")) {
+                            levelDatEntry = entry
+                            break
+                        }
+                    }
+
+                    if (levelDatEntry == null) throw IOException("No level.dat found in zip")
+
+                    val worldPath = levelDatEntry.name.substringBeforeLast("level.dat")
+                    val worldFolderName = if (worldPath.isEmpty()) {
+                        fileName.substringBeforeLast(".")
+                    } else {
+                        worldPath.removeSuffix("/").substringAfterLast("/")
+                    }
+                    
+                    val finalWorldDir = File(savesFolder, worldFolderName)
+                    finalWorldDir.mkdirs()
+
+                    val extractEntries = zip.entries()
+                    while (extractEntries.hasMoreElements()) {
+                        val entry = extractEntries.nextElement()
+                        if (entry.name.startsWith(worldPath)) {
+                            val relativePath = entry.name.substring(worldPath.length)
+                            if (relativePath.isEmpty()) continue
+                            
+                            val destFile = File(finalWorldDir, relativePath)
+                            if (entry.isDirectory) {
+                                destFile.mkdirs()
+                            } else {
+                                destFile.parentFile?.mkdirs()
+                                zip.getInputStream(entry).use { input ->
+                                    destFile.outputStream().use { output ->
+                                        input.copyTo(output)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                tempZip.delete()
+            }
+
+            ProgressKeeper.submitProgress(progressKey, -1, -1)
+            withContext(Dispatchers.Main) {
+                Toast.makeText(requireContext(), "Installed World: ${version.name}", Toast.LENGTH_SHORT).show()
+            }
+        } catch (e: Exception) {
+            ProgressKeeper.submitProgress(progressKey, -1, -1)
+            withContext(Dispatchers.Main) {
+                Toast.makeText(requireContext(), "Failed to install world: ${e.message}", Toast.LENGTH_LONG).show()
             }
         }
     }

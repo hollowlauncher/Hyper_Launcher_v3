@@ -1,84 +1,54 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
-    <!-- App name part -->
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
     <string name="app_short_name">Hyper Launcher</string>
-
-    <!-- Action bar part -->
-    <string name="close">close</string>
-    <!-- Languages list part -->
-    <string name="preference_language_title">Language</string>
-    <string name="preference_language_system">System Default</string>
-    <string name="preference_language_english">English</string>
-    <string name="preference_language_spanish">Español</string>
-    <string name="preference_language_french">Français</string>
-    <string name="preference_language_german">Deutsch</string>
-    <string name="preference_language_italian">Italiano</string>
-    <string name="preference_language_japanese">日本語</string>
-    <string name="preference_language_chinese">中文</string>
-    <string name="preference_language_russian">Русский</string>
-
-    <!-- Login strings -->
-    <string name="login_online_username_hint">Username</string>
-    <string name="login_online_login_label">Login</string>
-
-    <!-- Hint -->
-    <string name="hint_control_mapping">Touch the cogwheel icon to open the context menu ⚙\nTap a button to customize: edit, resize, remove, or change its keybinds.</string>
-
-    <!-- Warnings -->
-    <string name="warning_remove_account">This account will be removed!</string>
-
-    <!-- AlertDialog title -->
-    <string name="alerttitle_installmod">Select a mod installer</string>
-
-    <!-- Error messages -->
-    <string name="error_fatal">HyperLauncher has unexpectedly crashed</string>
-    <string name="error_no_version">No version!</string>
-    <string name="error_show_more">Show more</string>
-    <string name="error_show_less">Show less</string>
-
-    <!-- Toast messages -->
-    <string name="toast_permission_denied">The read/write to storage permission is required!</string>
-    <string name="toast_optifine_success">Install successful</string>
-    <!--
-    <string name="toast_3">Exit</string>
-    -->
-
-    <!-- MCLauncherActivity: Tabs -->
-    <string name="mcl_tab_web">Website</string>
-
-    <!-- MCLauncherActivity: Account status -->
-
-    <!-- MCLauncherActivity: Strings -->
-    <string name="mcl_launch_cleancache">Cleaning cache files</string>
+    <string name="preference_language_title">бзэ</string>
+    <string name="preference_language_system">системэм епхыу</string>
+    <string name="preference_language_english">Англи</string>
+    <string name="preference_language_spanish">Испани</string>
+    <string name="preference_language_french">Франц</string>
+    <string name="preference_language_german">Немыс</string>
+    <string name="preference_language_italian">Итали</string>
+    <string name="preference_language_japanese">Япон</string>
+    <string name="preference_language_chinese">Китай</string>
+    <string name="preference_language_russian">Орысыбзэ</string>
+    <string name="login_online_username_hint">псэунэхьэ</string>
+    <string name="login_online_login_label">псэухэ</string>
+    <string name="hint_control_mapping">Контекстым меню ⚙ апэщтэн пщыкӀэ икъуэкӀ.\nПщыкӀэр къэхъукӀэн: къэгъэпсэу, нэфӀышъо, къэухэ, нэ йопсэу къыхэщы.</string>
+    <string name="warning_remove_account">Ар аккаунт къэухэнущ!</string>
+    <string name="alerttitle_installmod">Мод установщикэр къыхэщ</string>
+    <string name="error_fatal">HyperLauncher къэфэщтэнкӀэ къэхъуагъэ</string>
+    <string name="error_no_version">Версиер щыӀэп!</string>
+    <string name="error_show_more">НэфӀышъо къэщ</string>
+    <string name="error_show_less">НэфӀышъо зэщ</string>
+    <string name="toast_permission_denied">Хъугъо пщыӀэ къызэфӀэпсэу/къэфӀэщын пщыкӀэщ.</string>
+    <string name="toast_optifine_success">Установкэр нэщӀагъэ</string>
+    <string name="mcl_tab_web">Вебсайт</string>
+    <string name="mcl_launch_cleancache">Кэш файлэхэр къэфӀэщын</string>
     <string name="mcl_launch_downloading">Downloading %s</string>
     <string name="mcl_launch_downloading_progress">"Downloading %s (%.2f MB / %.2f MB)"</string>
     <string name="mcl_launch_download_assets">Preparing to download resources</string>
-
-    <string name="mcl_options">Options</string>
-    <string name="mcl_option_customcontrol">Custom controls</string>
-
-    <string name="preference_category_appearance">Appearance</string>
-    <string name="preference_appearance_title">Appearance</string>
+    <string name="mcl_options">Параметрэхэр</string>
+    <string name="mcl_option_customcontrol">Къэхъулъэ пщыкӀэхэр</string>
+    <string name="preference_category_appearance">ЗэхэщӀапӀэ</string>
+    <string name="preference_appearance_title">ЗэхэщӀапӀэ</string>
     <string name="preference_appearance_description">Visual settings for the launcher</string>
     <string name="preference_screen_transition_title">Screen transition</string>
     <string name="preference_screen_transition_summary">Animation when switching between screens</string>
-    <string name="preference_screen_transition_none">None</string>
-    <string name="preference_screen_transition_fade">Fade</string>
-    <string name="preference_screen_transition_bounce">Bounce</string>
+    <string name="preference_screen_transition_none">ЗэриӀэп</string>
+    <string name="preference_screen_transition_fade">ЗэщӀагъэ</string>
+    <string name="preference_screen_transition_bounce">КъэгъэщӀэ</string>
     <string name="preference_app_theme_title">App theme</string>
     <string name="preference_app_theme_summary">Select the visual theme for the launcher</string>
-    <string name="preference_app_theme_system">Follow system</string>
-    <string name="preference_app_theme_light">Light</string>
-    <string name="preference_app_theme_dark">Dark</string>
-
-
+    <string name="preference_app_theme_system">Системэм епхыу</string>
+    <string name="preference_app_theme_light">фӀыцӀэщ</string>
+    <string name="preference_app_theme_dark">пшъэ</string>
     <string name="mcl_setting_title_use_surface_view">Use alternate surface rendering</string>
     <string name="mcl_setting_subtitle_use_surface_view">May help performance in GPU bound scenarios.</string>
     <string name="mcl_setting_title_ignore_notch">Ignore notch</string>
     <string name="mcl_setting_subtitle_ignore_notch">Ignores the notch and extends the screen under it.\nGives you a more immersive experience.</string>
     <string name="mcl_setting_title_fullscreen_ui">Fullscreen UI</string>
     <string name="mcl_setting_subtitle_fullscreen_ui">Use Edge-to-Edge display for launcher fragments.</string>
-    <string name="mcl_setting_title_resolution_scaler">Resolution Scaler</string>
+    <string name="mcl_setting_title_resolution_scaler">Разрешениер къэзышӀэ</string>
     <string name="mcl_setting_subtitle_resolution_scaler">Allows you to decrease the game resolution. 100% is full resolution.</string>
     <string name="mcl_setting_title_longpresstrigger">Trigger long press delay</string>
     <string name="mcl_setting_subtitle_longpresstrigger">Change long press trigger delay for destroying blocks and dropping items.</string>
@@ -86,50 +56,44 @@
     <string name="mcl_setting_subtitle_buttonscale">Upscale them if the buttons are too small.</string>
     <string name="mcl_setting_title_mousescale">Mouse scaling</string>
     <string name="mcl_setting_subtitle_mousescale">Change the size of the virtual mouse.</string>
-    <string name="mcl_setting_title_javaargs">JVM Launch arguments</string>
-    <string name="mcl_setting_subtitle_javaargs">Be careful, this may make game crash if modified without knowledge.</string>
-    <string name="mcl_setting_category_renderer">Renderer</string>
+    <string name="mcl_setting_title_javaargs">JVM пхъэ аргументхэр</string>
+    <string name="mcl_setting_subtitle_javaargs">Гъэпсэу, бзэм къэщтэнкӀэ къэхъуагъэуным къэзышӀэ.</string>
+    <string name="mcl_setting_category_renderer">Рендерер</string>
     <string name="mcl_setting_renderer_vulkan_zink">Zink (Vulkan) - all versions, mid</string>
     <string name="mcl_setting_renderer_freedreno_kgsl">Freedreno - all versions, fast, Adreno-only</string>
     <string name="mcl_setting_renderer_ltw">LTW (OpenGL ES 3) - 1.17+ only, fast</string>
     <string name="mcl_setting_renderer_mobileglues">MobileGlues - experimental renderer</string>
     <string name="mcl_setting_renderer_holy">Holy GL4ES - old versions, stable</string>
-    <string name="mcl_setting_veroption_release">Release</string>
-    <string name="mcl_setting_veroption_snapshot">Snapshot</string>
-    <string name="mcl_setting_veroption_oldalpha">Old-alpha</string>
-    <string name="mcl_setting_veroption_oldbeta">Old-beta</string>
+    <string name="mcl_setting_veroption_release">Релиз</string>
+    <string name="mcl_setting_veroption_snapshot">Снэпшот</string>
+    <string name="mcl_setting_veroption_oldalpha">ЗэфӀэкӀа альфа</string>
+    <string name="mcl_setting_veroption_oldbeta">ЗэфӀэкӀа бета</string>
     <string name="mcl_setting_java_sandbox">Sandbox .jar execution</string>
     <string name="mcl_setting_java_sandbox_subtitle">Control the availability of the sandbox security manager when executing a .jar file.</string>
-    <string name="mcl_version_clone">Clone</string>
-
-    <!-- Global strings -->
-    <string name="global_edit">Edit</string>
-    <string name="global_error">Error</string>
-    <string name="global_load">Load</string>
-    <string name="global_name">Name</string>
-    <string name="global_remove">Remove</string>
-    <string name="global_clone">Clone</string>
-    <string name="global_restart">Restart</string>
-    <string name="global_save">Save</string>
+    <string name="mcl_version_clone">Къэгъэщ</string>
+    <string name="global_edit">Къэгъэпсэу</string>
+    <string name="global_error">НэфӀэп</string>
+    <string name="global_load">Къэгъэщ</string>
+    <string name="global_name">ЦӀэ</string>
+    <string name="global_remove">Къэухэ</string>
+    <string name="global_clone">Къэгъэщ</string>
+    <string name="global_restart">Къэгъэзэу</string>
+    <string name="global_save">Къэгъэпсэу</string>
     <string name="global_unpacking">Unpacking %s</string>
     <string name="global_error_field_empty">This field can\'t be empty</string>
-    <string name="global_waiting">Wait</string>
-    <string name="global_select">Select</string>
-    <string name="global_retry">Retry</string>
-    <string name="global_default">Default</string>
-    <string name="global_mods">Mods</string>
-    <string name="global_modpacks">Modpacks</string>
-    <string name="global_resourcepacks">Resource</string>
-    <string name="global_shaders">Shaders</string>
+    <string name="global_waiting">ШӀо</string>
+    <string name="global_select">Къыхэщ</string>
+    <string name="global_retry">Къэгъэзэу</string>
+    <string name="global_default">ЗэрыщӀэ</string>
+    <string name="global_mods">Модхэр</string>
+    <string name="global_modpacks">Модпакхэр</string>
+    <string name="global_resourcepacks">Ресурсхэр</string>
+    <string name="global_shaders">Шейдерхэр</string>
     <string name="installer_search_hint">Search Modrinth…</string>
-
-    <!-- MainActivity: strings -->
     <string name="mcn_exit_title">Application/Game exited with code %d, check latestlog.txt for more details.</string>
     <string name="mcn_abort_title">Application/Game aborted, check latestlog.txt for more information</string>
     <string name="mcn_exit_confirm">Are you sure want to force close?</string>
     <string name="mcn_check_fail_vulkan_support">Zink (Vulkan) renderer is not supported on this device!</string>
-
-    <!-- MainActivity: Control buttons -->
     <string name="control_chat">Chat</string>
     <string name="control_debug">Debug</string>
     <string name="control_primary">Pri</string>
@@ -146,50 +110,36 @@
     <string name="control_mouse">Mouse</string>
     <string name="control_mouseoff">Mouse: off</string>
     <string name="control_mouseon">Mouse: on </string>
-
-    <!-- MainActivity: Menu advanced controls -->
-    <string name="control_forceclose">Force close</string>
-    <string name="control_viewout">Log output</string>
-    <string name="control_adebug">Input Debug</string>
-    <string name="control_customkey">Send custom keycode</string>
-
-    <!-- ImportControlActivity Strings -->
-    <string name="import_control_label">Import controls</string>
-    <string name="import_control_invalid_file">Invalid or corrupted file</string>
+    <string name="control_forceclose">ЗэфӀэкӀэ къэухэ</string>
+    <string name="control_viewout">Лог къэщӀапӀэ</string>
+    <string name="control_adebug">КъэщӀэ дебаг</string>
+    <string name="control_customkey">Къэхъулъэ клавиш-код къэщӀ</string>
+    <string name="import_control_label">ПщыкӀэхэр къэуцӀэн</string>
+    <string name="import_control_invalid_file">Файлэр зэфӀэкӀагъэ нэ щӀэщтэн</string>
     <string name="import_control_import_button">import controls</string>
     <string name="import_control_verifying_file">File is being verified, please wait and try again…</string>
     <string name="import_control_invalid_name">Invalid name or file already exists</string>
     <string name="import_control_done">Importation done</string>
-    <!--
-    <string name="control_more3"></string>
-    <string name="control_more4"></string>
--->
-
-    <string name="customctrl_toggle">Toggleable</string>
-    <string name="customctrl_size">Size</string>
-
-    <string name="customctrl_mapping">Mapping</string>
-    <string name="customctrl_orientation">Orientation</string>
-    <string name="customctrl_background_bitmap">Background image</string>
-    <string name="customctrl_background_color">Background color</string>
+    <string name="customctrl_toggle">ЗэщӀэгъэщ</string>
+    <string name="customctrl_size">ИныкӀэ</string>
+    <string name="customctrl_mapping">КъэщӀэ</string>
+    <string name="customctrl_orientation">Ориентациер</string>
+    <string name="customctrl_background_bitmap">Фон сурэт</string>
+    <string name="customctrl_background_color">Фон цӀыф</string>
     <string name="customctrl_background_color_warning">Changing background color will reset the background image</string>
     <string name="customctrl_corner_radius">Corner radius</string>
-    <string name="customctrl_stroke_width">Stroke width</string>
-    <string name="customctrl_stroke_color">Stroke color</string>
-
-    <string name="customctrl_button_opacity">Button Opacity</string>
-
-    <string name="customctrl_addbutton">Add button</string>
+    <string name="customctrl_stroke_width">Шъо ныбжь</string>
+    <string name="customctrl_stroke_color">Шъо цӀыф</string>
+    <string name="customctrl_button_opacity">ПщыкӀэ прозрачност</string>
+    <string name="customctrl_addbutton">ПщыкӀэ къэгъэщ</string>
     <string name="customctrl_addbutton_drawer">Add button drawer</string>
-    <string name="customctrl_addbutton_joystick">Add joystick</string>
-    <string name="customctrl_addsubbutton">Add sub-button</string>
-
+    <string name="customctrl_addbutton_joystick">Джойстик къэгъэщ</string>
+    <string name="customctrl_addsubbutton">ПщыкӀэ нэщӀэ къэгъэщ</string>
     <string name="customctrl_selectdefault">Select default controlmap</string>
     <string name="customctrl_export">Export controlmap</string>
-
-    <string name="main_share_logs">Share log file</string>
+    <string name="main_share_logs">Лог файлэр къэщӀ</string>
     <string name="main_install_jar_file">Execute a .jar</string>
-    <string name="main_play">Play</string>
+    <string name="main_play">Ойнэ</string>
     <string name="autoram_info_msg">Memory set to %d MB</string>
     <string name="mcl_setting_check_libraries">Check libraries after downloading</string>
     <string name="mcl_setting_check_libraries_subtitle">This option forces the launcher to check the library hash if it\'s available. Prevents broken downloads.</string>
@@ -208,24 +158,23 @@
     <string name="customctrl_absolute_tracking">Absolute finger tracking</string>
     <string name="memory_warning_msg">The current amount of free RAM (%d) is lower than allocated RAM (%d), which may lead to crashes. Change the allocation if the game crashes.</string>
     <string name="address_memory_warning_msg">The current amount of free addressable RAM space (%d) is lower than the allocated RAM (%d), which will lead to crashes. Change the allocation if the game crashes.</string>
-    <string name="mcl_memory_allocation">Memory allocation</string>
+    <string name="mcl_memory_allocation">Память къэзыщӀэ</string>
     <string name="mcl_memory_allocation_subtitle">Controls how much memory is given to the Java runtime.</string>
     <string name="multirt_runtime_corrupt">Corrupted Java Runtime</string>
     <string name="multirt_runtime_incompatiblearch">Incompatible architecture: %s</string>
-    <string name="multirt_config_title">Java Runtimes</string>
-    <string name="multirt_config_add">Add new</string>
-    <string name="multirt_title">Runtime Manager</string>
+    <string name="multirt_config_title">Java Runtimeхэр</string>
+    <string name="multirt_config_add">КъэщӀэ къэгъэщ</string>
+    <string name="multirt_title">Runtime къэзыщӀэр</string>
     <string name="multirt_subtitle">Manage installed Java Runtimes.</string>
     <string name="multirt_progress_caching">Caching…</string>
-    <string name="multirt_config_setdefault">Set default</string>
-    <string name="multirt_config_setdefault_already">Default</string>
+    <string name="multirt_config_setdefault">ЗэрыщӀэ къэщ</string>
+    <string name="multirt_config_setdefault_already">ЗэрыщӀэ</string>
     <string name="multirt_config_removeerror_last">You must have at least one Java Runtime installed.</string>
     <string name="multirt_nocompatiblert">Can\'t find any compatible Java Runtime. This version requires Java %d or newer.</string>
     <string name="multirt_nojava8rt">Can\'t find Java 8. In order to use this option, you need to install Java 8.</string>
-    <string name="multirt_delete_runtime">Delete runtime</string>
-    <string name="pvc_gameDirectory">Game directory</string>
+    <string name="multirt_delete_runtime">Runtime къэухэ</string>
+    <string name="pvc_gameDirectory">Ойын директорие</string>
     <string name="pvc_jvmArgs">JVM arguments</string>
-
     <string name="preference_mouse_start_title">Start with virtual mouse on</string>
     <string name="preference_mouse_start_description">The virtual mouse appears at startup when this option is on.</string>
     <string name="preference_video_title">Video and renderer</string>
@@ -250,47 +199,44 @@
     <string name="preference_force_english_description">Allows you to see original strings, as intended by developers. Requires a restart.</string>
     <string name="preference_edit_controls_title">Edit custom controls</string>
     <string name="preference_edit_controls_summary">Tweak the control scheme to fit your needs.</string>
-
     <string name="preference_category_gyro_controls">Gyroscope controls</string>
     <string name="preference_category_virtual_mouse">Virtual mouse</string>
-
     <string name="preference_gyro_invert_x_axis">Invert X axis</string>
     <string name="preference_gyro_invert_y_axis">Invert Y axis</string>
     <string name="preference_gyro_invert_x_axis_description">Invert the horizontal axis.</string>
     <string name="preference_gyro_invert_y_axis_description">Invert the vertical axis.</string>
     <string name="preference_gyro_smoothing_title">Enable gyroscope smoothing</string>
     <string name="preference_gyro_smoothing_description">Reduce jitter in exchange for latency.</string>
-
     <string name="preference_back_title">Back to the last screen</string>
     <string name="unnamed">Unnamed</string>
     <string name="profiles_latest_snapshot">Latest snapshot</string>
     <string name="profiles_latest_release">Latest release</string>
-    <string name="profiles_profile_name">Name</string>
+    <string name="profiles_profile_name">ЦӀэ</string>
     <string name="profiles_profile_version">Version</string>
     <string name="instance_shared_data">Shared data (click to switch)</string>
     <string name="instance_shared_data_on">Store game data in a shared directory</string>
     <string name="instance_shared_data_off">Store game data in the instance directory</string>
-    <string name="global_delete">Delete</string>
+    <string name="global_delete">Къэухэ</string>
     <string name="pedit_java_runtime">Java Runtime</string>
-    <string name="pedit_renderer">Renderer</string>
+    <string name="pedit_renderer">Рендерер</string>
     <string name="color_default_hex" translatable="false">FFFF0000</string>
-    <string name="notif_channel_name">General</string>
+    <string name="notif_channel_name">ЗэфӀэкӀэ</string>
     <string name="notif_channel_id" translatable="false">channel_id</string>
     <string name="lazy_service_default_title">Hyper Foreground Service</string>
-    <string name="mcl_setting_veroption_installed">Installed</string>
+    <string name="mcl_setting_veroption_installed">Установкэ щӀагъэ</string>
     <string name="use_global_default">(Use global default)</string>
     <string name="default_control">Default controlmap</string>
     <string name="progresslayout_tasks_in_progress">%d tasks in progress</string>
     <string name="notification_terminate">Terminate</string>
     <string name="notification_game_runs">The game is running!</string>
-    <string name="folder_dialog_create">Create</string>
+    <string name="folder_dialog_create">Къэгъэщ</string>
     <string name="folder_dialog_insert_name">Insert folder name</string>
-    <string name="folder_fragment_create">Create folder</string>
-    <string name="folder_fragment_select">Select folder</string>
-    <string name="main_login_done">Login done</string>
-    <string name="main_add_account">Add account</string>
+    <string name="folder_fragment_create">Папкэ къэгъэщ</string>
+    <string name="folder_fragment_select">Папкэр къыхэщ</string>
+    <string name="main_login_done">Псэухэр къэщӀагъэ</string>
+    <string name="main_add_account">Аккаунт къэгъэщ</string>
     <string name="tasks_ongoing">Tasks are in progress, please wait</string>
-    <string name="no_saved_accounts">No saved accounts</string>
+    <string name="no_saved_accounts">Аккаунтхэр хъумэу щыӀэп</string>
     <string name="mc_download_failed">Failed to download the game! This could be due to bad network connection, incorrectly placed files, etc..</string>
     <string name="xerr_unknown">Unknown Xbox Live API error %d</string>
     <string name="xerr_no_account">You don\'t seem to have an Xbox Live account. Please log in once on https://minecraft.net/ and try again.</string>
@@ -318,19 +264,16 @@
     <string name="customctrl_editor_exit_msg">Are you sure you want to exit?</string>
     <string name="customctrl_editor_exit">Leave editor</string>
     <string name="global_save_and_exit">Save and exit</string>
-    <string name="global_yes">Yes</string>
-    <string name="global_no">No</string>
-
+    <string name="global_yes">О</string>
+    <string name="global_no">Нэ</string>
     <string name="preference_controller_map_wiped">The controller config has been wiped.</string>
     <string name="preference_category_controller_settings">Controller settings</string>
     <string name="preference_wipe_controller_title">Reset controller mapping</string>
     <string name="preference_wipe_controller_description">Allows you to remap the controller buttons.</string>
     <string name="preference_deadzone_scale_title">Joystick deadzone scale</string>
     <string name="preference_deadzone_scale_description">Increase it if the joystick drifts.</string>
-
     <string name="preference_microphone_access_title">Request microphone access permission</string>
     <string name="preference_microphone_access_description">Requests system to give access to device microphone for the game</string>
-
     <string name="preference_force_big_core_title">Force the renderer to run on the big core</string>
     <string name="preference_force_big_core_desc">Forces the game\'s render thread to run on the core with the highest maximum frequency.</string>
     <string name="version_select_hint">Select a version</string>
@@ -359,21 +302,15 @@
     <string name="of_dl_failed_to_scrape">Failed to collect data for OptiFine installation</string>
     <string name="of_dl_progress">Downloading %s</string>
     <string name="mod_dl_install_optifine">Install OptiFine</string>
-
-
     <string name="hint_search_modpack">Search for modpacks</string>
-
     <string name="preference_vulkan_driver_system_title">Use system Vulkan driver</string>
     <string name="preference_vulkan_driver_system_description">Force the launcher to use the system Vulkan driver instead of Turnip on Adreno GPUs. Only affects Zink and mods that use Vulkan.</string>
-
     <string name="generic_install">Install</string>
     <string name="generic_apply">Apply</string>
     <string name="generic_debug">Debug</string>
-
     <string name="search_modpack_no_result">No modpacks found</string>
     <string name="search_modpack_error">Failed to find modpacks</string>
     <string name="search_modpack_download_error">Failed to download modpack metadata</string>
-
     <string name="modpack_download_downloading_metadata">Downloading modpack metadata (%.2f MB / %.2f MB)</string>
     <string name="modpack_download_downloading_mods">Downloading mods (%.2f MB / %.2f MB)</string>
     <string name="modpack_download_downloading_mods_fc">Downloading mods (File %d out of %d)</string>
@@ -384,15 +321,14 @@
     <string name="modpack_install_modloader_download_failed">Failed to download the mod loader files</string>
     <string name="modpack_install_download_failed">Failed to download modpack files</string>
     <string name="modpack_install_instance_button">Create modpack instance</string>
-
     <string name="notif_error_occured">An error has occurred</string>
     <string name="notif_error_occured_desc">Click to see more details</string>
     <string name="fabric_dl_only_stable">Show only stable versions</string>
     <string name="dl_tampered_manifest_title">File verification warning</string>
-    <string name="dl_tampered_manifest"><![CDATA[The game version manifest on the mirror does not match the official Mojang version manifest, which means it may have been tampered with.<br/>
-        <b>This is not safe. Your personal information may be at risk if you continue.</b><br/>
-        If you still want to use the mirror, press \"Turn off manifest checks\" and start the download again.<br/>
-        If you want to use the official download source, press \"Switch to official site\" and start the download again.<br/>]]>
+    <string name="dl_tampered_manifest">The game version manifest on the mirror does not match the official Mojang version manifest, which means it may have been tampered with.&lt;br/&gt;
+        &lt;b&gt;This is not safe. Your personal information may be at risk if you continue.&lt;/b&gt;&lt;br/&gt;
+        If you still want to use the mirror, press \"Turn off manifest checks\" and start the download again.&lt;br/&gt;
+        If you want to use the official download source, press \"Switch to official site\" and start the download again.&lt;br/&gt;
     </string>
     <string name="dl_turn_off_manifest_checks">Turn off manifest checks</string>
     <string name="dl_switch_to_official_site">Switch to official site</string>
@@ -438,7 +374,7 @@
     <string name="controller_button_x">X</string>
     <string name="controller_button_y">Y</string>
     <string name="controller_button_start">Start</string>
-    <string name="controller_button_select">Select</string>
+    <string name="controller_button_select">Къыхэщ</string>
     <string name="controller_button_trigger_left">Left Trigger</string>
     <string name="controller_button_trigger_right">Right Trigger</string>
     <string name="controller_button_shoulder_left">Left Shoulder</string>
@@ -456,9 +392,9 @@
     <string name="controller_remapper_exit_part1">Hold</string>
     <string name="controller_remapper_exit_part2">to exit</string>
     <string name="controller_remapper_operating_mode">Current mode</string>
-    <string name="customctrl_visibility_title">Visibility</string>
-    <string name="customctrl_visibility_ingame">In-game</string>
-    <string name="customctrl_visibility_in_menus">In menus</string>
+    <string name="customctrl_visibility_title">НэфӀагъэ</string>
+    <string name="customctrl_visibility_ingame">Ойын иӀэ</string>
+    <string name="customctrl_visibility_in_menus">Менюхэм иӀэ</string>
     <string name="controller_remapper_expand_entry">Expand to change keycodes</string>
     <string name="preference_remap_controller_title">Change controller key bindings</string>
     <string name="preference_remap_controller_description">Allows you to modify the keyboard keys bound to each controller button</string>
@@ -468,7 +404,7 @@
     <string name="social_media_invite" translatable="false">https://discord.com/invite/GxTY8Ckxry</string>
     <string name="local_login_bad_username_title">Unsuitable username</string>
     <string name="local_login_bad_username_text">The username must be between 3–16 characters long, and must only contain latin letters, numbers 0–9 and underscores.</string>
-    <string name="quick_setting_title">Quick settings</string>
+    <string name="quick_setting_title">Зэпсэу параметрхэр</string>
     <string name="create_bta_instance">Create \"Better than Adventure!\" instance</string>
     <string name="select_bta_version">Select \"Better than Adventure!\" version</string>
     <string name="bta_installer_available_versions">Supported BTA versions</string>
@@ -500,42 +436,42 @@
     <string name="vml_fail_load_classpath">Failed to load the classpath. Check latestlog.txt for details</string>
     <string name="vml_fail_run_main">Failed to start the main class. Check latestlog.txt for details</string>
     <string name="vml_huh">\???</string>
-    <string name="vml_err_ok">Success</string>
-    <string name="vml_err_unknown">Unknown error</string>
+    <string name="vml_err_ok">НэщӀагъэ</string>
+    <string name="vml_err_unknown">ЗэрыщыӀэп нэфӀэп</string>
     <string name="vml_err_detached">Thread is detached from the Java VM</string>
     <string name="vml_err_version">Incompatible JNI version</string>
-    <string name="vml_err_nomem">Out of RAM</string>
+    <string name="vml_err_nomem">RAM къэфӀэщагъэ</string>
     <string name="vml_err_exists">The VM is already loaded</string>
-    <string name="vml_err_inval">Bad arguments</string>
+    <string name="vml_err_inval">Аргументхэр зэпэщтэн</string>
     <string name="gr_err_renderer_load_Failed">Failed to load renderer library</string>
     <string name="ltw_4x_msaa_warning_msg">It appears that you have turned on "Force 4x MSAA" in Developer settings. Please turn it off to avoid rendering issues.</string>
     <string name="no_instance">No instance is selected. Please create an instance or select one.</string>
     <string name="downloading_java_runtime_uni">Downloading runtime, stage ½ (%.2f/%.2f MB)</string>
     <string name="downloading_java_runtime_platform">Downloading runtime, stage 2/2 (%.2f/%.2f MB)</string>
-    <string name="runtime_error_title">Runtime not available</string>
+    <string name="runtime_error_title">Runtime щыӀэп</string>
     <string name="runtime_error_missing">Java %d is not yet installed. Please choose another compatible runtime or connect to the Internet to install it automatically.</string>
     <string name="runtime_error_install_failed">Failed to install Java %d. Please check your Internet connection and try again.</string>
     <string name="modloader_dl_install_legacy_fabric_instance">Create Legacy Fabric instance</string>
-    <string name="instance_delete">Delete instance</string>
+    <string name="instance_delete">Инстанс къэухэ</string>
     <string name="instance_delete_confirmation">Are you sure you want to delete the instance? This will permanently delete all worlds, mods, resources and any other data in the instance directory. This action cannot be undone!</string>
-    <string name="import_local_modpack">Import local modpack</string>
+    <string name="import_local_modpack">Локал модпак къэуцӀэн</string>
     <string name="preference_sysmem_title">Force rendering into the system memory</string>
     <string name="preference_sysmem_summary">Forces Freedreno to render directly into the system memory. Enable if performance is low or you experience rendering issues</string>
-    <string name="preference_category_keyboard">Keyboard settings</string>
+    <string name="preference_category_keyboard">Клавиатурэ параметрхэр</string>
     <string name="preference_keyboard_autopan_title">Enable keyboard panning</string>
     <string name="preference_keyboard_autopan_summary">Allows on-screen keyboard to move the game window instead of overlapping it if the last touch was below the visible zone. Has no effect on custom control layout buttons with the same function</string>
-    <string name="preference_data_migration_title">Import data</string>
+    <string name="preference_data_migration_title">Даннэхэр къэуцӀэн</string>
     <string name="preference_data_migration_summary">Begin importing data (instances, control maps) from the old app installation</string>
     <string name="migration_progress_foreign">Provide a correct old installation!</string>
     <string name="migration_progress_failed">Failed to migrate data!</string>
-    <string name="migration_progress_finish">Data migration finished!</string>
+    <string name="migration_progress_finish">Даннэхэм я къэуцӀэщӀэ нэщӀагъэ!</string>
     <string name="migration_progress_self">You cannot import data from the same app!</string>
     <string name="migration_progress_copying">Copying %1s</string>
-    <string name="migration_progress_warning_title">Data Migration</string>
+    <string name="migration_progress_warning_title">Даннэхэм я къэуцӀэщӀэ</string>
     <string name="migration_progress_warning_summary">You\'re going to launch a data migration process. This process will copy all selected launcher\'s instances and control maps to the current app installation. All conflicting files will be OVERWRITTEN! Consider making backups. You have been warned.</string>
     <string name="migration_progress_space">Your device does not have enough space for data migration. Free minimum $%1l MB or greater to continue.</string>
     <string name="migration_notice">Looks like you have already used this application in the past. You can import old launcher installation data from miscellaneous settings.</string>
     <string name="preference_alsoft_opensl_title">Forcefully use OpenSL for audio</string>
     <string name="preference_alsoft_opensl_summary">Forcefully enables OpenSL backend in ALSoft instead of Oboe. Can fix audio capture issues on some devices. Disable if you see audio playback/capture issues</string>
-    <string name="global_worlds">Worlds</string>
+    <string name="global_worlds">Дунэяхэр</string>
 </resources>

@@ -9,6 +9,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -33,7 +34,7 @@ fun PojavTheme(
         mutableStateOf(if (isInPreview) false else LauncherPreferences.PREF_CUSTOM_THEME)
     }
     var themeColor by remember {
-        mutableStateOf(if (isInPreview) 0xFF3F51B5.toInt() else LauncherPreferences.PREF_THEME_COLOR)
+        mutableIntStateOf(if (isInPreview) 0xFF3F51B5.toInt() else LauncherPreferences.PREF_THEME_COLOR)
     }
 
     if (!isInPreview) {
@@ -58,40 +59,62 @@ fun PojavTheme(
         else -> isSystemInDarkTheme()
     }
 
-    val primaryColor = if (isCustomTheme) Color(themeColor) else colorResource(R.color.minebutton_color)
+    val primaryColor = if (isCustomTheme) {
+        val color = Color(themeColor)
+        val lum = color.luminance()
+        if (isDark) {
+            if (lum < 0.1f) colorResource(R.color.minebutton_color) else color
+        } else {
+            if (lum > 0.9f) colorResource(R.color.minebutton_color) else color
+        }
+    } else {
+        colorResource(R.color.minebutton_color)
+    }
 
     val colorScheme = if (isCustomTheme) {
         generateCustomColorScheme(primaryColor, isDark)
     } else {
+        val darkenedPrimary = Color(
+            red = primaryColor.red * 0.3f,
+            green = primaryColor.green * 0.3f,
+            blue = primaryColor.blue * 0.3f,
+            alpha = 1f
+        )
+        val lightenedPrimary = Color(
+            red = primaryColor.red * 0.2f + 0.8f,
+            green = primaryColor.green * 0.2f + 0.8f,
+            blue = primaryColor.blue * 0.2f + 0.8f,
+            alpha = 1f
+        )
         if (isDark) {
             darkColorScheme(
                 primary = primaryColor,
-                onPrimary = colorResource(R.color.minebutton_text_color),
+                onPrimary = if (primaryColor.luminance() > 0.5f) darkenedPrimary else lightenedPrimary,
                 primaryContainer = primaryColor.copy(alpha = 0.3f),
-                onPrimaryContainer = Color.White,
+                onPrimaryContainer = lightenedPrimary,
                 secondary = primaryColor,
-                onSecondary = colorResource(R.color.minebutton_text_color),
+                onSecondary = if (primaryColor.luminance() > 0.5f) darkenedPrimary else lightenedPrimary,
                 secondaryContainer = primaryColor.copy(alpha = 0.2f),
-                onSecondaryContainer = Color.White,
+                onSecondaryContainer = lightenedPrimary,
                 tertiary = primaryColor,
-                onTertiary = colorResource(R.color.minebutton_text_color),
+                onTertiary = if (primaryColor.luminance() > 0.5f) darkenedPrimary else lightenedPrimary,
                 tertiaryContainer = primaryColor.copy(alpha = 0.15f),
-                onTertiaryContainer = Color.White,
+                onTertiaryContainer = lightenedPrimary,
                 error = colorResource(R.color.warning),
-                onError = Color.Black,
+                onError = darkenedPrimary,
                 errorContainer = Color(0xFF93000A),
                 onErrorContainer = Color(0xFFFFDAD6),
                 background = colorResource(R.color.background_app),
-                onBackground = colorResource(R.color.primary_text),
+                onBackground = lightenedPrimary,
                 surface = colorResource(R.color.background_status_bar),
-                onSurface = colorResource(R.color.primary_text),
+                onSurface = lightenedPrimary,
                 surfaceVariant = colorResource(R.color.background_overlay),
-                onSurfaceVariant = colorResource(R.color.secondary_text),
+                onSurfaceVariant = lightenedPrimary.copy(alpha = 0.7f),
                 outline = colorResource(R.color.divider),
                 outlineVariant = colorResource(R.color.divider).copy(alpha = 0.5f),
                 scrim = Color.Black,
-                inverseSurface = Color.White,
-                inverseOnSurface = Color.Black,
+                inverseSurface = lightenedPrimary,
+                inverseOnSurface = darkenedPrimary,
                 inversePrimary = primaryColor,
                 surfaceDim = Color(0xFF1A1A1A),
                 surfaceBright = Color(0xFF3B3B3B),
@@ -104,27 +127,27 @@ fun PojavTheme(
         } else {
             lightColorScheme(
                 primary = primaryColor,
-                onPrimary = colorResource(R.color.minebutton_text_color),
+                onPrimary = if (primaryColor.luminance() > 0.5f) darkenedPrimary else Color.White,
                 primaryContainer = primaryColor.copy(alpha = 0.1f),
-                onPrimaryContainer = Color.Black,
+                onPrimaryContainer = darkenedPrimary,
                 secondary = primaryColor,
-                onSecondary = colorResource(R.color.minebutton_text_color),
+                onSecondary = if (primaryColor.luminance() > 0.5f) darkenedPrimary else Color.White,
                 secondaryContainer = primaryColor.copy(alpha = 0.05f),
-                onSecondaryContainer = Color.Black,
+                onSecondaryContainer = darkenedPrimary,
                 tertiary = primaryColor,
-                onTertiary = colorResource(R.color.minebutton_text_color),
+                onTertiary = if (primaryColor.luminance() > 0.5f) darkenedPrimary else Color.White,
                 tertiaryContainer = primaryColor.copy(alpha = 0.03f),
-                onTertiaryContainer = Color.Black,
+                onTertiaryContainer = darkenedPrimary,
                 error = colorResource(R.color.warning),
-                onError = Color.White,
+                onError = lightenedPrimary,
                 errorContainer = Color(0xFFFFDAD6),
                 onErrorContainer = Color(0xFF410002),
                 background = colorResource(R.color.background_app),
-                onBackground = colorResource(R.color.primary_text),
+                onBackground = darkenedPrimary,
                 surface = colorResource(R.color.background_status_bar),
-                onSurface = colorResource(R.color.primary_text),
+                onSurface = darkenedPrimary,
                 surfaceVariant = colorResource(R.color.background_overlay),
-                onSurfaceVariant = colorResource(R.color.secondary_text),
+                onSurfaceVariant = darkenedPrimary.copy(alpha = 0.7f),
                 outline = colorResource(R.color.divider),
                 outlineVariant = colorResource(R.color.divider).copy(alpha = 0.5f),
                 scrim = Color.Black,
@@ -149,29 +172,41 @@ fun PojavTheme(
 }
 
 private fun generateCustomColorScheme(primary: Color, isDark: Boolean): ColorScheme {
-    val onPrimary = if (primary.luminance() > 0.5f) Color.Black else Color.White
+    val darkenedPrimary = Color(
+        red = primary.red * 0.3f,
+        green = primary.green * 0.3f,
+        blue = primary.blue * 0.3f,
+        alpha = 1f
+    )
+    val lightenedPrimary = Color(
+        red = primary.red * 0.2f + 0.8f,
+        green = primary.green * 0.2f + 0.8f,
+        blue = primary.blue * 0.2f + 0.8f,
+        alpha = 1f
+    )
+    val onPrimary = if (primary.luminance() > 0.5f) darkenedPrimary else if (isDark) lightenedPrimary else Color.White
 
     return if (isDark) {
         val darkBackground = Color(0xFF121212)
         val tintedBackground = primary.copy(alpha = 0.08f).compositeOver(darkBackground)
         val tintedSurface = primary.copy(alpha = 0.12f).compositeOver(darkBackground)
-        val onSurface = Color.White.copy(alpha = 0.9f)
+        val onSurface = lightenedPrimary.copy(alpha = 0.9f)
 
         darkColorScheme(
             primary = primary,
             onPrimary = onPrimary,
             primaryContainer = primary.copy(alpha = 0.3f).compositeOver(darkBackground),
-            onPrimaryContainer = Color.White,
+            onPrimaryContainer = lightenedPrimary,
             secondary = primary,
             onSecondary = onPrimary,
             secondaryContainer = primary.copy(alpha = 0.2f).compositeOver(darkBackground),
-            onSecondaryContainer = Color.White,
+            onSecondaryContainer = lightenedPrimary,
             tertiary = primary,
             onTertiary = onPrimary,
             tertiaryContainer = primary.copy(alpha = 0.15f).compositeOver(darkBackground),
-            onTertiaryContainer = Color.White,
+            onTertiaryContainer = lightenedPrimary,
             error = Color(0xFFCF6679),
-            onError = Color(0xFF690005),
+            onError = darkenedPrimary,
             errorContainer = Color(0xFF93000A),
             onErrorContainer = Color(0xFFFFDAD6),
             background = tintedBackground,
@@ -179,12 +214,12 @@ private fun generateCustomColorScheme(primary: Color, isDark: Boolean): ColorSch
             surface = tintedSurface,
             onSurface = onSurface,
             surfaceVariant = primary.copy(alpha = 0.16f).compositeOver(darkBackground),
-            onSurfaceVariant = Color.White.copy(alpha = 0.7f),
+            onSurfaceVariant = lightenedPrimary.copy(alpha = 0.7f),
             outline = primary.copy(alpha = 0.5f),
             outlineVariant = primary.copy(alpha = 0.2f),
             scrim = Color.Black,
-            inverseSurface = Color.White,
-            inverseOnSurface = Color.Black,
+            inverseSurface = lightenedPrimary,
+            inverseOnSurface = darkenedPrimary,
             inversePrimary = primary,
             surfaceDim = primary.copy(alpha = 0.1f).compositeOver(darkBackground),
             surfaceBright = primary.copy(alpha = 0.2f).compositeOver(darkBackground),
@@ -198,23 +233,23 @@ private fun generateCustomColorScheme(primary: Color, isDark: Boolean): ColorSch
         val lightBackground = Color(0xFFF2F2F2)
         val tintedBackground = primary.copy(alpha = 0.05f).compositeOver(lightBackground)
         val tintedSurface = primary.copy(alpha = 0.08f).compositeOver(Color.White)
-        val onSurface = Color.Black.copy(alpha = 0.9f)
+        val onSurface = darkenedPrimary.copy(alpha = 0.9f)
 
         lightColorScheme(
             primary = primary,
             onPrimary = onPrimary,
             primaryContainer = primary.copy(alpha = 0.15f).compositeOver(Color.White),
-            onPrimaryContainer = Color.Black,
+            onPrimaryContainer = darkenedPrimary,
             secondary = primary,
             onSecondary = onPrimary,
             secondaryContainer = primary.copy(alpha = 0.1f).compositeOver(Color.White),
-            onSecondaryContainer = Color.Black,
+            onSecondaryContainer = darkenedPrimary,
             tertiary = primary,
             onTertiary = onPrimary,
             tertiaryContainer = primary.copy(alpha = 0.07f).compositeOver(Color.White),
-            onTertiaryContainer = Color.Black,
+            onTertiaryContainer = darkenedPrimary,
             error = Color(0xFFB00020),
-            onError = Color.White,
+            onError = lightenedPrimary,
             errorContainer = Color(0xFFFFDAD6),
             onErrorContainer = Color(0xFF410002),
             background = tintedBackground,
@@ -222,12 +257,12 @@ private fun generateCustomColorScheme(primary: Color, isDark: Boolean): ColorSch
             surface = tintedSurface,
             onSurface = onSurface,
             surfaceVariant = primary.copy(alpha = 0.12f).compositeOver(lightBackground),
-            onSurfaceVariant = Color.Black.copy(alpha = 0.7f),
+            onSurfaceVariant = darkenedPrimary.copy(alpha = 0.7f),
             outline = primary.copy(alpha = 0.4f),
             outlineVariant = primary.copy(alpha = 0.15f),
             scrim = Color.Black,
             inverseSurface = Color(0xFF313033),
-            inverseOnSurface = Color(0xFFF4EFF4),
+            inverseOnSurface = lightenedPrimary,
             inversePrimary = primary,
             surfaceDim = Color(0xFFDED8E1),
             surfaceBright = Color(0xFFFEF7FF),

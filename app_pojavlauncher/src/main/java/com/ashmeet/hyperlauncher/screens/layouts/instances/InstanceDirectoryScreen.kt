@@ -90,7 +90,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ashmeet.hyperlauncher.components.DefaultSwitch
-import com.ashmeet.hyperlauncher.components.InstanceNavigationRail
+import com.ashmeet.hyperlauncher.components.SideRail
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.TextInputDialog
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 import kotlinx.coroutines.Dispatchers
@@ -343,7 +343,7 @@ fun InstanceDirectoryContent(
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
             Box {
-                InstanceNavigationRail(
+                SideRail(
                     onCreateNew = { sidebarMenuExpanded = true },
                     onRefresh = { currentDir?.let { loadFiles(it) } },
                     onImportModpack = { isSearchActive = !isSearchActive },
@@ -543,6 +543,7 @@ fun InstanceDirectoryContent(
                                             placementSpec = tween(300)
                                         ),
                                         file = file,
+                                        selectedInstance = selectedInstance,
                                         instanceVersion = instanceVersion,
                                         instanceLoader = instanceLoader,
                                         onClick = {
@@ -576,6 +577,7 @@ fun InstanceDirectoryContent(
 fun FileListItem(
     modifier: Modifier = Modifier,
     file: File,
+    selectedInstance: net.kdt.pojavlaunch.instances.Instance?,
     instanceVersion: String?,
     instanceLoader: String?,
     onClick: () -> Unit,
@@ -614,7 +616,8 @@ fun FileListItem(
                     }
                     if (compatible.isNotEmpty()) {
                         val latest = compatible.first()
-                        if (mMeta.version == null || latest.name != mMeta.version) {
+                        val currentVersion = selectedInstance?.hyperClientVersion ?: mMeta.version
+                        if (currentVersion == null || latest.name != currentVersion) {
                             withContext(Dispatchers.Main) { updateAvailable = latest }
                         }
                     }
@@ -731,23 +734,34 @@ fun FileListItem(
 
             if (file.isFile && (file.name.endsWith(".jar") || file.name.endsWith(".jar.disabled"))) {
                 val isEnabled = !file.name.endsWith(".disabled")
+                val isHyperClient = modMeta?.name?.lowercase()?.contains("hyper client") == true
 
-                if (updateAvailable != null) {
+                if (isHyperClient) {
                     IconButton(
                         onClick = {
+                            if (updateAvailable == null) return@IconButton
                             isUpdating = true
                             scope.launch(Dispatchers.IO) {
                                 try {
                                     val url = URL(updateAvailable!!.downloadUrl)
                                     val fileName = updateAvailable!!.downloadUrl.substringAfterLast("/")
-                                    val destFile = File(file.parentFile, fileName)
+                                    val tempFile = File(file.parentFile, fileName + ".tmp")
 
                                     url.openStream().use { input ->
-                                        destFile.outputStream().use { output ->
+                                        tempFile.outputStream().use { output ->
                                             input.copyTo(output)
                                         }
                                     }
-                                    file.delete()
+
+                                    if (file.exists()) file.delete()
+                                    val finalFile = File(file.parentFile, fileName)
+                                    tempFile.renameTo(finalFile)
+
+                                    selectedInstance?.let {
+                                        it.hyperClientVersion = updateAvailable!!.name
+                                        it.maybeWrite()
+                                    }
+
                                     withContext(Dispatchers.Main) {
                                         onRefresh()
                                         updateAvailable = null
@@ -768,8 +782,10 @@ fun FileListItem(
                             Icon(
                                 imageVector = Icons.Rounded.Update,
                                 contentDescription = "Update available",
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(24.dp)
+                                tint = if (updateAvailable != null) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier
+                                    .size(24.dp)
+                                    .graphicsLayer { alpha = if (updateAvailable != null) 1f else 0.3f }
                             )
                         }
                     }
@@ -893,6 +909,7 @@ fun FileListItemPreview() {
         Column(modifier = Modifier.padding(16.dp)) {
             FileListItem(
                 file = File("example_mod.jar"),
+                selectedInstance = null,
                 instanceVersion = null,
                 instanceLoader = null,
                 onClick = {},

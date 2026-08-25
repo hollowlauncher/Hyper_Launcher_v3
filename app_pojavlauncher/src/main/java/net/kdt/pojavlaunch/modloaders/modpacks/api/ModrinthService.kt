@@ -30,6 +30,7 @@ object ModrinthService {
             ContentInstallerType.MODPACKS -> "modpack"
             ContentInstallerType.RESOURCEPACKS -> "resourcepack"
             ContentInstallerType.SHADERS -> "shader"
+            ContentInstallerType.WORLDS -> "world"
         }
         facets.add("[\"project_type:$typeStr\"]")
         

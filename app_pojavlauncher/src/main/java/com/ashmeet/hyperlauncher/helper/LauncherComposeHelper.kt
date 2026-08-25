@@ -40,7 +40,7 @@ import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.customcontrols.ControlLayout
 
 object LauncherComposeHelper {
-    private var settingsIconRes: Int by mutableIntStateOf(R.drawable.ic_sharp_settings_24)
+    private var settingsIconRes: Int by mutableIntStateOf(R.drawable.ic_px_sliders)
     private var mIsFileManagerVisible by mutableStateOf(true)
 
     interface OnFragmentViewCreatedListener {

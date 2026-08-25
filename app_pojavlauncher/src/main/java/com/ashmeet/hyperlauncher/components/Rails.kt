@@ -23,13 +23,11 @@ import androidx.compose.material.icons.rounded.VideogameAsset
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationRail
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences
 import net.ashmeet.hyperlauncher.R
 
 @Composable
@@ -152,24 +150,14 @@ fun SideNavigationRail(
 }
 
 @Composable
-fun InstanceNavigationRail(
+fun SideRail(
     onCreateNew: () -> Unit,
     onRefresh: () -> Unit,
     onImportModpack: () -> Unit,
     onBack: () -> Unit
 ) {
-    val isCustomTheme = remember { LauncherPreferences.PREF_CUSTOM_THEME }
+    val onPrimaryColor = MaterialTheme.colorScheme.onPrimary
     val primaryColor = MaterialTheme.colorScheme.primary
-    val onPrimaryColor = if (isCustomTheme) {
-        Color(
-            red = primaryColor.red * 0.3f,
-            green = primaryColor.green * 0.3f,
-            blue = primaryColor.blue * 0.3f,
-            alpha = 1f
-        )
-    } else {
-        MaterialTheme.colorScheme.onPrimary
-    }
 
     NavigationRail(
         containerColor = Color.Transparent,

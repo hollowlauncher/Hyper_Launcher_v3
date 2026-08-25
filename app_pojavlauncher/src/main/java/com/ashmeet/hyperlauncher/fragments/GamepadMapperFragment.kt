@@ -14,15 +14,17 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ashmeet.hyperlauncher.theme.PojavTheme
+import com.ashmeet.hyperlauncher.utils.drawable.rememberDrawablePainter
 import fr.spse.gamepad_remapper.RemapperManager
 import fr.spse.gamepad_remapper.RemapperView
 import net.ashmeet.hyperlauncher.R
@@ -85,7 +87,7 @@ class GamepadMapperFragment : Fragment(), View.OnKeyListener, View.OnGenericMoti
         onKeyListenerSet: () -> Unit,
         onGenericMotionListenerSet: () -> Unit
     ) {
-        var grabState by remember { mutableStateOf(0) }
+        var grabState by remember { mutableIntStateOf(0) }
         val grabOptions = listOf(
             stringResource(R.string.customctrl_visibility_in_menus),
             stringResource(R.string.customctrl_visibility_ingame)
@@ -109,7 +111,9 @@ class GamepadMapperFragment : Fragment(), View.OnKeyListener, View.OnGenericMoti
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Image(
-                            painter = painterResource(id = R.drawable.button_select),
+                            painter = rememberDrawablePainter(
+                                ContextCompat.getDrawable(LocalContext.current, R.drawable.button_select)
+                            ),
                             contentDescription = stringResource(R.string.controller_button_select),
                             modifier = Modifier.size(30.dp)
                         )
