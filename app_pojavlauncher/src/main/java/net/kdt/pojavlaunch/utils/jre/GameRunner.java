@@ -1,5 +1,6 @@
 package net.kdt.pojavlaunch.utils.jre;
 
+import android.os.Build;
 import android.util.ArrayMap;
 import android.util.Log;
 import android.widget.Toast;
@@ -282,6 +283,40 @@ public class GameRunner {
         javaArgList.addAll(getMoJsonJvmArgs(versionId));
 
         javaArgList.addAll(JREUtils.parseJavaArguments(instance.getLaunchArgs()));
+
+        // Prepare ImGui natives for mods like Axiom
+        try {
+            if (dev.koraizen.imgui.android.AndroidImGuiNativeLoader.prepare()) {
+                String imguiPath = System.getProperty("imgui.library.path");
+                if (imguiPath != null) {
+                    javaArgList.add("-Dimgui.library.path=" + imguiPath);
+                    javaArgList.add("-Dimgui.library.name=libimgui-java64.so");
+                    // Also for Axiom's fork
+                    javaArgList.add("-Dimgui.moulberry92.library.path=" + imguiPath);
+                    javaArgList.add("-Dimgui.moulberry92.library.name=libimgui-moulberry92-java64.so");
+                    
+                    // Create a symlink or copy for the fork if it doesn't exist
+                    File imguiDir = new File(imguiPath);
+                    File forkLib = new File(imguiDir, "libimgui-moulberry92-java64.so");
+                    if (!forkLib.exists()) {
+                        File baseLib = new File(imguiDir, "libimgui-java64.so");
+                        if (baseLib.exists()) {
+                            try {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                    java.nio.file.Files.copy(baseLib.toPath(), forkLib.toPath());
+                                } else {
+                                    org.apache.commons.io.FileUtils.copyFile(baseLib, forkLib);
+                                }
+                            } catch (IOException e) {
+                                Log.e("GameRunner", "Failed to copy ImGui fork library", e);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Throwable t) {
+            Log.e("GameRunner", "Failed to prepare ImGui natives", t);
+        }
 
         JREUtils.setEnviroimentForGame(activity, rendererName);
         JREUtils.chdir(instance.getGameDirectory().getAbsolutePath());

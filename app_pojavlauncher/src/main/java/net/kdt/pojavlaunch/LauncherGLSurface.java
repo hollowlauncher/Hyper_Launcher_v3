@@ -39,6 +39,7 @@ import net.kdt.pojavlaunch.utils.MCOptionUtils;
 import fr.spse.gamepad_remapper.GamepadHandler;
 import fr.spse.gamepad_remapper.RemapperManager;
 import fr.spse.gamepad_remapper.RemapperView;
+import dev.koraizen.imgui.android.AndroidImGuiInputBackend;
 import git.artdeell.dnbootstrap.glfw.GLFW;
 import git.artdeell.dnbootstrap.glfw.GamepadEnableHandler;
 import git.artdeell.dnbootstrap.glfw.GrabListener;
@@ -142,6 +143,7 @@ public class LauncherGLSurface extends View implements GrabListener, GamepadEnab
             GLFW.cursorX = e.getX(i) / getWidth();
             GLFW.cursorY = e.getY(i) / getHeight();
             GLFW.sendMousePos();
+            AndroidImGuiInputBackend.cursorPosition(GLFW.cursorX * windowWidth, GLFW.cursorY * windowHeight);
             return true; //mouse event handled successfully
         }
         if (mIngameProcessor == null || mInGUIProcessor == null) return true;
@@ -211,9 +213,11 @@ public class LauncherGLSurface extends View implements GrabListener, GamepadEnab
                 GLFW.cursorX = (event.getX(mouseCursorIndex) / getWidth());
                 GLFW.cursorY = (event.getY(mouseCursorIndex) / getHeight());
                 GLFW.sendMousePos();
+                AndroidImGuiInputBackend.cursorPosition(GLFW.cursorX * windowWidth, GLFW.cursorY * windowHeight);
                 return true;
             case MotionEvent.ACTION_SCROLL:
                 CallbackBridge.sendScroll(event.getAxisValue(MotionEvent.AXIS_HSCROLL), event.getAxisValue(MotionEvent.AXIS_VSCROLL));
+                AndroidImGuiInputBackend.scroll(event.getAxisValue(MotionEvent.AXIS_HSCROLL), event.getAxisValue(MotionEvent.AXIS_VSCROLL));
                 return true;
             case MotionEvent.ACTION_BUTTON_PRESS:
                 return sendMouseButtonUnconverted(event.getActionButton(),true);
@@ -271,6 +275,9 @@ public class LauncherGLSurface extends View implements GrabListener, GamepadEnab
         char codepoint = action == KeyEvent.ACTION_DOWN ? (char) event.getUnicodeChar(event.getMetaState()) : 0;
         GLFW.sendRawKeyEvent(eventKeycode, action == KeyEvent.ACTION_DOWN ? 1 : 0, CallbackBridge.getCurrentMods(), codepoint);
 
+        AndroidImGuiInputBackend.key(EfficientAndroidLWJGLKeycode.getLwjglKey(eventKeycode), event.getScanCode(), action == KeyEvent.ACTION_DOWN ? 1 : 0, CallbackBridge.getCurrentMods());
+        if (codepoint != 0) AndroidImGuiInputBackend.character(codepoint);
+
         // Some events will be generated an infinite number of times when no consumed
         return (event.getFlags() & KeyEvent.FLAG_FALLBACK) == KeyEvent.FLAG_FALLBACK;
     }
@@ -293,6 +300,7 @@ public class LauncherGLSurface extends View implements GrabListener, GamepadEnab
         }
         if(glfwButton == -256) return false;
         sendMouseButton(glfwButton, status);
+        AndroidImGuiInputBackend.mouseButton(glfwButton, status ? 1 : 0);
         return true;
     }
 

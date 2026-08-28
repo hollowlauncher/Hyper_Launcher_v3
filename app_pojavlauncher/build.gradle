@@ -146,6 +146,13 @@ android {
             useLegacyPackaging = true
         }
         pickFirst '**/libbytehook.so'
+        pickFirst 'META-INF/INDEX.LIST'
+        pickFirst 'META-INF/DEPENDENCIES'
+        pickFirst 'META-INF/LICENSE'
+        pickFirst 'META-INF/NOTICE'
+        pickFirst 'META-INF/LICENSE.txt'
+        pickFirst 'META-INF/NOTICE.txt'
+        pickFirst 'META-INF/ASL2.0'
     }
 
     buildFeatures {
@@ -360,6 +367,14 @@ dependencies {
     // implementation 'net.sourceforge.streamsupport:streamsupport-cfuture:1.7.0'
 
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+
+    // ImGui-Java Android / Pojav integration
+    def lwjglVersion = "3.3.3"
+    compileOnly "org.lwjgl:lwjgl:$lwjglVersion"
+    compileOnly "org.lwjgl:lwjgl-glfw:$lwjglVersion"
+    compileOnly "org.lwjgl:lwjgl-opengl:$lwjglVersion"
+    implementation "io.github.spair:imgui-java-binding:1.90.0"
+    implementation "io.github.spair:imgui-java-lwjgl3:1.90.0"
 }
 
 tasks.register("prepareKotlinBuildScriptModel") {}
