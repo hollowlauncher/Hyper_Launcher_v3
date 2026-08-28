@@ -247,6 +247,7 @@ public class GameRunner {
             String dirPath = versionSpecificNativesDir.getAbsolutePath();
             javaArgList.add("-Djava.library.path="+dirPath+":"+Tools.NATIVE_LIB_DIR);
             javaArgList.add("-Djna.boot.library.path="+dirPath);
+            javaArgList.add("-Djna.library.path="+dirPath+":"+Tools.NATIVE_LIB_DIR);
         }
 
         File lwjglExtractDir = new File(Tools.DIR_CACHE, "lwjgl_native/"+versionId);
@@ -284,35 +285,28 @@ public class GameRunner {
 
         javaArgList.addAll(JREUtils.parseJavaArguments(instance.getLaunchArgs()));
 
-        // Prepare ImGui natives for mods like Axiom
+        // Prepare ImGui natives for mods like Axiom using the AAR library
         try {
-            if (dev.koraizen.imgui.android.AndroidImGuiNativeLoader.prepare()) {
-                String imguiPath = System.getProperty("imgui.library.path");
-                if (imguiPath != null) {
-                    javaArgList.add("-Dimgui.library.path=" + imguiPath);
-                    javaArgList.add("-Dimgui.library.name=libimgui-java64.so");
-                    // Also for Axiom's fork
-                    javaArgList.add("-Dimgui.moulberry92.library.path=" + imguiPath);
-                    javaArgList.add("-Dimgui.moulberry92.library.name=libimgui-moulberry92-java64.so");
-                    
-                    // Create a symlink or copy for the fork if it doesn't exist
-                    File imguiDir = new File(imguiPath);
-                    File forkLib = new File(imguiDir, "libimgui-moulberry92-java64.so");
-                    if (!forkLib.exists()) {
-                        File baseLib = new File(imguiDir, "libimgui-java64.so");
-                        if (baseLib.exists()) {
-                            try {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                    java.nio.file.Files.copy(baseLib.toPath(), forkLib.toPath());
-                                } else {
-                                    org.apache.commons.io.FileUtils.copyFile(baseLib, forkLib);
-                                }
-                            } catch (IOException e) {
-                                Log.e("GameRunner", "Failed to copy ImGui fork library", e);
-                            }
-                        }
+            String nativeLibDir = activity.getApplicationInfo().nativeLibraryDir;
+            File imguiLib = new File(nativeLibDir, "libimgui-java.so");
+            if (imguiLib.exists()) {
+                File imguiDir = new File(Tools.DIR_CACHE, "imgui_natives");
+                if (!imguiDir.exists()) imguiDir.mkdirs();
+                
+                File forkLib = new File(imguiDir, "libimgui-moulberry92-java64.so");
+                if (!forkLib.exists() || forkLib.length() != imguiLib.length()) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        java.nio.file.Files.copy(imguiLib.toPath(), forkLib.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                    } else {
+                        org.apache.commons.io.FileUtils.copyFile(imguiLib, forkLib);
                     }
                 }
+                
+                javaArgList.add("-Dimgui.library.path=" + nativeLibDir);
+                javaArgList.add("-Dimgui.library.name=libimgui-java.so");
+                // Also for Axiom's fork
+                javaArgList.add("-Dimgui.moulberry92.library.path=" + imguiDir.getAbsolutePath());
+                javaArgList.add("-Dimgui.moulberry92.library.name=libimgui-moulberry92-java64.so");
             }
         } catch (Throwable t) {
             Log.e("GameRunner", "Failed to prepare ImGui natives", t);

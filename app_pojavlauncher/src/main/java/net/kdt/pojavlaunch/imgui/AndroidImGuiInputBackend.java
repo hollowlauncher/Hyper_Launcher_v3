@@ -1,4 +1,4 @@
-package dev.koraizen.imgui.android;
+package net.kdt.pojavlaunch.imgui;
 
 import imgui.ImGui;
 import imgui.ImGuiIO;
@@ -6,43 +6,17 @@ import imgui.flag.ImGuiKey;
 import imgui.glfw.ImGuiImplGlfw;
 import org.lwjgl.glfw.GLFW;
 
-/**
- * Callback-free input backend intended for PojavLauncher.
- * Feed it from the host application's existing input callbacks.
- */
 public final class AndroidImGuiInputBackend {
     private static final KeyMapper KEYS = new KeyMapper();
     private static boolean initialized;
-    private static boolean lastFocused = true;
-    private static long lastFrameNanos;
 
     private AndroidImGuiInputBackend() {}
 
     public static void initialize() {
-        ImGui.getIO().setBackendPlatformName("koraizen-android-host-input");
-        lastFrameNanos = System.nanoTime();
+        ImGui.getIO().setBackendPlatformName("pojav-aar-input");
         initialized = true;
     }
 
-    public static void newFrame(boolean focused) {
-        if (!initialized) return;
-
-        long now = System.nanoTime();
-        float delta = Math.max(0.001f, Math.min(0.1f, (now - lastFrameNanos) / 1_000_000_000f));
-        lastFrameNanos = now;
-
-        ImGuiIO io = ImGui.getIO();
-        io.setDeltaTime(delta);
-
-        if (focused != lastFocused) {
-            io.addFocusEvent(focused);
-            if (!focused) {
-                io.clearInputKeys();
-                io.clearInputMouse();
-            }
-            lastFocused = focused;
-        }
-    }
 
     public static void cursorPosition(double x, double y) {
         if (initialized) ImGui.getIO().addMousePosEvent((float) x, (float) y);

@@ -12,6 +12,9 @@ dependencyResolutionManagement {
         mavenCentral()
         mavenLocal()
         maven { url "https://jitpack.io" }
+        flatDir {
+            dirs 'app_pojavlauncher/libs'
+        }
     }
 }
 
