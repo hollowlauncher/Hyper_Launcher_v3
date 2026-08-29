@@ -285,31 +285,92 @@ public class GameRunner {
 
         javaArgList.addAll(JREUtils.parseJavaArguments(instance.getLaunchArgs()));
 
-        // Prepare ImGui natives for mods like Axiom using the AAR library
+        // Apply MioLibPatcher agent
+        try {
+            String patcherPath = Tools.DIR_DATA + "/launcher/MioLibPatcher.jar";
+            File patcherJar = new File(patcherPath);
+            Log.i("GameRunner", "Checking for MioLibPatcher at: " + patcherPath);
+            
+            if (!patcherJar.exists()) {
+                // Try alternative path (files/launcher)
+                patcherPath = activity.getFilesDir().getAbsolutePath() + "/launcher/MioLibPatcher.jar";
+                patcherJar = new File(patcherPath);
+                Log.i("GameRunner", "Checking for MioLibPatcher at alternative path: " + patcherPath);
+            }
+
+            if (patcherJar.exists()) {
+                String agentArg = "-javaagent:" + patcherJar.getAbsolutePath();
+                javaArgList.add(agentArg);
+                Log.i("GameRunner", "SUCCESS: Applied MioLibPatcher agent: " + agentArg);
+            } else {
+                Log.e("GameRunner", "CRITICAL ERROR: MioLibPatcher.jar NOT FOUND! Axiom will crash.");
+                // List files in DIR_DATA to help debug
+                File launcherDir = new File(Tools.DIR_DATA, "launcher");
+                if (launcherDir.exists()) {
+                    Log.i("GameRunner", "Files in " + launcherDir.getAbsolutePath() + ": " + java.util.Arrays.toString(launcherDir.list()));
+                } else {
+                    Log.i("GameRunner", "Launcher directory does not exist in DIR_DATA: " + Tools.DIR_DATA);
+                }
+            }
+        } catch (Throwable t) {
+            Log.e("GameRunner", "Failed to apply MioLibPatcher agent", t);
+        }
+
         try {
             String nativeLibDir = activity.getApplicationInfo().nativeLibraryDir;
-            File imguiLib = new File(nativeLibDir, "libimgui-java.so");
-            if (imguiLib.exists()) {
+            String[] possibleNames = {"libimgui-java.so", "libimgui.so", "libimgui-moulberry-java.so", "libimgui-moulberry92-java.so"};
+            File imguiLib = null;
+            for (String name : possibleNames) {
+                File f = new File(nativeLibDir, name);
+                if (f.exists()) {
+                    imguiLib = f;
+                    break;
+                }
+            }
+
+            if (imguiLib != null) {
+                Log.i("GameRunner", "Found ImGui native at: " + imguiLib.getAbsolutePath());
                 File imguiDir = new File(Tools.DIR_CACHE, "imgui_natives");
                 if (!imguiDir.exists()) imguiDir.mkdirs();
                 
-                File forkLib = new File(imguiDir, "libimgui-moulberry92-java64.so");
-                if (!forkLib.exists() || forkLib.length() != imguiLib.length()) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        java.nio.file.Files.copy(imguiLib.toPath(), forkLib.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
-                    } else {
+                String[] forkNames = {"libimgui-moulberry92-java64.so", "libimgui-moulberry-java64.so", "libimgui-java64.so"};
+                for (String forkName : forkNames) {
+                    File forkLib = new File(imguiDir, forkName);
+                    if (!forkLib.exists() || forkLib.length() != imguiLib.length()) {
                         org.apache.commons.io.FileUtils.copyFile(imguiLib, forkLib);
                     }
                 }
                 
+                String libName = imguiLib.getName();
+                javaArgList.add("-Dimgui.library.path=" + nativeLibDir);
+                javaArgList.add("-Dimgui.library.name=" + libName);
+
+                javaArgList.add("-Dimgui.moulberry.library.path=" + nativeLibDir);
+                javaArgList.add("-Dimgui.moulberry.library.name=" + libName);
+                javaArgList.add("-Dimgui.moulberry92.library.path=" + nativeLibDir);
+                javaArgList.add("-Dimgui.moulberry92.library.name=" + libName);
+                
+                // Set native.path as well, some loaders use this
+                javaArgList.add("-Dimgui.moulberry.native.path=" + imguiDir.getAbsolutePath());
+                javaArgList.add("-Dimgui.moulberry92.native.path=" + imguiDir.getAbsolutePath());
+            } else {
+                Log.w("GameRunner", "ImGui native library not found in " + nativeLibDir);
                 javaArgList.add("-Dimgui.library.path=" + nativeLibDir);
                 javaArgList.add("-Dimgui.library.name=libimgui-java.so");
-                // Also for Axiom's fork
-                javaArgList.add("-Dimgui.moulberry92.library.path=" + imguiDir.getAbsolutePath());
-                javaArgList.add("-Dimgui.moulberry92.library.name=libimgui-moulberry92-java64.so");
+                javaArgList.add("-Dimgui.moulberry92.library.path=" + nativeLibDir);
+                javaArgList.add("-Dimgui.moulberry92.library.name=libimgui-java.so");
+            }
+
+            File zstdLib = new File(nativeLibDir, "libzstd-jni_dh-1.5.7-6.so");
+            if (zstdLib.exists()) {
+                String zstdLibName = "zstd-jni_dh-1.5.7-6";
+                javaArgList.add("-Dzstd.libname=" + zstdLibName);
+                javaArgList.add("-Dzstd.libpath=" + nativeLibDir);
+                javaArgList.add("-Ddhzstd.libname=" + zstdLibName);
+                javaArgList.add("-Ddhzstd.libpath=" + nativeLibDir);
             }
         } catch (Throwable t) {
-            Log.e("GameRunner", "Failed to prepare ImGui natives", t);
+            Log.e("GameRunner", "Failed to prepare natives", t);
         }
 
         JREUtils.setEnviroimentForGame(activity, rendererName);

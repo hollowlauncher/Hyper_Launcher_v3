@@ -292,6 +292,7 @@ afterEvaluate {
         registrar.setVariant(variant)
 
         registrar.projectJarDependency project(":forge_installer"), "components/forge_installer"
+        registrar.projectJarDependency project(":MioLibPatcher"), "components/launcher"
 
 		if (variant.getName().toLowerCase().contains("full")) {
             registrar.jreRuntimeDependency 8, "components/jre"
@@ -355,6 +356,7 @@ dependencies {
 
     implementation files('libs/MobileGlues-release.aar')
     implementation(name: 'imgui-java-release', ext: 'aar')
+    implementation(name: 'zstd-jni-release', ext: 'aar')
 
     def composeBom = platform('androidx.compose:compose-bom:2024.12.01')
     implementation composeBom

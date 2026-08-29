@@ -58,4 +58,8 @@
 -keep class io.ktor.** { *; }
 -dontwarn io.ktor.**
 
+# Zstd-jni (Distant Horizons)
+-keep class com.github.luben.zstd.** { *; }
+-dontwarn com.github.luben.zstd.**
+
 
