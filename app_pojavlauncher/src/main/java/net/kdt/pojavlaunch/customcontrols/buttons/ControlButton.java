@@ -17,7 +17,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import net.kdt.pojavlaunch.LwjglGlfwKeycode;
-import net.kdt.pojavlaunch.MainActivity;
+import net.kdt.pojavlaunch.game.GameActivity;
 
 import git.artdeell.dnbootstrap.glfw.GLFW;
 import net.ashmeet.hyperlauncher.R;
@@ -223,11 +223,11 @@ public class ControlButton extends TextView implements ControlInterface {
     private void sendSpecialKey(int keycode, boolean isDown){
         switch (keycode) {
             case ControlData.SPECIALBTN_KEYBOARD:
-                if(isDown) MainActivity.switchKeyboardState(false);
+                if(isDown) GameActivity.switchKeyboardState(false);
                 break;
 
             case ControlData.SPECIALBTN_KEYBOARDPAN:
-                if(isDown) MainActivity.switchKeyboardState(true);
+                if(isDown) GameActivity.switchKeyboardState(true);
                 break;
 
             case ControlData.SPECIALBTN_TOGGLECTRL:
@@ -235,7 +235,7 @@ public class ControlButton extends TextView implements ControlInterface {
                 break;
 
             case ControlData.SPECIALBTN_VIRTUALMOUSE:
-                if(isDown) MainActivity.toggleMouse(getContext());
+                if(isDown) GameActivity.toggleMouse(getContext());
                 break;
 
             case ControlData.SPECIALBTN_MOUSEPRI:

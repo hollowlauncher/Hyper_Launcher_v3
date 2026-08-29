@@ -1,4 +1,4 @@
-package net.kdt.pojavlaunch;
+package net.kdt.pojavlaunch.game;
 
 
 import static com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences.PREF_ENABLE_GYRO;
@@ -49,6 +49,13 @@ import com.ashmeet.hyperlauncher.screens.activity.game.LoggerView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import net.ashmeet.hyperlauncher.R;
+import net.kdt.pojavlaunch.BaseActivity;
+import net.kdt.pojavlaunch.CallbackBridge;
+import net.kdt.pojavlaunch.EfficientAndroidLWJGLKeycode;
+import net.kdt.pojavlaunch.LauncherGLSurface;
+import net.kdt.pojavlaunch.Logger;
+import net.kdt.pojavlaunch.LwjglGlfwKeycode;
+import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.authenticator.accounts.Account;
 import net.kdt.pojavlaunch.authenticator.accounts.Accounts;
 import net.kdt.pojavlaunch.customcontrols.ControlButtonMenuListener;
@@ -83,7 +90,7 @@ import git.artdeell.dnbootstrap.glfw.GLFW;
 import git.artdeell.dnbootstrap.glfw.GLFWCursorView;
 import kotlin.Unit;
 
-public class MainActivity extends BaseActivity implements ControlButtonMenuListener, EditorExitable, ServiceConnection {
+public class GameActivity extends BaseActivity implements ControlButtonMenuListener, EditorExitable, ServiceConnection {
     public static final String INTENT_LAUNCH_VERSION = "intent_version";
     public static final String INTENT_LAUNCH_CLASSPATH = "intent_classpath";
 
@@ -246,7 +253,7 @@ public class MainActivity extends BaseActivity implements ControlButtonMenuListe
                     android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.menu_ingame));
             gameActionClickListener = (parent, view, position, id) -> {
                 switch(position) {
-                     case 0: dialogForceClose(MainActivity.this); break;
+                     case 0: dialogForceClose(GameActivity.this); break;
                      case 1: openLogOutput(); break;
                      case 2: dialogSendCustomKey(); break;
                      case 3: openQuickSettings(); break;
@@ -602,7 +609,7 @@ public class MainActivity extends BaseActivity implements ControlButtonMenuListe
     public static void switchKeyboardState(boolean panning) {
         if(touchCharInput != null) {
             touchCharInput.switchKeyboardState();
-            MainActivity.mForceFullPanning = panning;
+            GameActivity.mForceFullPanning = panning;
         }
     }
 

@@ -1,6 +1,6 @@
 package net.kdt.pojavlaunch;
 
-import static net.kdt.pojavlaunch.MainActivity.touchCharInput;
+import static net.kdt.pojavlaunch.game.GameActivity.touchCharInput;
 import static net.kdt.pojavlaunch.utils.MCOptionUtils.getMcScale;
 import static net.kdt.pojavlaunch.CallbackBridge.sendMouseButton;
 import static net.kdt.pojavlaunch.CallbackBridge.windowHeight;
@@ -30,6 +30,8 @@ import net.kdt.pojavlaunch.customcontrols.mouse.InGUIEventProcessor;
 import net.kdt.pojavlaunch.customcontrols.mouse.InGameEventProcessor;
 import net.kdt.pojavlaunch.customcontrols.mouse.TouchEventProcessor;
 import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences;
+
+import net.kdt.pojavlaunch.game.GameActivity;
 import net.kdt.pojavlaunch.render.SurfaceProvider;
 import net.kdt.pojavlaunch.render.SurfaceViewSurfaceProvider;
 import net.kdt.pojavlaunch.render.TextureViewSurfaceProvider;
@@ -76,7 +78,7 @@ public class LauncherGLSurface extends View implements GrabListener, GamepadEnab
     SurfaceReadyListener mSurfaceReadyListener = null;
     final Object mSurfaceReadyListenerLock = new Object();
     /* View holding the surface, either a SurfaceView or a TextureView */
-    View mSurface;
+    public View mSurface;
 
     private final InGameEventProcessor mIngameProcessor = new InGameEventProcessor(this, mSensitivityFactor);
     private final InGUIEventProcessor mInGUIProcessor = new InGUIEventProcessor(this);
@@ -149,19 +151,19 @@ public class LauncherGLSurface extends View implements GrabListener, GamepadEnab
         if (mIngameProcessor == null || mInGUIProcessor == null) return true;
         boolean ret = mCurrentTouchProcessor.processTouchEvent(e);
         // Keep cursor on screen if panning with IME inset
-        if(LauncherPreferences.PREF_KEYBOARD_AUTOPANNING && MainActivity.mImeHeight > 0){
+        if(LauncherPreferences.PREF_KEYBOARD_AUTOPANNING && GameActivity.mImeHeight > 0){
             int translationY = Tools.getTranslationFromCursorY(
                     (int)(GLFW.cursorY * mSurface.getHeight() + 100),
                     mSurface.getHeight(),
-                    MainActivity.mImeHeight,
+                    GameActivity.mImeHeight,
                     0
             );
             // If the view was force panned (KeyboardPan keycode) apply an animation instead of immediate override
             // This fixes weird jumps when the user moves the cursor first time after pressing that keycode
-            if(MainActivity.mForceFullPanning) {
+            if(GameActivity.mForceFullPanning) {
                 mSurface.animate().setDuration(100).translationY(-translationY).start();
                 mTouchpad.animate().setDuration(100).translationY(-translationY).start();
-                MainActivity.mForceFullPanning = false;
+                GameActivity.mForceFullPanning = false;
             } else {
                 mSurface.setTranslationY(-translationY);
                 mTouchpad.setTranslationY(-translationY);

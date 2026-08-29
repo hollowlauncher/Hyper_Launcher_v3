@@ -114,7 +114,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="net.kdt.pojavlaunch.MainActivity"
+            android:name="net.kdt.pojavlaunch.game.GameActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|keyboard|navigation|uiMode"
             android:launchMode="singleTop"
             android:process=":game"
