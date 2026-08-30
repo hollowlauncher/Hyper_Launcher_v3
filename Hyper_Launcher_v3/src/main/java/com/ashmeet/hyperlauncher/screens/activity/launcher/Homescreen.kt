@@ -102,11 +102,21 @@ fun MainMenuFragmentCompose(
     val backgroundTransparency = 1f
     var hideActionButtons by remember { mutableStateOf(LauncherPreferences.PREF_HIDE_SIDEBAR) }
 
+    var selectedInstance by remember {
+        mutableStateOf<Instance?>(
+            if (isPreview) null
+            else try { Instances.loadSelectedInstance() } catch (e: Exception) { null }
+        )
+    }
+
     if (!isPreview) {
         DisposableEffect(Unit) {
             val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
                 if (key == "hide_sidebar") {
                     hideActionButtons = LauncherPreferences.prefs.getBoolean("hide_sidebar", false)
+                }
+                if (key == LauncherPreferences.PREF_KEY_CURRENT_INSTANCE) {
+                    selectedInstance = try { Instances.loadSelectedInstance() } catch (e: Exception) { null }
                 }
             }
             LauncherPreferences.prefs.registerOnSharedPreferenceChangeListener(listener)
@@ -114,13 +124,6 @@ fun MainMenuFragmentCompose(
                 LauncherPreferences.prefs.unregisterOnSharedPreferenceChangeListener(listener)
             }
         }
-    }
-
-    var selectedInstance by remember {
-        mutableStateOf<Instance?>(
-            if (isPreview) null
-            else try { Instances.loadSelectedInstance() } catch (e: Exception) { null }
-        )
     }
 
     SideEffect {
