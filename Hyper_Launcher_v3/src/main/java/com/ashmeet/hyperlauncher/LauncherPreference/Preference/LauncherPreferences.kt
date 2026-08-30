@@ -21,11 +21,9 @@ object LauncherPreferences {
     @JvmField
     var DEFAULT_PREF: SharedPreferences? = null
 
-    @JvmStatic
-    fun getPrefs(): SharedPreferences = DEFAULT_PREF!!
-
+    @get:JvmStatic
     val prefs: SharedPreferences
-        get() = getPrefs()
+        get() = DEFAULT_PREF!!
 
     @JvmField
     var PREF_RENDERER = "opengles2"
