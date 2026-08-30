@@ -120,7 +120,7 @@ public class Instances {
      * @param instance new selected instance
      */
     public static void setSelectedInstance(DisplayInstance instance) {
-        LauncherPreferences.DEFAULT_PREF.edit()
+        LauncherPreferences.getPrefs().edit()
                 .putString(
                         LauncherPreferences.PREF_KEY_CURRENT_INSTANCE,
                         instance.mInstanceRoot.getName()
@@ -143,6 +143,7 @@ public class Instances {
      */
     private static void createFirstTimeInstance() throws IOException {
         internalCreateInstance((instance)-> {
+            instance.name = "1.12.2";
             instance.sharedData = true;
             instance.versionId = "1.12.2";
         }, null);
