@@ -16,13 +16,14 @@ dependencyResolutionManagement {
         mavenLocal()
         maven { url "https://jitpack.io" }
         flatDir {
-            dirs 'app_pojavlauncher/libs'
+            dirs 'Hyper_Launcher_v3/libs'
         }
     }
 }
 
 rootProject.name='HyperLauncher'
-include ':app_pojavlauncher'
+include ':Hyper_Launcher_v3'
+project(':Hyper_Launcher_v3').projectDir = new File(settingsDir, 'Hyper_Launcher_v3')
 
 include ':forge_installer'
 include ':glfw:android-gradle'

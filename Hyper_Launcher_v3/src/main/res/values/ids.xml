@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="container_fragment" type="id" />
+    <item name="container_fragment_auth" type="id" />
+    <item name="main_control_layout" type="id" />
+    <item name="main_game_render_view" type="id" />
+    <item name="main_touchpad" type="id" />
+    <item name="mainTouchCharInput" type="id" />
+    <item name="drawer_button" type="id" />
+    <item name="hotbar_view" type="id" />
+    <item name="mainLoggerView" type="id" />
+</resources>

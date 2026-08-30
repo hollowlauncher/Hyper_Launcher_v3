@@ -78,7 +78,7 @@ Hyper Launcher создан для того, чтобы обеспечить:
 Соберите лаунчер (все необходимые компоненты будут загружены автоматически):
 
 ```bash
-./gradlew :app_pojavlauncher:assembleDebug
+./gradlew :Hyper_Launcher_v3:assembleDebug
 ```
 
 > Замените `./gradlew` на `.\gradlew.bat`, если сборка выполняется в Windows.
@@ -128,7 +128,7 @@ Hyper Launcher 3 — форк [MojoLauncher](https://github.com/MojoLauncher/Moj
 
 - [MojoLauncher](https://github.com/MojoLauncher/MojoLauncher): [лицензия GNU LGPLv3](https://github.com/MojoLauncher/MojoLauncher/blob/v3_openjdk/LICENSE)
 - [PojavLauncher](https://github.com/PojavLauncherTeam/PojavLauncher): [лицензия GNU LGPLv3](https://github.com/PojavLauncherTeam/PojavLauncher/blob/v3_openjdk/LICENSE)
-- [Boardwalk](https://github.com/zhuowei/Boardwalk) (JVM Launcher): лицензия неизвестна / [Apache License 2.0](https://github.com/zhuowei/Boardwalk/blob/master/LICENSE) или GNU GPLv2
+- [Boardwalk](https://github.com/zhuowei/Boardwalk) (JVM Launcher): лицензия неизвестна / [Apache License 2.0](https://github.com/zhuowei/Boardwalk/blob/master/LICENSE) or GNU GPLv2
 - Android Support Libraries: [Apache License 2.0](https://android.googlesource.com/platform/prebuilts/maven_repo/android/+/master/NOTICE.txt)
 - [GL4ES](https://github.com/PojavLauncherTeam/gl4es): [лицензия MIT](https://github.com/ptitSeb/gl4es/blob/master/LICENSE)
 - [OpenJDK](https://github.com/PojavLauncherTeam/openjdk-multiarch-jdk8u): [лицензия GNU GPLv2](https://openjdk.java.net/legal/gplv2+ce.html)
@@ -139,4 +139,7 @@ Hyper Launcher 3 — форк [MojoLauncher](https://github.com/MojoLauncher/Moj
 - [Authlib-Injector](https://github.com/yushijinhun/authlib-injector) (используется для авторизации через ely.by): [AGPL-3.0](https://github.com/yushijinhun/authlib-injector/blob/develop/LICENSE)
 - [alsoft](https://github.com/kcat/openal-soft/) (библиотека вывода звука): [GNU LGPL](https://github.com/kcat/openal-soft/blob/master/COPYING) и [изменённый PFFFT](https://github.com/kcat/openal-soft/blob/master/LICENSE-pffft)
 - [oboe](https://github.com/google/oboe): [Apache License 2.0](https://github.com/google/oboe/blob/main/LICENSE)
+- [exp4j](https://github.com/fasseg/exp4j): [лицензия Apache 2.0](https://github.com/fasseg/exp4j/blob/master/LICENSE.txt)
+- [Gson](https://github.com/google/gson): [лицензия Apache 2.0](https://github.com/google/gson/blob/master/LICENSE)
+- [Shaderc](https://github.com/google/shaderc) и [SPIRV-Cross](https://github.com/KhronosGroup/SPIRV-Cross): [лицензия Apache 2.0](https://github.com/google/shaderc/blob/main/LICENSE)
 - Благодарим [Mineskin](https://mineskin.eu/) за предоставление аватаров Minecraft.

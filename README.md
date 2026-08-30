@@ -77,7 +77,7 @@ You can get Hyper Launcher 3 via three methods:
 Build the launcher (it will automatically download all required components):
 
 ```bash
-./gradlew :app_pojavlauncher:assembleDebug
+./gradlew :Hyper_Launcher_v3:assembleDebug
 ```
 
 > Replace `./gradlew` with `.\gradlew.bat` if you are building on Windows.
@@ -138,4 +138,7 @@ Hyper Launcher 3 is a fork of [MojoLauncher](https://github.com/MojoLauncher/Moj
 - [Authlib-Injector](https://github.com/yushijinhun/authlib-injector) (Used for authorisation via ely.by): [AGPL-3.0](https://github.com/yushijinhun/authlib-injector/blob/develop/LICENSE)
 - [alsoft](https://github.com/kcat/openal-soft/) (Audio output library): [GNU LGPL](https://github.com/kcat/openal-soft/blob/master/COPYING) and [modified PFFFT](https://github.com/kcat/openal-soft/blob/master/LICENSE-pffft)
 - [oboe](https://github.com/google/oboe): [Apache License 2.0](https://github.com/google/oboe/blob/main/LICENSE)
+- [exp4j](https://github.com/fasseg/exp4j): [Apache License 2.0](https://github.com/fasseg/exp4j/blob/master/LICENSE.txt)
+- [Gson](https://github.com/google/gson): [Apache License 2.0](https://github.com/google/gson/blob/master/LICENSE)
+- [Shaderc](https://github.com/google/shaderc) & [SPIRV-Cross](https://github.com/KhronosGroup/SPIRV-Cross): [Apache License 2.0](https://github.com/google/shaderc/blob/main/LICENSE)
 - Thanks to [Mineskin](https://mineskin.eu/) for providing Minecraft avatars.
