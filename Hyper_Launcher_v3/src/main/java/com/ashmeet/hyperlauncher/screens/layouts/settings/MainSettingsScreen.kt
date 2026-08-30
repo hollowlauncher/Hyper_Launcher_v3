@@ -18,6 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.edit
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ashmeet.hyperlauncher.screens.layouts.settings.layouts.CardPosition
@@ -125,7 +126,7 @@ fun MainSettingsScreen(
                     checked = forceEnglish,
                     onCheckedChange = {
                         forceEnglish = it
-                        LauncherPreferences.prefs.edit().putBoolean("force_english", it).apply()
+                        LauncherPreferences.prefs.edit { putBoolean("force_english", it) }
                         LauncherPreferences.loadPreferences(context)
                     }
                 )
