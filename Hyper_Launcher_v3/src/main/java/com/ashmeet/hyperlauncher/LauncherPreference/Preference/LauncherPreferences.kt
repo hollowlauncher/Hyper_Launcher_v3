@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import android.os.Build
 import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.edit
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.Architecture.is32BitsDevice
 import net.kdt.pojavlaunch.Tools
@@ -20,6 +21,7 @@ object LauncherPreferences {
     @JvmField
     var DEFAULT_PREF: SharedPreferences? = null
 
+    @get:JvmStatic
     val prefs: SharedPreferences
         get() = DEFAULT_PREF!!
 
@@ -252,7 +254,7 @@ object LauncherPreferences {
         PREF_VERIFY_MANIFEST = pref.getBoolean("verifyManifest", true)
         PREF_SKIP_NOTIFICATION_PERMISSION_CHECK = pref.getBoolean(PREF_KEY_SKIP_NOTIFICATION_CHECK, false)
         PREF_VSYNC_IN_ZINK = pref.getBoolean("vsync_in_zink", true)
-        PREF_FULLSCREEN_LAUNCHER = pref.getBoolean("fullscreen_launcher", false)
+        PREF_FULLSCREEN_LAUNCHER = pref.getBoolean("fullscreen_launcher", true)
         PREF_VERIFY_FILES = pref.getBoolean("checkGameFiles", true)
         PREF_RAPID_START = pref.getBoolean("fastStartupCheck", true)
         PREF_FREEDRENO_SYSMEM = pref.getBoolean("freedrenoSysmem", false)
@@ -260,7 +262,7 @@ object LauncherPreferences {
         PREF_ZINK_FORCE_LEGACY = pref.getBoolean("zinkForceLegacy", false)
         PREF_MIGRATION_NOTICE = pref.getBoolean("migrationNotice", true)
         PREF_ALSOFT_FORCE_OPENSL = pref.getBoolean("alsoftForceOpenSL", false)
-        PREF_SCREEN_TRANSITION = pref.getString("screen_transition", "none") ?: "none"
+        PREF_SCREEN_TRANSITION = pref.getString("screen_transition", "bounce") ?: "none"
         PREF_THEME = pref.getString("app_theme", "system") ?: "system"
         PREF_LANGUAGE = pref.getString("app_language", "en") ?: "en"
         PREF_CUSTOM_THEME = pref.getBoolean("app_custom_theme", false)
@@ -268,10 +270,10 @@ object LauncherPreferences {
         if ("custom" == PREF_THEME) {
             PREF_THEME = "system"
             PREF_CUSTOM_THEME = true
-            pref.edit()
-                .putString("app_theme", "system")
-                .putBoolean("app_custom_theme", true)
-                .apply()
+            pref.edit {
+                putString("app_theme", "system")
+                putBoolean("app_custom_theme", true)
+            }
         }
 
         PREF_THEME_COLOR = pref.getInt("app_theme_color", -0xc0ae4b)
@@ -295,8 +297,9 @@ object LauncherPreferences {
         if (customJavaArgs != null) {
             for (arg in JREUtils.parseJavaArguments(customJavaArgs)) {
                 if (arg.startsWith(argLwjglLibname)) {
-                    pref.edit().putString("javaArgs",
-                        customJavaArgs.replace(arg, "")).apply()
+                    pref.edit {
+                        putString("javaArgs", customJavaArgs.replace(arg, ""))
+                    }
                 }
             }
         }
@@ -310,7 +313,7 @@ object LauncherPreferences {
                 return
             }
             PREF_DEFAULT_RUNTIME = runtimes[0].name
-            pref.edit().putString("defaultRuntime", PREF_DEFAULT_RUNTIME).apply()
+            pref.edit { putString("defaultRuntime", PREF_DEFAULT_RUNTIME) }
         }
     }
 
@@ -321,7 +324,7 @@ object LauncherPreferences {
 
     @JvmStatic
     fun setPluginLibraryEnabled(name: String, enabled: Boolean) {
-        prefs.edit().putBoolean("pref_plugin_lib_$name", enabled).apply()
+        prefs.edit { putBoolean("pref_plugin_lib_$name", enabled) }
     }
 
     @JvmStatic

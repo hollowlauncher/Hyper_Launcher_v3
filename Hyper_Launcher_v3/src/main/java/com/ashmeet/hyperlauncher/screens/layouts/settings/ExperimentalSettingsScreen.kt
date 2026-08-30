@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.core.content.edit
 import androidx.compose.ui.unit.dp
 import com.ashmeet.hyperlauncher.screens.layouts.settings.layouts.CardPosition
 import com.ashmeet.hyperlauncher.screens.layouts.settings.layouts.SettingsCard
@@ -49,7 +50,7 @@ fun ExperimentalSettingsScreen(
                     warningTooltip = "Experimental: Shader dumping can significantly impact performance and fill up storage space.",
                     onCheckedChange = {
                         dumpShaders = it
-                        LauncherPreferences.prefs.edit().putBoolean("dump_shaders", it).apply()
+                        LauncherPreferences.prefs.edit { putBoolean("dump_shaders", it) }
                         LauncherPreferences.loadPreferences(context)
                     }
                 )
@@ -64,7 +65,7 @@ fun ExperimentalSettingsScreen(
                     warningTooltip = "Experimental: Forcing big core affinity may lead to increased heat and battery drain.",
                     onCheckedChange = {
                         bigCoreAffinity = it
-                        LauncherPreferences.prefs.edit().putBoolean("bigCoreAffinity", it).apply()
+                        LauncherPreferences.prefs.edit { putBoolean("bigCoreAffinity", it) }
                         LauncherPreferences.loadPreferences(context)
                     }
                 )
@@ -80,7 +81,7 @@ fun ExperimentalSettingsScreen(
                         warningTooltip = "Experimental: Freedreno System Memory rendering can be unstable and cause crashes on certain drivers.",
                         onCheckedChange = {
                             freedrenoSysmem = it
-                            LauncherPreferences.prefs.edit().putBoolean("freedrenoSysmem", it).apply()
+                            LauncherPreferences.prefs.edit { putBoolean("freedrenoSysmem", it) }
                             LauncherPreferences.loadPreferences(context)
                         }
                     )
@@ -96,7 +97,7 @@ fun ExperimentalSettingsScreen(
                     warningTooltip = "Experimental: Forcing OpenSL may solve audio issues on some devices but could cause latency or crashes on others.",
                     onCheckedChange = {
                         alsoftForceOpenSL = it
-                        LauncherPreferences.prefs.edit().putBoolean("alsoftForceOpenSL", it).apply()
+                        LauncherPreferences.prefs.edit { putBoolean("alsoftForceOpenSL", it) }
                         LauncherPreferences.loadPreferences(context)
                     }
                 )

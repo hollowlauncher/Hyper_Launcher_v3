@@ -68,7 +68,7 @@ public class GLFW {
     }
 
     @SuppressWarnings("unused") // Used from native
-    private static void receiveGrabState(boolean isGrabbing) {
+    public static void receiveGrabState(boolean isGrabbing) {
         boolean wasGrabbing = GLFW.grabbing;
         GLFW.grabbing = isGrabbing;
         Utils.runOnUiThread(() -> {

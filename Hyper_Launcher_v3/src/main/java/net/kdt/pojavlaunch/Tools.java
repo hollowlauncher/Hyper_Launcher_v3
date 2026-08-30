@@ -228,7 +228,7 @@ public final class Tools {
     public static DisplayMetrics getDisplayMetrics(Activity activity) {
         DisplayMetrics displayMetrics;
 
-        if(SDK_INT >= Build.VERSION_CODES.N && (activity.isInMultiWindowMode() || activity.isInPictureInPictureMode())){
+        if(activity.isInMultiWindowMode() || activity.isInPictureInPictureMode()){
             //For devices with free form/split screen, we need window size, not screen size.
             displayMetrics = activity.getResources().getDisplayMetrics();
         }else{
@@ -623,10 +623,7 @@ public final class Tools {
                     throw new RuntimeException("Can't find the source version for "+ versionName +" (req version="+customVer.inheritsFrom+")");
                 }
                 //inheritsVer.inheritsFrom = inheritsVer.id;
-                insertSafety(inheritsVer, customVer,
-                        "assetIndex", "assets", "id",
-                        "mainClass", "minecraftArguments",
-                        "releaseTime", "time", "type"
+                insertSafety(inheritsVer, customVer
                 );
 
                 // Go through the libraries, remove the ones overridden by the custom version
@@ -718,8 +715,8 @@ public final class Tools {
     }
 
     // Prevent NullPointerException
-    private static void insertSafety(JVersionList.Version targetVer, JVersionList.Version fromVer, String... keyArr) {
-        for (String key : keyArr) {
+    private static void insertSafety(JVersionList.Version targetVer, JVersionList.Version fromVer) {
+        for (String key : new String[]{"assetIndex", "assets", "id", "mainClass", "minecraftArguments", "releaseTime", "time", "type"}) {
             Object value = null;
             try {
                 Field fieldA = null;

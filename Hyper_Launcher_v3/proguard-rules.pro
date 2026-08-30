@@ -8,8 +8,6 @@
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
 # General optimization settings
--keepattributes Signature,AnnotationDefault,EnclosingMethod,InnerClasses,SourceFile,LineNumberTable
--repackageclasses ''
 -allowaccessmodification
 
 # We use Reflection on the builder to avoid creating too many objects
@@ -29,6 +27,9 @@
 # Minecraft JSON classes (GSON mapping and Reflection)
 -keep class net.kdt.pojavlaunch.JVersionList** { *; }
 -keep class net.kdt.pojavlaunch.modloaders.modpacks.api.** { *; }
+
+# JNI keep rules
+-keep class git.artdeell.dnbootstrap.glfw.GLFW { *; }
 
 # ASM and Bytecode Injectors
 -keep class org.objectweb.asm.** { *; }

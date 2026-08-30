@@ -379,7 +379,7 @@ public class MoJsonDownloader extends Downloader {
         for(DependentLibrary dependentLibrary : dependentLibraries) {
             if(dependentLibrary.rules != null) {
                 String ruleSetAction = MoJsonRule.ruleSetCheck(dependentLibrary.rules);
-                if(!ruleSetAction.equals("allow")) continue;
+                if(ruleSetAction == null || !ruleSetAction.equals("allow")) continue;
             }
 
             LibrarySubstitution substitution = mSubstitutionMap.findSubstitution(dependentLibrary.name);
@@ -404,7 +404,7 @@ public class MoJsonDownloader extends Downloader {
         growDownloadList(assetNames.size());
         for(String asset : assetNames) {
             JAssetInfo assetInfo = assetObjects.get(asset);
-            if(assetInfo == null) continue;
+            if(assetInfo == null || assetInfo.hash == null) continue;
             File targetFile;
             String hashedPath = assetInfo.hash.substring(0, 2) + File.separator + assetInfo.hash;
             String basePath = assets.mapToResources ? Tools.OBSOLETE_RESOURCES_PATH : Tools.ASSETS_PATH;

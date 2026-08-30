@@ -6,19 +6,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
+import androidx.core.content.edit
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences
 import com.ashmeet.hyperlauncher.screens.layouts.settings.JavaSettingsScreen
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.Architecture
-import net.kdt.pojavlaunch.PojavApplication
 import net.kdt.pojavlaunch.Tools
 import net.kdt.pojavlaunch.contracts.OpenDocumentWithExtension
 import net.kdt.pojavlaunch.multirt.MultiRTUtils
 import net.kdt.pojavlaunch.multirt.Runtime
-import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences
 
 class LauncherPreferenceJavaFragment : Fragment(), SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -37,7 +41,7 @@ class LauncherPreferenceJavaFragment : Fragment(), SharedPreferences.OnSharedPre
     ): View {
         val deviceRam = Tools.getTotalDeviceMemory(requireContext())
         val maxRAM = if (Architecture.is32BitsDevice() || deviceRam < 2048) {
-            Math.min(1024, deviceRam)
+            minOf(1024, deviceRam)
         } else {
             deviceRam - if (deviceRam < 3064) 800 else 1024
         }
@@ -66,23 +70,23 @@ class LauncherPreferenceJavaFragment : Fragment(), SharedPreferences.OnSharedPre
             return
         }
 
-        PojavApplication.sExecutorService.execute {
+        lifecycleScope.launch(Dispatchers.IO) {
             try {
                 MultiRTUtils.removeRuntimeNamed(runtime.name)
-                Tools.runOnUiThread {
-
+                withContext(Dispatchers.Main) {
                     if (LauncherPreferences.PREF_DEFAULT_RUNTIME == runtime.name) {
                         val remaining = MultiRTUtils.getRuntimes()
                         if (remaining.isNotEmpty()) {
                             val newDefault = remaining[0].name
-                            LauncherPreferences.prefs.edit().putString("defaultRuntime", newDefault).apply()
+                            LauncherPreferences.prefs.edit { putString("defaultRuntime", newDefault) }
                             LauncherPreferences.loadPreferences(context)
                         }
                     }
-
                 }
             } catch (e: Exception) {
-                Tools.runOnUiThread { Tools.showError(context, e) }
+                withContext(Dispatchers.Main) {
+                    Tools.showError(context, e)
+                }
             }
         }
     }

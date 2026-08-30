@@ -56,8 +56,8 @@ android {
         applicationId "net.ashmeet.hyperlauncher"
         minSdkVersion 24
         targetSdkVersion 37
-        versionCode localProperties.getProperty('VERSION_CODE')?.toInteger() ?: (project.findProperty('VERSION_CODE')?.toInteger() ?: (localProperties.getProperty('hyperversioncode')?.toInteger() ?: 3))
-        def hyperVersionName = localProperties.getProperty('VERSION_NAME') ?: (project.findProperty('VERSION_NAME') ?: (localProperties.getProperty('hyperversion') ?: "4.0.0"))
+        versionCode localProperties.getProperty('VERSION_CODE')?.toInteger() ?: (project.findProperty('VERSION_CODE')?.toInteger() ?: (localProperties.getProperty('hyperversioncode')?.toInteger() ?: 5))
+        def hyperVersionName = localProperties.getProperty('VERSION_NAME') ?: (project.findProperty('VERSION_NAME') ?: (localProperties.getProperty('hyperversion') ?: "4.0.1"))
         versionName hyperVersionName
         multiDexEnabled false //important
         resValue 'string', 'curseforge_api_key', getCFApiKey()

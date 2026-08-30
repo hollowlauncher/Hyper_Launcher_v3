@@ -24,7 +24,11 @@ public class MoJsonRule {
             if(ruleLevel <= precedenceLevel) {
                 continue;
             }
-            if(rule.matches()) action = rule.action;
+            if(rule.matches()) {
+                if (rule.action != null) {
+                    action = rule.action;
+                }
+            }
             precedenceLevel = ruleLevel;
         }
         return action;
