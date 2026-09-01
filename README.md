@@ -140,5 +140,6 @@ Hyper Launcher 3 is a fork of [MojoLauncher](https://github.com/MojoLauncher/Moj
 - [oboe](https://github.com/google/oboe): [Apache License 2.0](https://github.com/google/oboe/blob/main/LICENSE)
 - [exp4j](https://github.com/fasseg/exp4j): [Apache License 2.0](https://github.com/fasseg/exp4j/blob/master/LICENSE.txt)
 - [Gson](https://github.com/google/gson): [Apache License 2.0](https://github.com/google/gson/blob/master/LICENSE)
-- [Shaderc](https://github.com/google/shaderc) & [SPIRV-Cross](https://github.com/KhronosGroup/SPIRV-Cross): [Apache License 2.0](https://github.com/google/shaderc/blob/main/LICENSE)
+- [SPIRV-Cross](https://github.com/KhronosGroup/SPIRV-Cross): [Apache License 2.0](https://github.com/google/shaderc/blob/main/LICENSE)
+- [translate.js](https://github.com/xnx3/translate) (AI translation service by [zvo.cn](https://zvo.cn)): [MIT License](https://github.com/xnx3/translate/blob/master/LICENSE)
 - Thanks to [Mineskin](https://mineskin.eu/) for providing Minecraft avatars.
