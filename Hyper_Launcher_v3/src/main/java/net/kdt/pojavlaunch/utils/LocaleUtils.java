@@ -40,8 +40,7 @@ public class LocaleUtils extends ContextWrapper {
                 locale = new Locale(PREF_LANGUAGE);
             }
         } else {
-            // Default to English if not system and not specified, 
-            // but the user said "otherwise select to default english".
+            // Default to English if not system and not specified,
             // If system is selected, we follow system.
             return new LocaleUtils(context);
         }
