@@ -1,6 +1,7 @@
 package com.ashmeet.hyperlauncher.screens.activity.game
 
 import androidx.compose.foundation.background
+import com.ashmeet.hyperlauncher.utils.translatedText
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -163,7 +164,7 @@ fun ExitScreen(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "View crash report",
+                            text = translatedText("View crash report"),
                             style = MaterialTheme.typography.labelLarge,
                             fontWeight = FontWeight.SemiBold
                         )
@@ -189,7 +190,7 @@ fun ExitScreen(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = stringResource(id = R.string.main_share_logs),
+                        text = translatedText(stringResource(R.string.main_share_logs)),
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -215,7 +216,7 @@ fun ExitScreen(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Copy logs",
+                        text = translatedText("Copy logs"),
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -225,7 +226,7 @@ fun ExitScreen(
 
                 MineButton(
                     onClick = onRestartClick,
-                    text = stringResource(id = R.string.global_restart),
+                    text = translatedText(stringResource(R.string.global_restart)),
                     modifier = Modifier.fillMaxWidth(),
                     height = 56.dp,
                     isUppercase = false
@@ -240,7 +241,7 @@ fun ExitScreen(
 fun ExitScreenPreview() {
     PojavTheme {
         ExitScreen(
-            title = "Game exited with code 1",
+            title = translatedText("Game exited with code 1"),
             logs = "[10:57:55] [main/INFO]: Loading Minecraft...\n".repeat(20),
             onShareClick = {},
             onCopyClick = {},

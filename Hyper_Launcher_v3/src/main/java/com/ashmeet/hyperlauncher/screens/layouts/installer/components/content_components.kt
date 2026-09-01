@@ -1,6 +1,7 @@
 package com.ashmeet.hyperlauncher.screens.layouts.installer.components
 
 import androidx.compose.animation.core.Animatable
+import com.ashmeet.hyperlauncher.utils.translatedText
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -182,7 +183,7 @@ fun VersionItemView(
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Warning,
-                        contentDescription = "Incompatible loader",
+                        contentDescription = translatedText("Incompatible loader"),
                         tint = MaterialTheme.colorScheme.error,
                         modifier = Modifier
                             .padding(end = 2.dp)
@@ -316,7 +317,7 @@ fun ProjectDetailsSidebar(project: ModrinthProject) {
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Text(
-                    text = "Images",
+                    text = translatedText("Images"),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
@@ -337,7 +338,7 @@ fun ProjectDetailsSidebar(project: ModrinthProject) {
                                 .data(project.gallery[index])
                                 .crossfade(true)
                                 .build(),
-                            contentDescription = "Gallery image $index",
+                            contentDescription = translatedText("Gallery image $index"),
                             modifier = Modifier
                                 .fillMaxSize()
                                 .maskClip(MaterialTheme.shapes.extraLarge),
@@ -349,13 +350,13 @@ fun ProjectDetailsSidebar(project: ModrinthProject) {
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Text(
-                    text = "Images",
+                    text = translatedText("Images"),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "No gallery images available.",
+                    text = translatedText("No gallery images available."),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -405,7 +406,7 @@ fun SearchFiltersSidebar(
                 useSurface = true
             ) {
                 FilterSectionItem(
-                    title = "Game Version",
+                    title = translatedText("Game Version"),
                     current = selectedVersion ?: instanceVersion ?: "Any",
                     onValueChange = onVersionChange,
                     icon = Icons.Rounded.Event
@@ -418,7 +419,7 @@ fun SearchFiltersSidebar(
                     useSurface = true
                 ) {
                     FilterSectionItem(
-                        title = "Loader",
+                        title = translatedText("Loader"),
                         current = selectedLoader ?: instanceLoader ?: "Any",
                         onValueChange = onLoaderChange,
                         icon = Icons.Rounded.Settings
@@ -437,8 +438,8 @@ fun SearchFiltersSidebar(
                     useSurface = true
                 ) {
                     SettingsActionItem(
-                        title = "Import Modpack",
-                        summary = "Install a local modpack file (.zip, .mrpack)",
+                        title = translatedText("Import Modpack"),
+                        summary = translatedText("Install a local modpack file (.zip, .mrpack)"),
                         icon = Icons.Rounded.FileUpload,
                         onClick = onImportModpack
                     )
@@ -514,7 +515,7 @@ fun FilterSourceItem(
     }
 
     SettingsActionItem(
-        title = "Source",
+        title = translatedText("Source"),
         summary = currentSource.displayName,
         icon = Icons.Rounded.Language,
         warningTooltip = if (currentSource == ContentSource.CURSEFORGE) "CurseForge support is experimental and may be unstable." else null,

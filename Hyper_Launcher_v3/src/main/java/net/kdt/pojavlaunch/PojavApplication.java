@@ -23,6 +23,7 @@ import net.kdt.pojavlaunch.tasks.AsyncAssetManager;
 import net.kdt.pojavlaunch.tasks.MoJsonDownloader;
 import net.kdt.pojavlaunch.utils.FileUtils;
 import net.kdt.pojavlaunch.utils.LocaleUtils;
+import com.ashmeet.hyperlauncher.utils.Translator;
 
 import java.io.File;
 import java.io.PrintStream;
@@ -95,6 +96,7 @@ public class PojavApplication extends Application {
 			}
             MoJsonDownloader.prepareSubstitutionMap(getAssets());
 			AsyncAssetManager.unpackRuntime(getAssets());
+			Translator.INSTANCE.init(this);
 		} catch (Throwable throwable) {
 			Intent ferrorIntent = new Intent(this, FatalErrorActivity.class);
 			ferrorIntent.putExtra("throwable", throwable);

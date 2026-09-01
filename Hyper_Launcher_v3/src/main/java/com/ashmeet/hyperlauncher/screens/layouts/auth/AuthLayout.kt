@@ -1,6 +1,7 @@
 package com.ashmeet.hyperlauncher.screens.layouts.auth
 
 import android.widget.FrameLayout
+import com.ashmeet.hyperlauncher.utils.translatedText
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -106,7 +107,7 @@ fun AuthLayout(
                         IconButton(onClick = onBack) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                                contentDescription = "Back",
+                                contentDescription = translatedText("Back"),
                                 tint = MaterialTheme.colorScheme.onSurface
                             )
                         }

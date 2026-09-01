@@ -1,6 +1,7 @@
 package com.ashmeet.hyperlauncher.fragments
 
 import android.os.Bundle
+import com.ashmeet.hyperlauncher.utils.translatedText
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,7 +36,7 @@ class AuthHostFragment : Fragment() {
             setContent {
                 PojavTheme {
                     AuthLayout(
-                        title = "Login",
+                        title = translatedText("Login"),
                         onBack = { requireActivity().onBackPressedDispatcher.onBackPressed() },
                         onFragmentViewCreated = {
                             val fm = childFragmentManager

@@ -1,6 +1,7 @@
 package com.ashmeet.hyperlauncher.screens.layouts.settings
 
 import androidx.compose.foundation.layout.Arrangement
+import com.ashmeet.hyperlauncher.utils.translatedText
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Extension
@@ -30,7 +31,7 @@ fun PluginSettingsScreen(
     val isPluginInstalled = discoveredLibs.isNotEmpty()
 
     SettingsScreenWrapper(
-        title = "Plugins",
+        title = translatedText("Plugins"),
         onBack = onBack,
         addTopGap = true
     ) {
@@ -38,15 +39,15 @@ fun PluginSettingsScreen(
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 SettingsCard(position = CardPosition.SINGLE, useSurface = true) {
                     SettingsActionItem(
-                        title = "No plugins detected",
-                        summary = "Install the HyperPlugin bundle to enable additional features.",
+                        title = translatedText("No plugins detected"),
+                        summary = translatedText("Install the HyperPlugin bundle to enable additional features."),
                         icon = Icons.Default.Info,
                         onClick = {}
                     )
                 }
             }
         } else {
-            PreferenceCategory(title = "Discovered Libraries")
+            PreferenceCategory(title = translatedText("Discovered Libraries"))
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 discoveredLibs.forEachIndexed { index, lib ->
                     val position = when {
@@ -61,7 +62,7 @@ fun PluginSettingsScreen(
                             var enabled by remember(lib.name) { mutableStateOf(LauncherPreferences.isPluginLibraryEnabled(lib.name)) }
                             SettingsSwitchItem(
                                 title = lib.name,
-                                summary = "Version: ${lib.version} | Strategy: ${lib.strategy}",
+                                summary = translatedText("Version: ${lib.version} | Strategy: ${lib.strategy}"),
                                 icon = Icons.Default.Extension,
                                 checked = enabled,
                                 onCheckedChange = {
@@ -74,7 +75,7 @@ fun PluginSettingsScreen(
                         } else {
                             SettingsActionItem(
                                 title = lib.name,
-                                summary = "Version: ${lib.version} | Strategy: ${lib.strategy} (Required)",
+                                summary = translatedText("Version: ${lib.version} | Strategy: ${lib.strategy} (Required)"),
                                 icon = Icons.Default.Extension,
                                 onClick = {}
                             )

@@ -178,8 +178,25 @@ public class AsyncAssetManager {
         File componentTarget = new File(rootDir, component);
         String installedVersion = readInstalledComponentVersion(componentTarget);
         String builtinVersion = readBuiltinComponentVersion(am, component);
+        String componentSource = "components/" + component;
+        String[] fileList = am.list(componentSource);
 
-        if(installedVersion != null && installedVersion.equals(builtinVersion)) {
+        boolean needsUpdate = installedVersion == null || !installedVersion.equals(builtinVersion);
+        
+        // Even if the version matches, check if the files actually exist and are not empty
+        if (!needsUpdate && fileList != null) {
+            for (String fileName : fileList) {
+                if (fileName.equals("version")) continue;
+                File f = new File(componentTarget, fileName);
+                if (!f.exists() || f.length() == 0) {
+                    needsUpdate = true;
+                    Log.w("AssetUnpacker", "Component file " + fileName + " is missing or empty, forcing re-unpack");
+                    break;
+                }
+            }
+        }
+
+        if(!needsUpdate) {
             Log.i("AssetUnpacker", "Component "+component+" is up-to-date, continuing...");
             return;
         }
@@ -192,9 +209,6 @@ public class AsyncAssetManager {
             throw new IOException("Failed to create directory for "+component);
         }
 
-        String componentSource = "components/" + component;
-
-        String[] fileList = am.list(componentSource);
         if (fileList != null) {
             for (String fileName : fileList) {
                 if (fileName.equals("version")) continue;

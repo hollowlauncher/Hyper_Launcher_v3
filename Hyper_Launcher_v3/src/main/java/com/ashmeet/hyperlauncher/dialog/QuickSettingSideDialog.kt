@@ -1,5 +1,7 @@
 package com.ashmeet.hyperlauncher.dialog
 
+import com.ashmeet.hyperlauncher.utils.translatedText
+
 import android.content.Context
 import android.content.SharedPreferences
 import android.view.ViewGroup
@@ -152,7 +154,7 @@ private fun QuickSettingContent(
     ) {
 
         SettingsSliderItem(
-            title = stringResource(R.string.mcl_setting_title_resolution_scaler),
+            title = translatedText(stringResource(R.string.mcl_setting_title_resolution_scaler)),
             value = resolutionScaler,
             valueRange = 25f..100f,
             valueSuffix = "%",
@@ -167,7 +169,7 @@ private fun QuickSettingContent(
         if (isGyroAvailable) {
             SettingsCard(position = CardPosition.TOP, useSurface = true) {
                 SettingsSwitchItem(
-                    title = stringResource(R.string.preference_enable_gyro_title),
+                    title = translatedText(stringResource(R.string.preference_enable_gyro_title)),
                     checked = enableGyro,
                     onCheckedChange = {
                         enableGyro = it
@@ -181,7 +183,7 @@ private fun QuickSettingContent(
             if (enableGyro) {
                 SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
                     SettingsSwitchItem(
-                        title = stringResource(R.string.preference_gyro_invert_x_axis),
+                        title = translatedText(stringResource(R.string.preference_gyro_invert_x_axis)),
                         checked = gyroInvertX,
                         onCheckedChange = {
                             gyroInvertX = it
@@ -193,7 +195,7 @@ private fun QuickSettingContent(
                 }
                 SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {
                     SettingsSwitchItem(
-                        title = stringResource(R.string.preference_gyro_invert_y_axis),
+                        title = translatedText(stringResource(R.string.preference_gyro_invert_y_axis)),
                         checked = gyroInvertY,
                         onCheckedChange = {
                             gyroInvertY = it
@@ -204,7 +206,7 @@ private fun QuickSettingContent(
                     )
                 }
                 SettingsSliderItem(
-                    title = stringResource(R.string.preference_gyro_sensitivity_title),
+                    title = translatedText(stringResource(R.string.preference_gyro_sensitivity_title)),
                     value = gyroSensitivity,
                     valueRange = 25f..300f,
                     valueSuffix = "%",
@@ -219,7 +221,7 @@ private fun QuickSettingContent(
         }
 
         SettingsSliderItem(
-            title = stringResource(R.string.mcl_setting_title_mousespeed),
+            title = translatedText(stringResource(R.string.mcl_setting_title_mousespeed)),
             value = mouseSpeed,
             valueRange = 25f..300f,
             valueSuffix = "%",
@@ -232,7 +234,7 @@ private fun QuickSettingContent(
 
         SettingsCard(position = CardPosition.SINGLE, useSurface = true) {
             SettingsSwitchItem(
-                title = stringResource(R.string.mcl_disable_gestures),
+                title = translatedText(stringResource(R.string.mcl_disable_gestures)),
                 checked = disableGestures,
                 onCheckedChange = {
                     disableGestures = it
@@ -244,7 +246,7 @@ private fun QuickSettingContent(
 
         if (!disableGestures) {
             SettingsSliderItem(
-                title = stringResource(R.string.mcl_setting_title_longpresstrigger),
+                title = translatedText(stringResource(R.string.mcl_setting_title_longpresstrigger)),
                 value = gestureDelay,
                 valueRange = 100f..1000f,
                 valueSuffix = " ms",

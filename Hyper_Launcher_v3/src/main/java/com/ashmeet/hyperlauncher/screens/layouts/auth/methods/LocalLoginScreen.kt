@@ -1,6 +1,7 @@
 package com.ashmeet.hyperlauncher.screens.layouts.auth.methods
 
 import androidx.activity.compose.rememberLauncherForActivityResult
+import com.ashmeet.hyperlauncher.utils.translatedText
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -105,7 +106,7 @@ fun LocalLoginScreen(
             horizontalAlignment = Alignment.Start
         ) {
             Text(
-                text = stringResource(id = R.string.login_online_username_hint),
+                text = translatedText(stringResource(R.string.login_online_username_hint)),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.padding(bottom = 8.dp)
@@ -115,7 +116,7 @@ fun LocalLoginScreen(
                 value = username,
                 onValueChange = { username = it },
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text(text = "Username") },
+                placeholder = { Text(text = translatedText("Username")) },
                 shape = RoundedCornerShape(12.dp),
                 singleLine = true,
                 leadingIcon = {
@@ -188,7 +189,7 @@ fun LocalLoginScreen(
 
             MineButton(
                 onClick = { onLoginClick(username, selectedSkinPath, selectedCapePath) },
-                text = stringResource(id = R.string.login_online_login_label),
+                text = translatedText(stringResource(R.string.login_online_login_label)),
                 modifier = Modifier.fillMaxWidth(),
                 isUppercase = false
             )

@@ -1,6 +1,7 @@
 package com.ashmeet.hyperlauncher.screens.layouts.settings.layouts
 
 import androidx.compose.foundation.layout.Arrangement
+import com.ashmeet.hyperlauncher.utils.translatedText
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -83,7 +84,7 @@ fun SettingsScreenWrapper(
                         IconButton(onClick = onBack) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                                contentDescription = "Back",
+                                contentDescription = translatedText("Back"),
                                 tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
@@ -106,15 +107,15 @@ fun SettingsScreenWrapper(
 fun SettingsScreenWrapperPreview() {
     PojavTheme {
         SettingsScreenWrapper(
-            title = "Preview Title",
+            title = translatedText("Preview Title"),
             onBack = {}
         ) {
             Text(
-                text = "Content item 1",
+                text = translatedText("Content item 1"),
                 color = MaterialTheme.colorScheme.onBackground
             )
             Text(
-                text = "Content item 2",
+                text = translatedText("Content item 2"),
                 color = MaterialTheme.colorScheme.onBackground
             )
         }

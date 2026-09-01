@@ -1,6 +1,7 @@
 package com.ashmeet.hyperlauncher.compose
 
 import androidx.compose.animation.AnimatedVisibility
+import com.ashmeet.hyperlauncher.utils.translatedText
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -39,7 +40,7 @@ private val OBSERVED_PROGRESS_KEYS = listOf(
     "unpack_runtime", "download_minecraft", "download_verlist",
     "authenticate", "install_modpack", "extract_components",
     "extract_single_files", "instance_install", "data_migration",
-    "copy_files", "download_content"
+    "copy_files", "download_content", "download_translations"
 )
 
 @Composable
@@ -137,7 +138,7 @@ fun ProgressLayoutContent(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = stringResource(id = R.string.progresslayout_tasks_in_progress, taskCount),
+                        text = translatedText(stringResource(R.string.progresslayout_tasks_in_progress, taskCount)),
                         color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 14.sp
                     )

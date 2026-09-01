@@ -1,5 +1,7 @@
 package com.ashmeet.hyperlauncher.screens.activity.game.controls
 
+import com.ashmeet.hyperlauncher.utils.translatedText
+
 import android.content.Context
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -113,8 +115,8 @@ fun ControlsEditorScreen(
         if (showDeleteConfirm) {
             AlertDialog(
                 onDismissRequest = { showDeleteConfirm = false },
-                title = { Text(text = stringResource(R.string.global_delete)) },
-                text = { Text(text = "Are you sure you want to delete this button?") },
+                title = { Text(text = translatedText(stringResource(R.string.global_delete))) },
+                text = { Text(text = translatedText("Are you sure you want to delete this button?")) },
                 confirmButton = {
                     TextButton(
                         onClick = {
@@ -123,7 +125,7 @@ fun ControlsEditorScreen(
                             showDeleteConfirm = false
                         }
                     ) {
-                        Text(text = stringResource(R.string.global_delete))
+                        Text(text = translatedText(stringResource(R.string.global_delete)))
                     }
                 },
                 dismissButton = {

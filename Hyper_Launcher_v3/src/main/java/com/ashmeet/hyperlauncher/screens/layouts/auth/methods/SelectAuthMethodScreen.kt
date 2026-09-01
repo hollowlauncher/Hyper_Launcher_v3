@@ -1,6 +1,7 @@
 package com.ashmeet.hyperlauncher.screens.layouts.auth.methods
 
 import androidx.compose.foundation.background
+import com.ashmeet.hyperlauncher.utils.translatedText
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -38,19 +39,19 @@ fun SelectAuthMethodScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             MineButton(
-                text = stringResource(id = R.string.auth_select_microsoft),
+                text = translatedText(stringResource(R.string.auth_select_microsoft)),
                 onClick = onMicrosoftClick,
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(16.dp))
             MineButton(
-                text = stringResource(id = R.string.auth_select_elyby),
+                text = translatedText(stringResource(R.string.auth_select_elyby)),
                 onClick = onElyByClick,
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(16.dp))
             MineButton(
-                text = stringResource(id = R.string.auth_select_local),
+                text = translatedText(stringResource(R.string.auth_select_local)),
                 onClick = onLocalClick,
                 modifier = Modifier.fillMaxWidth()
             )

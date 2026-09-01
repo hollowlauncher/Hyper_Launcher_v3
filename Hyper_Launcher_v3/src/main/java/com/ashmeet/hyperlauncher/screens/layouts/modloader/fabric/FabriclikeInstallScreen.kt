@@ -1,5 +1,7 @@
 package com.ashmeet.hyperlauncher.screens.layouts.modloader.fabric
 
+import com.ashmeet.hyperlauncher.utils.translatedText
+
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -98,14 +100,14 @@ fun FabriclikeInstallScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     VersionSpinner(
-                        label = stringResource(R.string.fabric_dl_game_version),
+                        label = translatedText(stringResource(R.string.fabric_dl_game_version)),
                         versions = filteredGameVersions,
                         selectedVersion = selectedGameVersion,
                         onVersionSelected = { selectedGameVersion = it }
                     )
 
                     VersionSpinner(
-                        label = stringResource(R.string.fabric_dl_loader_version, loaderName),
+                        label = translatedText(stringResource(R.string.fabric_dl_loader_version, loaderName)),
                         versions = filteredLoaderVersions,
                         selectedVersion = selectedLoaderVersion,
                         onVersionSelected = { selectedLoaderVersion = it }
@@ -136,7 +138,7 @@ fun FabriclikeInstallScreen(
                             .padding(8.dp)
                     ) {
                         Text(
-                            text = stringResource(R.string.fabric_dl_only_stable),
+                            text = translatedText(stringResource(R.string.fabric_dl_only_stable)),
                             style = MaterialTheme.typography.bodyLarge,
                             modifier = Modifier.weight(1f)
                         )
@@ -160,7 +162,7 @@ fun FabriclikeInstallScreen(
                             Column(modifier = Modifier.weight(1f)) {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Text(
-                                        text = "Hyper Client",
+                                        text = translatedText("Hyper Client"),
                                         style = MaterialTheme.typography.bodyLarge
                                     )
                                     if (!isAvailable && !isHyperClientLoading) {
@@ -215,7 +217,7 @@ fun FabriclikeInstallScreen(
                                 strokeWidth = 2.dp
                             )
                         } else {
-                            Text(stringResource(R.string.global_save))
+                            Text(translatedText(stringResource(R.string.global_save)))
                         }
                     }
                 }

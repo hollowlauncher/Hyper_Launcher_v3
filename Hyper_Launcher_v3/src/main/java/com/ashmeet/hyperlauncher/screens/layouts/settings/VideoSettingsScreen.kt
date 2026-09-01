@@ -1,4 +1,6 @@
 package com.ashmeet.hyperlauncher.screens.layouts.settings
+
+import com.ashmeet.hyperlauncher.utils.translatedText
 import android.os.Build
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -53,7 +55,7 @@ fun VideoSettingsScreen(
     var showRendererDialog by remember { mutableStateOf(false) }
 
     SettingsScreenWrapper(
-        title = stringResource(R.string.preference_category_video),
+        title = translatedText(stringResource(R.string.preference_category_video)),
         onBack = onBack,
         addTopGap = true
     ) {
@@ -66,7 +68,7 @@ fun VideoSettingsScreen(
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             SettingsCard(position = CardPosition.TOP, useSurface = true) {
                 SettingsActionItem(
-                    title = stringResource(R.string.mcl_setting_category_renderer),
+                    title = translatedText(stringResource(R.string.mcl_setting_category_renderer)),
                     summary = rendererDisplayName,
                     icon = Icons.Default.Brush,
                     onClick = { showRendererDialog = true }
@@ -75,8 +77,8 @@ fun VideoSettingsScreen(
 
             SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
                 SettingsSwitchItem(
-                    title = stringResource(R.string.mcl_setting_title_ignore_notch),
-                    summary = stringResource(R.string.mcl_setting_subtitle_ignore_notch),
+                    title = translatedText(stringResource(R.string.mcl_setting_title_ignore_notch)),
+                    summary = translatedText(stringResource(R.string.mcl_setting_subtitle_ignore_notch)),
                     icon = Icons.Default.AspectRatio,
                     checked = ignoreNotch,
                     onCheckedChange = {
@@ -89,8 +91,8 @@ fun VideoSettingsScreen(
 
             SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
                 SettingsSwitchItem(
-                    title = stringResource(R.string.mcl_setting_title_fullscreen_ui),
-                    summary = stringResource(R.string.mcl_setting_subtitle_fullscreen_ui),
+                    title = translatedText(stringResource(R.string.mcl_setting_title_fullscreen_ui)),
+                    summary = translatedText(stringResource(R.string.mcl_setting_subtitle_fullscreen_ui)),
                     icon = Icons.Default.Fullscreen,
                     checked = fullscreenLauncher,
                     warningTooltip = "Disabling edge-to-edge display may cause layout issues on some devices",
@@ -104,8 +106,8 @@ fun VideoSettingsScreen(
 
             SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {
                 SettingsSliderItem(
-                    title = stringResource(R.string.mcl_setting_title_resolution_scaler),
-                    summary = stringResource(R.string.mcl_setting_subtitle_resolution_scaler),
+                    title = translatedText(stringResource(R.string.mcl_setting_title_resolution_scaler)),
+                    summary = translatedText(stringResource(R.string.mcl_setting_subtitle_resolution_scaler)),
                     icon = Icons.Default.Monitor,
                     value = resolutionRatio,
                     valueRange = integerResource(R.integer.resolution_seekbar_min).toFloat()..100f,
@@ -122,8 +124,8 @@ fun VideoSettingsScreen(
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             SettingsCard(position = CardPosition.TOP, useSurface = true) {
                 SettingsSwitchItem(
-                    title = stringResource(R.string.mcl_setting_title_use_surface_view),
-                    summary = stringResource(R.string.mcl_setting_subtitle_use_surface_view),
+                    title = translatedText(stringResource(R.string.mcl_setting_title_use_surface_view)),
+                    summary = translatedText(stringResource(R.string.mcl_setting_subtitle_use_surface_view)),
                     icon = Icons.Default.Layers,
                     checked = alternateSurface,
                     warningTooltip = "Surface View rendering might be unstable on some devices and could lead to graphical glitches.",
@@ -138,8 +140,8 @@ fun VideoSettingsScreen(
             val hasSustainedPerf = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
             SettingsCard(position = if (hasSustainedPerf) CardPosition.MIDDLE else CardPosition.BOTTOM, useSurface = true) {
                 SettingsSwitchItem(
-                    title = stringResource(R.string.preference_force_vsync_title),
-                    summary = stringResource(R.string.preference_force_vsync_description),
+                    title = translatedText(stringResource(R.string.preference_force_vsync_title)),
+                    summary = translatedText(stringResource(R.string.preference_force_vsync_description)),
                     icon = Icons.Default.Sync,
                     checked = forceVsync,
                     onCheckedChange = {
@@ -153,8 +155,8 @@ fun VideoSettingsScreen(
             if (hasSustainedPerf) {
                 SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {
                     SettingsSwitchItem(
-                        title = stringResource(R.string.preference_sustained_performance_title),
-                        summary = stringResource(R.string.preference_sustained_performance_description),
+                        title = translatedText(stringResource(R.string.preference_sustained_performance_title)),
+                        summary = translatedText(stringResource(R.string.preference_sustained_performance_description)),
                         icon = Icons.Default.Speed,
                         checked = sustainedPerformance,
                         onCheckedChange = {
@@ -175,8 +177,8 @@ fun VideoSettingsScreen(
                     val zinkVsyncPos = if (isAngleAvailable) CardPosition.TOP else CardPosition.TOP
                     SettingsCard(position = zinkVsyncPos, useSurface = true) {
                         SettingsSwitchItem(
-                            title = stringResource(R.string.preference_vsync_in_zink_title),
-                            summary = stringResource(R.string.preference_vsync_in_zink_description),
+                            title = translatedText(stringResource(R.string.preference_vsync_in_zink_title)),
+                            summary = translatedText(stringResource(R.string.preference_vsync_in_zink_description)),
                             icon = Icons.Default.Sync,
                             checked = vsyncInZink,
                             onCheckedChange = {
@@ -196,8 +198,8 @@ fun VideoSettingsScreen(
                     }
                     SettingsCard(position = anglePos, useSurface = true) {
                         SettingsSwitchItem(
-                            title = stringResource(R.string.preference_use_angle_title),
-                            summary = stringResource(R.string.preference_use_angle_description),
+                            title = translatedText(stringResource(R.string.preference_use_angle_title)),
+                            summary = translatedText(stringResource(R.string.preference_use_angle_description)),
                             icon = Icons.Default.Architecture,
                             checked = useAngle,
                             onCheckedChange = {
@@ -213,8 +215,8 @@ fun VideoSettingsScreen(
 
                     SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {
                         SettingsSwitchItem(
-                            title = stringResource(R.string.preference_force_legacy_zink_title),
-                            summary = stringResource(R.string.preference_force_legacy_zink_description),
+                            title = translatedText(stringResource(R.string.preference_force_legacy_zink_title)),
+                            summary = translatedText(stringResource(R.string.preference_force_legacy_zink_description)),
                             icon = Icons.Default.History,
                             checked = zinkForceLegacy,
                             onCheckedChange = {
@@ -232,7 +234,7 @@ fun VideoSettingsScreen(
     if (showRendererDialog) {
         val compatibleRenderers = RendererCompatUtil.getCompatibleRenderers(context)
         SingleChoiceDialog(
-            title = stringResource(R.string.mcl_setting_category_renderer),
+            title = translatedText(stringResource(R.string.mcl_setting_category_renderer)),
             options = compatibleRenderers.rendererDisplayNames.toList(),
             optionValues = compatibleRenderers.rendererIds,
             selectedValue = renderer,

@@ -1,6 +1,7 @@
 package com.ashmeet.hyperlauncher.screens.activity.game.controls
 
 import androidx.compose.foundation.Image
+import com.ashmeet.hyperlauncher.utils.translatedText
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -57,7 +58,7 @@ fun ImportControlScreen(
             ) {
                 Column(horizontalAlignment = Alignment.Start) {
                     Text(
-                        text = "File name:",
+                        text = translatedText("File name:"),
                         style = MaterialTheme.typography.labelLarge,
                         modifier = Modifier.padding(start = 4.dp, bottom = 4.dp)
                     )
@@ -77,7 +78,7 @@ fun ImportControlScreen(
                     Spacer(modifier = Modifier.height(24.dp))
 
                     MineButton(
-                        text = stringResource(id = R.string.import_control_import_button),
+                        text = translatedText(stringResource(R.string.import_control_import_button)),
                         onClick = { onImport(fileName) },
                         modifier = Modifier.fillMaxWidth()
                     )

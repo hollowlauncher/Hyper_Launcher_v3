@@ -1,5 +1,7 @@
 package com.ashmeet.hyperlauncher.components
 
+import com.ashmeet.hyperlauncher.utils.translatedText
+
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -107,7 +109,7 @@ fun ActionRow(
                 modifier = Modifier.height(36.dp),
                 contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 12.dp)
             ) {
-                Text(stringResource(R.string.global_delete), style = MaterialTheme.typography.labelMedium)
+                Text(translatedText(stringResource(R.string.global_delete)), style = MaterialTheme.typography.labelMedium)
             }
             Button(
                 onClick = onClone,
@@ -115,7 +117,7 @@ fun ActionRow(
                 modifier = Modifier.height(36.dp),
                 contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 12.dp)
             ) {
-                Text(stringResource(R.string.global_clone), style = MaterialTheme.typography.labelMedium)
+                Text(translatedText(stringResource(R.string.global_clone)), style = MaterialTheme.typography.labelMedium)
             }
             if (followedButton is ControlDrawer) {
                 Button(
@@ -124,7 +126,7 @@ fun ActionRow(
                     modifier = Modifier.height(36.dp),
                     contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 12.dp)
                 ) {
-                    Text(stringResource(R.string.customctrl_addsubbutton), style = MaterialTheme.typography.labelMedium)
+                    Text(translatedText(stringResource(R.string.customctrl_addsubbutton)), style = MaterialTheme.typography.labelMedium)
                 }
             }
         }

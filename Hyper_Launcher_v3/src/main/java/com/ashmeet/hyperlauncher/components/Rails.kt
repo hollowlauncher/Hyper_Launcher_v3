@@ -1,5 +1,7 @@
 package com.ashmeet.hyperlauncher.components
 
+import com.ashmeet.hyperlauncher.utils.translatedText
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -46,7 +48,7 @@ fun SideNavigationRail(
             Column(horizontalAlignment = Alignment.Start) {
                 SidebarRailButton(
                     icon = Icons.Rounded.Close,
-                    label = stringResource(R.string.close),
+                    label = translatedText(stringResource(R.string.close)),
                     onClick = { onAction(-1) },
                     isExpanded = true
                 )
@@ -63,42 +65,42 @@ fun SideNavigationRail(
             if (isEditor) {
                 SidebarRailButton(
                     icon = Icons.Rounded.Add,
-                    label = stringResource(R.string.customctrl_addbutton),
+                    label = translatedText(stringResource(R.string.customctrl_addbutton)),
                     onClick = { onAction(0) },
                     isExpanded = true
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 SidebarRailButton(
                     icon = Icons.Rounded.Search,
-                    label = stringResource(R.string.customctrl_addbutton_drawer),
+                    label = translatedText(stringResource(R.string.customctrl_addbutton_drawer)),
                     onClick = { onAction(1) },
                     isExpanded = true
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 SidebarRailButton(
                     icon = Icons.Rounded.VideogameAsset,
-                    label = stringResource(R.string.customctrl_addbutton_joystick),
+                    label = translatedText(stringResource(R.string.customctrl_addbutton_joystick)),
                     onClick = { onAction(2) },
                     isExpanded = true
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 SidebarRailButton(
                     icon = Icons.Rounded.Refresh,
-                    label = stringResource(R.string.global_load),
+                    label = translatedText(stringResource(R.string.global_load)),
                     onClick = { onAction(3) },
                     isExpanded = true
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 SidebarRailButton(
                     icon = Icons.Rounded.Description,
-                    label = stringResource(R.string.global_save),
+                    label = translatedText(stringResource(R.string.global_save)),
                     onClick = { onAction(4) },
                     isExpanded = true
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 SidebarRailButton(
                     icon = Icons.Rounded.Settings,
-                    label = stringResource(R.string.customctrl_selectdefault),
+                    label = translatedText(stringResource(R.string.customctrl_selectdefault)),
                     onClick = { onAction(5) },
                     isExpanded = true
                 )
@@ -112,35 +114,35 @@ fun SideNavigationRail(
             } else {
                 SidebarRailButton(
                     icon = Icons.Rounded.Close,
-                    label = stringResource(R.string.control_forceclose),
+                    label = translatedText(stringResource(R.string.control_forceclose)),
                     onClick = { onAction(0) },
                     isExpanded = true
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 SidebarRailButton(
                     icon = Icons.Rounded.Description,
-                    label = stringResource(R.string.control_viewout),
+                    label = translatedText(stringResource(R.string.control_viewout)),
                     onClick = { onAction(1) },
                     isExpanded = true
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 SidebarRailButton(
                     icon = Icons.Rounded.Keyboard,
-                    label = stringResource(R.string.control_customkey),
+                    label = translatedText(stringResource(R.string.control_customkey)),
                     onClick = { onAction(2) },
                     isExpanded = true
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 SidebarRailButton(
                     icon = Icons.Rounded.Settings,
-                    label = stringResource(R.string.quick_setting_title),
+                    label = translatedText(stringResource(R.string.quick_setting_title)),
                     onClick = { onAction(3) },
                     isExpanded = true
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 SidebarRailButton(
                     icon = Icons.Rounded.Build,
-                    label = stringResource(R.string.mcl_option_customcontrol),
+                    label = translatedText(stringResource(R.string.mcl_option_customcontrol)),
                     onClick = { onAction(4) },
                     isExpanded = true
                 )

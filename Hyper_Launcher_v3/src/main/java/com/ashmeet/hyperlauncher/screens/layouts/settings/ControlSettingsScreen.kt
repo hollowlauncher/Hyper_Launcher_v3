@@ -1,5 +1,7 @@
 package com.ashmeet.hyperlauncher.screens.layouts.settings
 
+import com.ashmeet.hyperlauncher.utils.translatedText
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
@@ -64,15 +66,15 @@ fun ControlSettingsScreen(
     var keyboardAutoPanning by remember { mutableStateOf(LauncherPreferences.PREF_KEYBOARD_AUTOPANNING) }
 
     SettingsScreenWrapper(
-        title = stringResource(R.string.preference_control_title),
+        title = translatedText(stringResource(R.string.preference_control_title)),
         onBack = onBack,
         addTopGap = true
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             SettingsCard(position = CardPosition.SINGLE, useSurface = true) {
                 SettingsActionItem(
-                    title = stringResource(R.string.preference_edit_controls_title),
-                    summary = stringResource(R.string.preference_edit_controls_summary),
+                    title = translatedText(stringResource(R.string.preference_edit_controls_title)),
+                    summary = translatedText(stringResource(R.string.preference_edit_controls_summary)),
                     icon = Icons.Default.Edit,
                     onClick = onNavigateToCustomControls
                 )
@@ -82,8 +84,8 @@ fun ControlSettingsScreen(
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             SettingsCard(position = CardPosition.TOP, useSurface = true) {
                 SettingsSwitchItem(
-                    title = stringResource(R.string.mcl_disable_gestures),
-                    summary = stringResource(R.string.mcl_disable_gestures_subtitle),
+                    title = translatedText(stringResource(R.string.mcl_disable_gestures)),
+                    summary = translatedText(stringResource(R.string.mcl_disable_gestures_subtitle)),
                     icon = Icons.Default.TouchApp,
                     checked = disableGestures,
                     onCheckedChange = {
@@ -96,8 +98,8 @@ fun ControlSettingsScreen(
 
             SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
                 SettingsSwitchItem(
-                    title = stringResource(R.string.mcl_disable_swap_hand),
-                    summary = stringResource(R.string.mcl_disable_swap_hand_subtitle),
+                    title = translatedText(stringResource(R.string.mcl_disable_swap_hand)),
+                    summary = translatedText(stringResource(R.string.mcl_disable_swap_hand_subtitle)),
                     icon = Icons.AutoMirrored.Filled.CompareArrows,
                     checked = disableDoubleTap,
                     onCheckedChange = {
@@ -110,8 +112,8 @@ fun ControlSettingsScreen(
 
             SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {
                 SettingsSliderItem(
-                    title = stringResource(R.string.mcl_setting_title_longpresstrigger),
-                    summary = stringResource(R.string.mcl_setting_subtitle_longpresstrigger),
+                    title = translatedText(stringResource(R.string.mcl_setting_title_longpresstrigger)),
+                    summary = translatedText(stringResource(R.string.mcl_setting_subtitle_longpresstrigger)),
                     icon = Icons.Default.TouchApp,
                     value = longPressTrigger,
                     valueRange = integerResource(R.integer.gesture_delay_seekbar_min).toFloat()..integerResource(R.integer.gesture_delay_seekbar_max).toFloat(),
@@ -125,13 +127,13 @@ fun ControlSettingsScreen(
             }
         }
 
-        PreferenceCategory(title = stringResource(R.string.preference_category_buttons))
+        PreferenceCategory(title = translatedText(stringResource(R.string.preference_category_buttons)))
 
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             SettingsCard(position = CardPosition.TOP, useSurface = true) {
                 SettingsSliderItem(
-                    title = stringResource(R.string.mcl_setting_title_buttonscale),
-                    summary = stringResource(R.string.mcl_setting_subtitle_buttonscale),
+                    title = translatedText(stringResource(R.string.mcl_setting_title_buttonscale)),
+                    summary = translatedText(stringResource(R.string.mcl_setting_subtitle_buttonscale)),
                     icon = Icons.Default.SettingsOverscan,
                     value = buttonScale,
                     valueRange = integerResource(R.integer.button_scale_seekbar_min).toFloat()..integerResource(R.integer.button_scale_seekbar_max).toFloat(),
@@ -146,8 +148,8 @@ fun ControlSettingsScreen(
 
             SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {
                 SettingsSwitchItem(
-                    title = stringResource(R.string.mcl_setting_title_buttonallcaps),
-                    summary = stringResource(R.string.mcl_setting_subtitle_buttonallcaps),
+                    title = translatedText(stringResource(R.string.mcl_setting_title_buttonallcaps)),
+                    summary = translatedText(stringResource(R.string.mcl_setting_subtitle_buttonallcaps)),
                     icon = Icons.Default.Title,
                     checked = buttonAllCaps,
                     onCheckedChange = {
@@ -159,13 +161,13 @@ fun ControlSettingsScreen(
             }
         }
 
-        PreferenceCategory(title = stringResource(R.string.preference_category_virtual_mouse))
+        PreferenceCategory(title = translatedText(stringResource(R.string.preference_category_virtual_mouse)))
 
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             SettingsCard(position = CardPosition.TOP, useSurface = true) {
                 SettingsSliderItem(
-                    title = stringResource(R.string.mcl_setting_title_mousescale),
-                    summary = stringResource(R.string.mcl_setting_subtitle_mousescale),
+                    title = translatedText(stringResource(R.string.mcl_setting_title_mousescale)),
+                    summary = translatedText(stringResource(R.string.mcl_setting_subtitle_mousescale)),
                     icon = Icons.Default.Mouse,
                     value = mouseScale,
                     valueRange = integerResource(R.integer.mouse_scale_seekbar_min).toFloat()..integerResource(R.integer.mouse_scale_seekbar_max).toFloat(),
@@ -180,8 +182,8 @@ fun ControlSettingsScreen(
 
             SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
                 SettingsSliderItem(
-                    title = stringResource(R.string.mcl_setting_title_mousespeed),
-                    summary = stringResource(R.string.mcl_setting_subtitle_mousespeed),
+                    title = translatedText(stringResource(R.string.mcl_setting_title_mousespeed)),
+                    summary = translatedText(stringResource(R.string.mcl_setting_subtitle_mousespeed)),
                     icon = Icons.Default.Speed,
                     value = mouseSpeed,
                     valueRange = integerResource(R.integer.mouse_speed_seekbar_min).toFloat()..integerResource(R.integer.mouse_speed_seekbar_max).toFloat(),
@@ -196,8 +198,8 @@ fun ControlSettingsScreen(
 
             SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {
                 SettingsSwitchItem(
-                    title = stringResource(R.string.preference_mouse_start_title),
-                    summary = stringResource(R.string.preference_mouse_start_description),
+                    title = translatedText(stringResource(R.string.preference_mouse_start_title)),
+                    summary = translatedText(stringResource(R.string.preference_mouse_start_description)),
                     icon = Icons.Default.Mouse,
                     checked = mouseStart,
                     onCheckedChange = {
@@ -210,13 +212,13 @@ fun ControlSettingsScreen(
         }
 
         if (isGyroAvailable) {
-            PreferenceCategory(title = stringResource(R.string.preference_category_gyro_controls))
+            PreferenceCategory(title = translatedText(stringResource(R.string.preference_category_gyro_controls)))
 
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 SettingsCard(position = CardPosition.TOP, useSurface = true) {
                     SettingsSwitchItem(
-                        title = stringResource(R.string.preference_enable_gyro_title),
-                        summary = stringResource(R.string.preference_enable_gyro_description),
+                        title = translatedText(stringResource(R.string.preference_enable_gyro_title)),
+                        summary = translatedText(stringResource(R.string.preference_enable_gyro_description)),
                         icon = Icons.Default.ScreenRotation,
                         checked = enableGyro,
                         onCheckedChange = {
@@ -229,8 +231,8 @@ fun ControlSettingsScreen(
 
                 SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
                     SettingsSliderItem(
-                        title = stringResource(R.string.preference_gyro_sensitivity_title),
-                        summary = stringResource(R.string.preference_gyro_sensitivity_description),
+                        title = translatedText(stringResource(R.string.preference_gyro_sensitivity_title)),
+                        summary = translatedText(stringResource(R.string.preference_gyro_sensitivity_description)),
                         enabled = enableGyro,
                         icon = Icons.Default.Speed,
                         value = gyroSensitivity,
@@ -246,8 +248,8 @@ fun ControlSettingsScreen(
 
                 SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
                     SettingsSliderItem(
-                        title = stringResource(R.string.preference_gyro_sample_rate_title),
-                        summary = stringResource(R.string.preference_gyro_sample_rate_description),
+                        title = translatedText(stringResource(R.string.preference_gyro_sample_rate_title)),
+                        summary = translatedText(stringResource(R.string.preference_gyro_sample_rate_description)),
                         enabled = enableGyro,
                         icon = Icons.Default.Tune,
                         value = gyroSampleRate,
@@ -263,8 +265,8 @@ fun ControlSettingsScreen(
 
                 SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
                     SettingsSwitchItem(
-                        title = stringResource(R.string.preference_gyro_smoothing_title),
-                        summary = stringResource(R.string.preference_gyro_smoothing_description),
+                        title = translatedText(stringResource(R.string.preference_gyro_smoothing_title)),
+                        summary = translatedText(stringResource(R.string.preference_gyro_smoothing_description)),
                         enabled = enableGyro,
                         icon = Icons.Default.Tune,
                         checked = gyroSmoothing,
@@ -278,8 +280,8 @@ fun ControlSettingsScreen(
 
                 SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
                     SettingsSwitchItem(
-                        title = stringResource(R.string.preference_gyro_invert_x_axis),
-                        summary = stringResource(R.string.preference_gyro_invert_x_axis_description),
+                        title = translatedText(stringResource(R.string.preference_gyro_invert_x_axis)),
+                        summary = translatedText(stringResource(R.string.preference_gyro_invert_x_axis_description)),
                         enabled = enableGyro,
                         icon = Icons.AutoMirrored.Filled.CompareArrows,
                         checked = gyroInvertX,
@@ -293,8 +295,8 @@ fun ControlSettingsScreen(
 
                 SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {
                     SettingsSwitchItem(
-                        title = stringResource(R.string.preference_gyro_invert_y_axis),
-                        summary = stringResource(R.string.preference_gyro_invert_y_axis_description),
+                        title = translatedText(stringResource(R.string.preference_gyro_invert_y_axis)),
+                        summary = translatedText(stringResource(R.string.preference_gyro_invert_y_axis_description)),
                         enabled = enableGyro,
                         icon = Icons.AutoMirrored.Filled.CompareArrows,
                         checked = gyroInvertY,
@@ -308,13 +310,13 @@ fun ControlSettingsScreen(
             }
         }
 
-        PreferenceCategory(title = stringResource(R.string.preference_category_controller_settings))
+        PreferenceCategory(title = translatedText(stringResource(R.string.preference_category_controller_settings)))
 
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             SettingsCard(position = CardPosition.TOP, useSurface = true) {
                 SettingsActionItem(
-                    title = stringResource(R.string.preference_remap_controller_title),
-                    summary = stringResource(R.string.preference_remap_controller_description),
+                    title = translatedText(stringResource(R.string.preference_remap_controller_title)),
+                    summary = translatedText(stringResource(R.string.preference_remap_controller_description)),
                     icon = Icons.Default.VideogameAsset,
                     onClick = onNavigateToGamepadMapper
                 )
@@ -322,8 +324,8 @@ fun ControlSettingsScreen(
 
             SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
                 SettingsActionItem(
-                    title = stringResource(R.string.preference_wipe_controller_title),
-                    summary = stringResource(R.string.preference_wipe_controller_description),
+                    title = translatedText(stringResource(R.string.preference_wipe_controller_title)),
+                    summary = translatedText(stringResource(R.string.preference_wipe_controller_description)),
                     icon = Icons.Default.Build,
                     onClick = onWipeController
                 )
@@ -331,8 +333,8 @@ fun ControlSettingsScreen(
 
             SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {
                 SettingsSliderItem(
-                    title = stringResource(R.string.preference_deadzone_scale_title),
-                    summary = stringResource(R.string.preference_deadzone_scale_description),
+                    title = translatedText(stringResource(R.string.preference_deadzone_scale_title)),
+                    summary = translatedText(stringResource(R.string.preference_deadzone_scale_description)),
                     icon = Icons.Default.ControlCamera,
                     value = deadzoneScale,
                     valueRange = integerResource(R.integer.gamepad_deadzone_seekbar_min).toFloat()..integerResource(R.integer.gamepad_deadzone_seekbar_max).toFloat(),
@@ -346,12 +348,12 @@ fun ControlSettingsScreen(
             }
         }
 
-        PreferenceCategory(title = stringResource(R.string.preference_category_keyboard))
+        PreferenceCategory(title = translatedText(stringResource(R.string.preference_category_keyboard)))
 
         SettingsCard(position = CardPosition.SINGLE, useSurface = true) {
             SettingsSwitchItem(
-                title = stringResource(R.string.preference_keyboard_autopan_title),
-                summary = stringResource(R.string.preference_keyboard_autopan_summary),
+                title = translatedText(stringResource(R.string.preference_keyboard_autopan_title)),
+                summary = translatedText(stringResource(R.string.preference_keyboard_autopan_summary)),
                 icon = Icons.Default.Keyboard,
                 checked = keyboardAutoPanning,
                 onCheckedChange = {

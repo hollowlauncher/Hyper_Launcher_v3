@@ -1,5 +1,7 @@
 package com.ashmeet.hyperlauncher.dialog
 
+import com.ashmeet.hyperlauncher.utils.translatedText
+
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -193,7 +195,7 @@ private fun EditControlContent(
                     properties.name = it
                     button.updateProperties()
                 },
-                label = { Text(stringResource(R.string.global_name)) },
+                label = { Text(translatedText(stringResource(R.string.global_name))) },
                 modifier = Modifier.fillMaxWidth()
             )
         }
@@ -211,7 +213,7 @@ private fun EditControlContent(
                             button.updateProperties()
                         }
                     },
-                    label = { Text(stringResource(R.string.customctrl_size) + " X") },
+                    label = { Text(translatedText(stringResource(R.string.customctrl_size)) + " X") },
                     modifier = Modifier.weight(1f)
                 )
                 if (!isJoystick) {
@@ -224,7 +226,7 @@ private fun EditControlContent(
                                 button.updateProperties()
                             }
                         },
-                        label = { Text(stringResource(R.string.customctrl_size) + " Y") },
+                        label = { Text(translatedText(stringResource(R.string.customctrl_size)) + " Y") },
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -234,7 +236,7 @@ private fun EditControlContent(
         // Mapping Section (Keycodes)
         if (!isJoystick && !isDrawer) {
             Text(
-                text = stringResource(R.string.customctrl_mapping),
+                text = translatedText(stringResource(R.string.customctrl_mapping)),
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.primary
             )
@@ -288,7 +290,7 @@ private fun EditControlContent(
         if (!isJoystick && !isDrawer) {
             SettingsCard(position = CardPosition.TOP, useSurface = true) {
                 SettingsSwitchItem(
-                    title = stringResource(R.string.customctrl_toggle),
+                    title = translatedText(stringResource(R.string.customctrl_toggle)),
                     checked = isToggle,
                     onCheckedChange = {
                         isToggle = it
@@ -298,7 +300,7 @@ private fun EditControlContent(
             }
             SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
                 SettingsSwitchItem(
-                    title = stringResource(R.string.customctrl_passthru),
+                    title = translatedText(stringResource(R.string.customctrl_passthru)),
                     checked = passThruEnabled,
                     onCheckedChange = {
                         passThruEnabled = it
@@ -308,7 +310,7 @@ private fun EditControlContent(
             }
             SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {
                 SettingsSwitchItem(
-                    title = stringResource(R.string.customctrl_swipeable),
+                    title = translatedText(stringResource(R.string.customctrl_swipeable)),
                     checked = isSwipeable,
                     onCheckedChange = {
                         isSwipeable = it
@@ -325,7 +327,7 @@ private fun EditControlContent(
 
             SettingsCard(position = CardPosition.TOP, useSurface = true) {
                 SettingsSwitchItem(
-                    title = stringResource(R.string.customctrl_forward_lock),
+                    title = translatedText(stringResource(R.string.customctrl_forward_lock)),
                     checked = forwardLock,
                     onCheckedChange = {
                         forwardLock = it
@@ -335,7 +337,7 @@ private fun EditControlContent(
             }
             SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {
                 SettingsSwitchItem(
-                    title = stringResource(R.string.customctrl_absolute_tracking),
+                    title = translatedText(stringResource(R.string.customctrl_absolute_tracking)),
                     checked = absolute,
                     onCheckedChange = {
                         absolute = it
@@ -350,7 +352,7 @@ private fun EditControlContent(
         
         if (context is CustomControlsActivity && !isJoystick) {
             SettingsActionItem(
-                title = stringResource(R.string.customctrl_background_bitmap),
+                title = translatedText(stringResource(R.string.customctrl_background_bitmap)),
                 onClick = {
                     val receiver = object : CropperUtils.CropperReceiver {
                         override fun getAspectRatio() = button.controlView.width.toFloat() / button.controlView.height
@@ -368,8 +370,8 @@ private fun EditControlContent(
         }
 
         SettingsActionItem(
-            title = stringResource(R.string.customctrl_background_color),
-            summary = if (properties.bitmapTag != null) stringResource(R.string.customctrl_background_color_warning) else null,
+            title = translatedText(stringResource(R.string.customctrl_background_color)),
+            summary = if (properties.bitmapTag != null) translatedText(stringResource(R.string.customctrl_background_color_warning)) else null,
             onClick = {
                 onShowColorPicker(properties.bgColor, true) {
                     properties.bitmapTag = null
@@ -381,7 +383,7 @@ private fun EditControlContent(
 
         if (properties.bitmapTag == null) {
             SettingsActionItem(
-                title = stringResource(R.string.customctrl_stroke_color),
+                title = translatedText(stringResource(R.string.customctrl_stroke_color)),
                 onClick = {
                     onShowColorPicker(properties.strokeColor, false) {
                         properties.strokeColor = it
@@ -390,7 +392,7 @@ private fun EditControlContent(
                 }
             )
             SettingsSliderItem(
-                title = stringResource(R.string.customctrl_stroke_width),
+                title = translatedText(stringResource(R.string.customctrl_stroke_width)),
                 value = strokeWidth,
                 valueRange = 0f..100f,
                 onValueChange = {
@@ -400,7 +402,7 @@ private fun EditControlContent(
                 }
             )
             SettingsSliderItem(
-                title = stringResource(R.string.customctrl_corner_radius),
+                title = translatedText(stringResource(R.string.customctrl_corner_radius)),
                 value = cornerRadius,
                 valueRange = 0f..100f,
                 onValueChange = {
@@ -412,7 +414,7 @@ private fun EditControlContent(
         }
 
         SettingsSliderItem(
-            title = stringResource(R.string.customctrl_button_opacity),
+            title = translatedText(stringResource(R.string.customctrl_button_opacity)),
             value = opacity,
             valueRange = 0f..100f,
             onValueChange = {
@@ -426,13 +428,13 @@ private fun EditControlContent(
         if (!isSubButton) {
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
             Text(
-                text = stringResource(R.string.customctrl_visibility_title),
+                text = translatedText(stringResource(R.string.customctrl_visibility_title)),
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.primary
             )
             SettingsCard(position = CardPosition.TOP, useSurface = true) {
                 SettingsSwitchItem(
-                    title = stringResource(R.string.customctrl_visibility_ingame),
+                    title = translatedText(stringResource(R.string.customctrl_visibility_ingame)),
                     checked = displayInGame,
                     onCheckedChange = {
                         displayInGame = it
@@ -442,7 +444,7 @@ private fun EditControlContent(
             }
             SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {
                 SettingsSwitchItem(
-                    title = stringResource(R.string.customctrl_visibility_in_menus),
+                    title = translatedText(stringResource(R.string.customctrl_visibility_in_menus)),
                     checked = displayInMenu,
                     onCheckedChange = {
                         displayInMenu = it

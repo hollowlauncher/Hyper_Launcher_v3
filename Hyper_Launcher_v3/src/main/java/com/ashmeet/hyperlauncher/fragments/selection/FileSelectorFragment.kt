@@ -1,5 +1,7 @@
 package com.ashmeet.hyperlauncher.fragments.selection
 
+import com.ashmeet.hyperlauncher.utils.translatedText
+
 import android.app.AlertDialog
 import android.os.Build
 import android.os.Bundle
@@ -146,7 +148,7 @@ fun FileSelectorContent(
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 MineButton(
-                    text = stringResource(R.string.folder_fragment_create),
+                    text = translatedText(stringResource(R.string.folder_fragment_create)),
                     onClick = {
                         fileListViewRef?.let { flv ->
                             val context = flv.context
@@ -170,7 +172,7 @@ fun FileSelectorContent(
 
                 if (selectFolder) {
                     MineButton(
-                        text = stringResource(R.string.folder_fragment_select),
+                        text = translatedText(stringResource(R.string.folder_fragment_select)),
                         onClick = {
                             fileListViewRef?.let { flv ->
                                 onFolderSelected(flv.fullPath.absolutePath)

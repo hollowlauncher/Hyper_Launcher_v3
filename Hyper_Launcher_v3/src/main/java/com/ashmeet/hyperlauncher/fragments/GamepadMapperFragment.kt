@@ -1,5 +1,7 @@
 package com.ashmeet.hyperlauncher.fragments
 
+import com.ashmeet.hyperlauncher.utils.translatedText
+
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -89,8 +91,8 @@ class GamepadMapperFragment : Fragment(), View.OnKeyListener, View.OnGenericMoti
     ) {
         var grabState by remember { mutableIntStateOf(0) }
         val grabOptions = listOf(
-            stringResource(R.string.customctrl_visibility_in_menus),
-            stringResource(R.string.customctrl_visibility_ingame)
+            translatedText(stringResource(R.string.customctrl_visibility_in_menus)),
+            translatedText(stringResource(R.string.customctrl_visibility_ingame))
         )
 
         Surface(
@@ -107,25 +109,25 @@ class GamepadMapperFragment : Fragment(), View.OnKeyListener, View.OnGenericMoti
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            text = stringResource(R.string.controller_remapper_exit_part1),
+                            text = translatedText(stringResource(R.string.controller_remapper_exit_part1)),
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Image(
                             painter = rememberDrawablePainter(
                                 ContextCompat.getDrawable(LocalContext.current, R.drawable.button_select)
                             ),
-                            contentDescription = stringResource(R.string.controller_button_select),
+                            contentDescription = translatedText(stringResource(R.string.controller_button_select)),
                             modifier = Modifier.size(30.dp)
                         )
                         Text(
-                            text = stringResource(R.string.controller_remapper_exit_part2),
+                            text = translatedText(stringResource(R.string.controller_remapper_exit_part2)),
                             color = MaterialTheme.colorScheme.onSurface
                         )
                     }
 
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
-                            text = stringResource(R.string.controller_remapper_operating_mode),
+                            text = translatedText(stringResource(R.string.controller_remapper_operating_mode)),
                             color = MaterialTheme.colorScheme.onSurface,
                             fontSize = 12.sp
                         )
@@ -140,7 +142,7 @@ class GamepadMapperFragment : Fragment(), View.OnKeyListener, View.OnGenericMoti
 
                         if (showGrabDialog) {
                             SingleChoiceDialog(
-                                title = stringResource(R.string.controller_remapper_operating_mode),
+                                title = translatedText(stringResource(R.string.controller_remapper_operating_mode)),
                                 options = grabOptions,
                                 optionValues = listOf("0", "1"),
                                 selectedValue = grabState.toString(),

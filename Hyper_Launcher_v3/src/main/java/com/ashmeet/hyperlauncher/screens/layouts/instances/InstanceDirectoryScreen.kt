@@ -1,6 +1,7 @@
 package com.ashmeet.hyperlauncher.screens.layouts.instances
 
 import androidx.activity.compose.rememberLauncherForActivityResult
+import com.ashmeet.hyperlauncher.utils.translatedText
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
@@ -262,7 +263,7 @@ fun InstanceDirectoryContent(
 
     if (showNewFolderDialog) {
         TextInputDialog(
-            title = "New Folder",
+            title = translatedText("New Folder"),
             initialValue = "",
             onConfirm = { name ->
                 showNewFolderDialog = false
@@ -281,7 +282,7 @@ fun InstanceDirectoryContent(
 
     if (fileToRename != null) {
         TextInputDialog(
-            title = "Rename",
+            title = translatedText("Rename"),
             initialValue = fileToRename?.name ?: "",
             onConfirm = { newName ->
                 val target = fileToRename
@@ -722,7 +723,7 @@ fun FileListItem(
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Warning,
-                        contentDescription = "Metadata warning",
+                        contentDescription = translatedText("Metadata warning"),
                         tint = MaterialTheme.colorScheme.error,
                         modifier = Modifier
                             .padding(end = 4.dp)
@@ -781,7 +782,7 @@ fun FileListItem(
                         } else {
                             Icon(
                                 imageVector = Icons.Rounded.Update,
-                                contentDescription = "Update available",
+                                contentDescription = translatedText("Update available"),
                                 tint = if (updateAvailable != null) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
                                 modifier = Modifier
                                     .size(24.dp)
@@ -811,7 +812,7 @@ fun FileListItem(
                 IconButton(onClick = { menuExpanded = true }) {
                     Icon(
                         imageVector = Icons.Rounded.MoreVert,
-                        contentDescription = "Options",
+                        contentDescription = translatedText("Options"),
                         modifier = Modifier.size(24.dp),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -827,7 +828,7 @@ fun FileListItem(
                     DropdownMenuItem(
                         text = {
                             Text(
-                                text = stringResource(id = R.string.global_edit),
+                                text = translatedText(stringResource(R.string.global_edit)),
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                         },
@@ -847,7 +848,7 @@ fun FileListItem(
                     DropdownMenuItem(
                         text = {
                             Text(
-                                text = "Open in Files",
+                                text = translatedText("Open in Files"),
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                         },
@@ -867,7 +868,7 @@ fun FileListItem(
                     DropdownMenuItem(
                         text = {
                             Text(
-                                text = stringResource(id = R.string.global_delete),
+                                text = translatedText(stringResource(R.string.global_delete)),
                                 color = MaterialTheme.colorScheme.error
                             )
                         },

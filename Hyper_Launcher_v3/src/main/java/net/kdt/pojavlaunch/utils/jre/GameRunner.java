@@ -291,7 +291,14 @@ public class GameRunner {
                     playerSkin,
                     null
             );
-            javaArgList.add("-javaagent:" + Tools.DIR_DATA + "/authlib-injector/authlib-injector.jar=" + skinManager.getAuthlibUrl());
+            
+            String injectorPath = Tools.DIR_DATA + "/authlib-injector/authlib-injector.jar";
+            File injectorJar = new File(injectorPath);
+            if (injectorJar.exists() && injectorJar.length() > 0) {
+                javaArgList.add("-javaagent:" + injectorPath + "=" + skinManager.getAuthlibUrl());
+            } else {
+                Log.e("GameRunner", "authlib-injector.jar is missing or empty! Skipping javaagent to prevent crash.");
+            }
         }
 
         javaArgList.addAll(getMoJsonJvmArgs(versionId));
@@ -304,18 +311,18 @@ public class GameRunner {
             File patcherJar = new File(patcherPath);
             Log.i("GameRunner", "Checking for MioLibPatcher at: " + patcherPath);
             
-            if (!patcherJar.exists()) {
+            if (!patcherJar.exists() || patcherJar.length() == 0) {
                 patcherPath = Tools.DIR_DATA + "/launcher/MioLibPatcher.jar";
                 patcherJar = new File(patcherPath);
                 Log.i("GameRunner", "Checking for MioLibPatcher at alternative path: " + patcherPath);
             }
 
-            if (patcherJar.exists()) {
+            if (patcherJar.exists() && patcherJar.length() > 0) {
                 String agentArg = "-javaagent:" + patcherJar.getAbsolutePath();
                 javaArgList.add(agentArg);
                 Log.i("GameRunner", "SUCCESS: Applied MioLibPatcher agent: " + agentArg);
             } else {
-                Log.e("GameRunner", "CRITICAL ERROR: MioLibPatcher.jar NOT FOUND! Axiom will crash.");
+                Log.e("GameRunner", "CRITICAL ERROR: MioLibPatcher.jar NOT FOUND or EMPTY! Axiom will crash.");
                 // List files in DIR_DATA to help debug
                 File launcherDir = new File(Tools.DIR_DATA, "launcher");
                 if (launcherDir.exists()) {
@@ -494,7 +501,14 @@ public class GameRunner {
     private static void addAuthlibInjectorArgs(List<String> javaArgList, Account account) {
         String injectorUrl = account.authType.injectorUrl;
         if(injectorUrl == null) return;
-        javaArgList.add("-javaagent:"+Tools.DIR_DATA+"/authlib-injector/authlib-injector.jar="+injectorUrl);
+        
+        String injectorPath = Tools.DIR_DATA + "/authlib-injector/authlib-injector.jar";
+        File injectorJar = new File(injectorPath);
+        if (injectorJar.exists() && injectorJar.length() > 0) {
+            javaArgList.add("-javaagent:" + injectorPath + "=" + injectorUrl);
+        } else {
+            Log.e("GameRunner", "authlib-injector.jar is missing or empty! Skipping javaagent to prevent crash.");
+        }
     }
 
     private static List<String> getMoJsonJvmArgs(String versionName) {

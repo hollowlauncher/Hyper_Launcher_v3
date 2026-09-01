@@ -1,5 +1,7 @@
 package com.ashmeet.hyperlauncher.screens.layouts.instances
 
+import com.ashmeet.hyperlauncher.utils.translatedText
+
 import android.graphics.drawable.Drawable
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -122,8 +124,8 @@ fun InstanceEditorScreen(
                 OutlinedTextField(
                     value = instanceName,
                     onValueChange = onInstanceNameChange,
-                    label = { Text(stringResource(R.string.profiles_profile_name)) },
-                    placeholder = { Text(stringResource(R.string.unnamed)) },
+                    label = { Text(translatedText(stringResource(R.string.profiles_profile_name))) },
+                    placeholder = { Text(translatedText(stringResource(R.string.unnamed))) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
@@ -136,8 +138,8 @@ fun InstanceEditorScreen(
                     OutlinedTextField(
                         value = versionId,
                         onValueChange = {},
-                        label = { Text(stringResource(R.string.profiles_profile_version)) },
-                        placeholder = { Text(stringResource(R.string.version_select_hint)) },
+                        label = { Text(translatedText(stringResource(R.string.profiles_profile_version))) },
+                        placeholder = { Text(translatedText(stringResource(R.string.version_select_hint))) },
                         readOnly = true,
                         modifier = Modifier.weight(1f),
                         trailingIcon = {
@@ -147,7 +149,7 @@ fun InstanceEditorScreen(
                         }
                     )
                     MineButton(
-                        text = stringResource(R.string.global_select),
+                        text = translatedText(stringResource(R.string.global_select)),
                         onClick = onSelectVersion,
                         modifier = Modifier.height(40.dp)
                     )
@@ -161,8 +163,8 @@ fun InstanceEditorScreen(
                     OutlinedTextField(
                         value = controlLayout,
                         onValueChange = {},
-                        label = { Text(stringResource(R.string.default_control)) },
-                        placeholder = { Text(stringResource(R.string.use_global_default)) },
+                        label = { Text(translatedText(stringResource(R.string.default_control))) },
+                        placeholder = { Text(translatedText(stringResource(R.string.use_global_default))) },
                         readOnly = true,
                         modifier = Modifier.weight(1f),
                         trailingIcon = {
@@ -172,14 +174,14 @@ fun InstanceEditorScreen(
                         }
                     )
                     MineButton(
-                        text = stringResource(R.string.global_select),
+                        text = translatedText(stringResource(R.string.global_select)),
                         onClick = onSelectControl,
                         modifier = Modifier.height(40.dp)
                     )
                 }
 
                 ListItem(
-                    headlineContent = { Text(stringResource(R.string.instance_shared_data)) },
+                    headlineContent = { Text(translatedText(stringResource(R.string.instance_shared_data))) },
                     supportingContent = {
                         Text(stringResource(if (sharedData) R.string.instance_shared_data_on else R.string.instance_shared_data_off))
                     },
@@ -196,24 +198,24 @@ fun InstanceEditorScreen(
                 OutlinedTextField(
                     value = jvmArgs,
                     onValueChange = onJvmArgsChange,
-                    label = { Text(stringResource(R.string.pvc_jvmArgs)) },
-                    placeholder = { Text(stringResource(R.string.use_global_default)) },
+                    label = { Text(translatedText(stringResource(R.string.pvc_jvmArgs))) },
+                    placeholder = { Text(translatedText(stringResource(R.string.use_global_default))) },
                     modifier = Modifier.fillMaxWidth()
                 )
 
                 InstanceDropdown(
-                    label = stringResource(R.string.pedit_java_runtime),
+                    label = translatedText(stringResource(R.string.pedit_java_runtime)),
                     items = runtimes,
                     selectedItem = selectedRuntime,
                     itemLabel = {
                         if (runtimes.indexOf(it) == runtimes.size - 1) it.name
-                        else "${it.name.replace(".tar.xz", "")} - ${it.versionString ?: stringResource(R.string.multirt_runtime_corrupt)}"
+                        else "${it.name.replace(".tar.xz", "")} - ${it.versionString ?: translatedText(stringResource(R.string.multirt_runtime_corrupt))}"
                     },
                     onItemSelected = onRuntimeSelected
                 )
 
                 InstanceDropdown(
-                    label = stringResource(R.string.pedit_renderer),
+                    label = translatedText(stringResource(R.string.pedit_renderer)),
                     items = renderers,
                     selectedItem = selectedRenderer,
                     itemLabel = {
@@ -255,7 +257,7 @@ fun InstanceEditorScreen(
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         MineButton(
-                            text = stringResource(R.string.global_delete),
+                            text = translatedText(stringResource(R.string.global_delete)),
                             onClick = onDelete,
                             modifier = Modifier.weight(1f),
                             height = 48.dp,
@@ -263,7 +265,7 @@ fun InstanceEditorScreen(
                         )
 
                         MineButton(
-                            text = stringResource(R.string.global_save),
+                            text = translatedText(stringResource(R.string.global_save)),
                             onClick = onSave,
                             modifier = Modifier.weight(1f),
                             height = 48.dp,

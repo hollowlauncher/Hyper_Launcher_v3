@@ -1,5 +1,7 @@
 package com.ashmeet.hyperlauncher.screens.layouts.settings.preferences
 
+import com.ashmeet.hyperlauncher.utils.translatedText
+
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -135,7 +137,7 @@ fun RuntimeSelectionDialog(
                                 )
                             } else {
                                 Text(
-                                    text = stringResource(R.string.multirt_runtime_corrupt),
+                                    text = translatedText(stringResource(R.string.multirt_runtime_corrupt)),
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.error
                                 )
@@ -159,7 +161,7 @@ fun RuntimeSelectionDialog(
         },
         confirmButton = {
             TextButton(onClick = onAddRuntime) {
-                Text(stringResource(R.string.multirt_config_add))
+                Text(translatedText(stringResource(R.string.multirt_config_add)))
             }
         },
         dismissButton = {
@@ -274,7 +276,7 @@ fun PointerHotspotPickerDialog(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Column {
-                        Text(text = "Hotspot X", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
+                        Text(text = translatedText("Hotspot X"), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
                         SimpleTextSlider(
                             value = hotspotX,
                             onValueChange = { hotspotX = it },
@@ -287,7 +289,7 @@ fun PointerHotspotPickerDialog(
                     }
 
                     Column {
-                        Text(text = "Hotspot Y", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
+                        Text(text = translatedText("Hotspot Y"), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
                         SimpleTextSlider(
                             value = hotspotY,
                             onValueChange = { hotspotY = it },

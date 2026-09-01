@@ -1,5 +1,7 @@
 package com.ashmeet.hyperlauncher.fragments
 
+import com.ashmeet.hyperlauncher.utils.translatedText
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -33,8 +35,8 @@ class DeleteConfirmDialogFragment : DialogFragment() {
                     } else {
                         AlertDialog(
                             onDismissRequest = { dismiss() },
-                            title = { Text(text = stringResource(R.string.instance_delete)) },
-                            text = { Text(text = stringResource(R.string.instance_delete_confirmation)) },
+                            title = { Text(text = translatedText(stringResource(R.string.instance_delete))) },
+                            text = { Text(text = translatedText(stringResource(R.string.instance_delete_confirmation))) },
                             confirmButton = {
                                 TextButton(onClick = {
                                     InstanceIconProvider.dropIcon(mInstance)
@@ -46,12 +48,12 @@ class DeleteConfirmDialogFragment : DialogFragment() {
                                     }
                                     dismiss()
                                 }) {
-                                    Text(text = stringResource(R.string.global_delete))
+                                    Text(text = translatedText(stringResource(R.string.global_delete)))
                                 }
                             },
                             dismissButton = {
                                 TextButton(onClick = { dismiss() }) {
-                                    Text(text = stringResource(R.string.global_no))
+                                    Text(text = translatedText(stringResource(R.string.global_no)))
                                 }
                             }
                         )

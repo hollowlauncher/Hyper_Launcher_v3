@@ -65,6 +65,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.ashmeet.hyperlauncher.utils.translatedText
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.authenticator.accounts.Account
 import net.kdt.pojavlaunch.authenticator.accounts.Accounts
@@ -204,7 +205,7 @@ fun MainMenuFragmentCompose(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(60.dp),
-                            title = stringResource(id = R.string.mcl_tab_web),
+                            title = translatedText(stringResource(id = R.string.mcl_tab_web)),
                             icon = Icons.Rounded.Info,
                             position = CardPosition.TOP,
                             onClick = onWikiClick
@@ -213,7 +214,7 @@ fun MainMenuFragmentCompose(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(60.dp),
-                            title = stringResource(id = R.string.mcl_button_social_media),
+                            title = translatedText(stringResource(id = R.string.mcl_button_social_media)),
                             icon = Icons.Rounded.Share,
                             position = CardPosition.MIDDLE,
                             onClick = onSocialMediaClick
@@ -223,7 +224,7 @@ fun MainMenuFragmentCompose(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(60.dp),
-                            title = stringResource(id = R.string.mcl_option_customcontrol),
+                            title = translatedText(stringResource(id = R.string.mcl_option_customcontrol)),
                             icon = Icons.Rounded.Build,
                             position = CardPosition.MIDDLE,
                             onClick = onCustomControlsClick
@@ -232,7 +233,7 @@ fun MainMenuFragmentCompose(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(60.dp),
-                            title = stringResource(id = R.string.main_install_jar_file),
+                            title = translatedText(stringResource(id = R.string.main_install_jar_file)),
                             icon = Icons.Rounded.Add,
                             position = CardPosition.MIDDLE,
                             onClick = onInstallJarClick
@@ -241,7 +242,7 @@ fun MainMenuFragmentCompose(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(60.dp),
-                            title = stringResource(id = R.string.main_share_logs),
+                            title = translatedText(stringResource(id = R.string.main_share_logs)),
                             icon = Icons.AutoMirrored.Rounded.Send,
                             position = CardPosition.MIDDLE,
                             onClick = onShareLogsClick
@@ -250,7 +251,7 @@ fun MainMenuFragmentCompose(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(60.dp),
-                            title = stringResource(id = R.string.mcl_button_open_directory),
+                            title = translatedText(stringResource(id = R.string.mcl_button_open_directory)),
                             icon = Icons.Rounded.Search,
                             position = CardPosition.BOTTOM,
                             onClick = onOpenFilesClick
@@ -313,7 +314,7 @@ fun MainMenuFragmentCompose(
                                 } else {
                                     Icon(
                                         imageVector = Icons.Default.Add,
-                                        contentDescription = "Add Account",
+                                        contentDescription = translatedText("Add Account"),
                                         modifier = Modifier.size(32.dp),
                                         tint = MaterialTheme.colorScheme.primary
                                     )
@@ -368,9 +369,9 @@ fun MainMenuFragmentCompose(
                                     Column(modifier = Modifier.weight(1f)) {
                                         val name = selectedInstance?.name
                                         val instanceDisplayName = if (selectedInstance == null) {
-                                            stringResource(id = R.string.no_instance)
+                                            translatedText(stringResource(id = R.string.no_instance))
                                         } else if (name.isNullOrBlank()) {
-                                            "UNNAMED"
+                                            translatedText("UNNAMED")
                                         } else {
                                             name
                                         }
@@ -385,7 +386,7 @@ fun MainMenuFragmentCompose(
                                             color = MaterialTheme.colorScheme.onSurface
                                         )
                                         Text(
-                                            text = selectedInstance?.versionId ?: stringResource(id = R.string.version_select_hint),
+                                            text = selectedInstance?.versionId ?: translatedText(stringResource(id = R.string.version_select_hint)),
                                             style = MaterialTheme.typography.bodySmall.copy(fontSize = 9.sp),
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
@@ -398,7 +399,7 @@ fun MainMenuFragmentCompose(
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.Settings,
-                                        contentDescription = "Edit Profile",
+                                        contentDescription = translatedText("Edit Profile"),
                                         modifier = Modifier.size(24.dp),
                                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
@@ -411,7 +412,7 @@ fun MainMenuFragmentCompose(
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                             verticalAlignment = Alignment.CenterVertically) {
                             MineButton(
-                                text = "Launch",
+                                text = translatedText("Launch"),
                                 onClick = onPlayClick,
                                 modifier = Modifier
                                     .weight(1f),

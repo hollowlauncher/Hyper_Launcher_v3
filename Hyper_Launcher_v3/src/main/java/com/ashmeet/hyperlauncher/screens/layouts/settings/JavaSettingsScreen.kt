@@ -1,5 +1,7 @@
 package com.ashmeet.hyperlauncher.screens.layouts.settings
 
+import com.ashmeet.hyperlauncher.utils.translatedText
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
@@ -49,7 +51,7 @@ fun JavaSettingsScreen(
     var showJavaArgsDialog by remember { mutableStateOf(false) }
 
     SettingsScreenWrapper(
-        title = stringResource(R.string.preference_java_title),
+        title = translatedText(stringResource(R.string.preference_java_title)),
         onBack = onBack,
         addTopGap = true
     ) {
@@ -67,8 +69,8 @@ fun JavaSettingsScreen(
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             SettingsCard(position = CardPosition.TOP, useSurface = true) {
                 SettingsActionItem(
-                    title = stringResource(R.string.multirt_title),
-                    summary = runtimeSummary.ifEmpty { stringResource(R.string.multirt_subtitle) },
+                    title = translatedText(stringResource(R.string.multirt_title)),
+                    summary = runtimeSummary.ifEmpty { translatedText(stringResource(R.string.multirt_subtitle)) },
                     icon = Icons.Default.Coffee,
                     onClick = { showRuntimeDialog = true }
                 )
@@ -76,8 +78,8 @@ fun JavaSettingsScreen(
 
             SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
                 SettingsActionItem(
-                    title = stringResource(R.string.mcl_setting_title_javaargs),
-                    summary = javaArgs.ifEmpty { stringResource(R.string.mcl_setting_subtitle_javaargs) },
+                    title = translatedText(stringResource(R.string.mcl_setting_title_javaargs)),
+                    summary = javaArgs.ifEmpty { translatedText(stringResource(R.string.mcl_setting_subtitle_javaargs)) },
                     icon = Icons.Default.Terminal,
                     warningTooltip = "Improper JVM arguments can cause the game to crash or perform poorly. Only modify if you know what you are doing.",
                     onClick = { showJavaArgsDialog = true }
@@ -86,8 +88,8 @@ fun JavaSettingsScreen(
 
             SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
                 SettingsSliderItem(
-                    title = stringResource(R.string.mcl_memory_allocation),
-                    summary = stringResource(R.string.mcl_memory_allocation_subtitle),
+                    title = translatedText(stringResource(R.string.mcl_memory_allocation)),
+                    summary = translatedText(stringResource(R.string.mcl_memory_allocation_subtitle)),
                     icon = Icons.Default.Memory,
                     value = ramAllocation,
                     valueRange = integerResource(R.integer.memory_seekbar_min).toFloat()..maxRam.toFloat(),
@@ -102,8 +104,8 @@ fun JavaSettingsScreen(
 
             SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {
                 SettingsSwitchItem(
-                    title = stringResource(R.string.mcl_setting_java_sandbox),
-                    summary = stringResource(R.string.mcl_setting_java_sandbox_subtitle),
+                    title = translatedText(stringResource(R.string.mcl_setting_java_sandbox)),
+                    summary = translatedText(stringResource(R.string.mcl_setting_java_sandbox_subtitle)),
                     icon = Icons.Default.Code,
                     checked = javaSandbox,
                     onCheckedChange = {
@@ -118,7 +120,7 @@ fun JavaSettingsScreen(
 
     if (showRuntimeDialog) {
         RuntimeSelectionDialog(
-            title = stringResource(R.string.multirt_title),
+            title = translatedText(stringResource(R.string.multirt_title)),
             runtimes = MultiRTUtils.getRuntimes(),
             selectedRuntimeName = defaultRuntimeName,
             isDeleting = isDeletingRuntimes,
@@ -142,7 +144,7 @@ fun JavaSettingsScreen(
 
     if (showJavaArgsDialog) {
         TextInputDialog(
-            title = stringResource(R.string.mcl_setting_title_javaargs),
+            title = translatedText(stringResource(R.string.mcl_setting_title_javaargs)),
             initialValue = javaArgs,
             onConfirm = { newValue ->
                 javaArgs = newValue

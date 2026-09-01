@@ -1,5 +1,8 @@
 package com.ashmeet.hyperlauncher.screens.layouts.settings
 
+import com.ashmeet.hyperlauncher.utils.Translator
+import com.ashmeet.hyperlauncher.utils.translatedText
+
 import android.view.ViewGroup
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -90,9 +93,9 @@ fun AppearanceSettingsScreen(
     val transitionOptions = listOf("none", "fade", "bounce")
     val transitionOptionNames = transitionOptions.map { id ->
         when (id) {
-            "none" -> stringResource(R.string.preference_screen_transition_none)
-            "fade" -> stringResource(R.string.preference_screen_transition_fade)
-            "bounce" -> stringResource(R.string.preference_screen_transition_bounce)
+            "none" -> translatedText(stringResource(R.string.preference_screen_transition_none))
+            "fade" -> translatedText(stringResource(R.string.preference_screen_transition_fade))
+            "bounce" -> translatedText(stringResource(R.string.preference_screen_transition_bounce))
             else -> id
         }
     }
@@ -100,9 +103,9 @@ fun AppearanceSettingsScreen(
     val themeOptions = listOf("system", "light", "dark")
     val themeOptionNames = themeOptions.map { id ->
         when (id) {
-            "system" -> stringResource(R.string.preference_app_theme_system)
-            "light" -> stringResource(R.string.preference_app_theme_light)
-            "dark" -> stringResource(R.string.preference_app_theme_dark)
+            "system" -> translatedText(stringResource(R.string.preference_app_theme_system))
+            "light" -> translatedText(stringResource(R.string.preference_app_theme_light))
+            "dark" -> translatedText(stringResource(R.string.preference_app_theme_dark))
             else -> id
         }
     }
@@ -110,28 +113,28 @@ fun AppearanceSettingsScreen(
     val languageOptions = listOf("system", "en", "es", "fr", "de", "it", "ja", "zh", "ru")
     val languageOptionNames = languageOptions.map { id ->
         when (id) {
-            "system" -> stringResource(R.string.preference_language_system)
-            "en" -> stringResource(R.string.preference_language_english)
-            "es" -> stringResource(R.string.preference_language_spanish)
-            "fr" -> stringResource(R.string.preference_language_french)
-            "de" -> stringResource(R.string.preference_language_german)
-            "it" -> stringResource(R.string.preference_language_italian)
-            "ja" -> stringResource(R.string.preference_language_japanese)
-            "zh" -> stringResource(R.string.preference_language_chinese)
-            "ru" -> stringResource(R.string.preference_language_russian)
+            "system" -> translatedText(stringResource(R.string.preference_language_system))
+            "en" -> translatedText(stringResource(R.string.preference_language_english))
+            "es" -> translatedText(stringResource(R.string.preference_language_spanish))
+            "fr" -> translatedText(stringResource(R.string.preference_language_french))
+            "de" -> translatedText(stringResource(R.string.preference_language_german))
+            "it" -> translatedText(stringResource(R.string.preference_language_italian))
+            "ja" -> translatedText(stringResource(R.string.preference_language_japanese))
+            "zh" -> translatedText(stringResource(R.string.preference_language_chinese))
+            "ru" -> translatedText(stringResource(R.string.preference_language_russian))
             else -> id
         }
     }
 
     SettingsScreenWrapper(
-        title = stringResource(R.string.preference_appearance_title),
+        title = translatedText(stringResource(R.string.preference_appearance_title)),
         onBack = onBack,
         addTopGap = true
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             SettingsCard(position = CardPosition.TOP, useSurface = true) {
                 SettingsActionItem(
-                    title = stringResource(R.string.preference_app_theme_title),
+                    title = translatedText(stringResource(R.string.preference_app_theme_title)),
                     summary = themeOptionNames[themeOptions.indexOf(appTheme).coerceAtLeast(0)],
                     icon = Icons.Default.Palette,
                     onClick = { showThemeDialog = true }
@@ -140,7 +143,7 @@ fun AppearanceSettingsScreen(
 
             SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
                 SettingsActionItem(
-                    title = stringResource(R.string.preference_language_title),
+                    title = translatedText(stringResource(R.string.preference_language_title)),
                     summary = languageOptionNames[languageOptions.indexOf(appLanguage).coerceAtLeast(0)],
                     icon = Icons.Default.Language,
                     onClick = { showLanguageDialog = true }
@@ -149,8 +152,8 @@ fun AppearanceSettingsScreen(
 
             SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
                 SettingsSwitchItem(
-                    title = "Custom Theme",
-                    summary = "Enable custom colors for the launcher",
+                    title = translatedText("Custom Theme"),
+                    summary = translatedText("Enable custom colors for the launcher"),
                     icon = Icons.Rounded.ColorLens,
                     checked = isCustomTheme,
                     onCheckedChange = {
@@ -165,8 +168,8 @@ fun AppearanceSettingsScreen(
             if (isCustomTheme) {
                 SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
                     SettingsActionItem(
-                        title = "Theme Color",
-                        summary = "Choose a custom color for the launcher",
+                        title = translatedText("Theme Color"),
+                        summary = translatedText("Choose a custom color for the launcher"),
                         icon = Icons.Rounded.ColorLens,
                         onClick = {
                             if (parent != null) {
@@ -186,18 +189,18 @@ fun AppearanceSettingsScreen(
 
             SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {
                 SettingsActionItem(
-                    title = stringResource(R.string.preference_screen_transition_title),
+                    title = translatedText(stringResource(R.string.preference_screen_transition_title)),
                     summary = transitionOptionNames[transitionOptions.indexOf(screenTransition).coerceAtLeast(0)],
                     icon = Icons.Default.Animation,
                     onClick = { showTransitionDialog = true }
                 )
             }
 
-            PreferenceCategory(title = "Main Menu")
+            PreferenceCategory(title = translatedText("Main Menu"))
             SettingsCard(position = CardPosition.SINGLE, useSurface = true) {
                 SettingsSwitchItem(
-                    title = "Hide sidebar",
-                    summary = "Hide action buttons on the left side of the main menu",
+                    title = translatedText("Hide sidebar"),
+                    summary = translatedText("Hide action buttons on the left side of the main menu"),
                     icon = Icons.AutoMirrored.Rounded.ViewSidebar,
                     checked = hideSidebar,
                     onCheckedChange = {
@@ -208,10 +211,10 @@ fun AppearanceSettingsScreen(
                 )
             }
 
-            PreferenceCategory(title = "Drawer Button")
+            PreferenceCategory(title = translatedText("Drawer Button"))
             SettingsCard(position = CardPosition.TOP, useSurface = true) {
                 SettingsSliderItem(
-                    title = "Size",
+                    title = translatedText("Size"),
                     icon = Icons.Rounded.AspectRatio,
                     value = drawerSizePerc,
                     valueRange = 10f..100f,
@@ -225,7 +228,7 @@ fun AppearanceSettingsScreen(
             }
             SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
                 SettingsSliderItem(
-                    title = "Background Opacity",
+                    title = translatedText("Background Opacity"),
                     icon = Icons.Rounded.Opacity,
                     value = drawerBgOpacity,
                     valueRange = 0f..100f,
@@ -239,7 +242,7 @@ fun AppearanceSettingsScreen(
             }
             SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
                 SettingsSliderItem(
-                    title = "Icon Opacity",
+                    title = translatedText("Icon Opacity"),
                     icon = Icons.Rounded.Opacity,
                     value = drawerIconOpacity,
                     valueRange = 0f..100f,
@@ -253,7 +256,7 @@ fun AppearanceSettingsScreen(
             }
             SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
                 SettingsSwitchItem(
-                    title = "Hold to move",
+                    title = translatedText("Hold to move"),
                     icon = Icons.Rounded.DragIndicator,
                     checked = drawerHoldToMove,
                     onCheckedChange = {
@@ -265,7 +268,7 @@ fun AppearanceSettingsScreen(
             }
             SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
                 SettingsSwitchItem(
-                    title = "Show background",
+                    title = translatedText("Show background"),
                     icon = Icons.Rounded.RadioButtonUnchecked,
                     checked = drawerBackground,
                     onCheckedChange = {
@@ -295,7 +298,7 @@ fun AppearanceSettingsScreen(
                     }
                 }
                 SettingsActionItem(
-                    title = "Change icon image",
+                    title = translatedText("Change icon image"),
                     summary = if (drawerIconPath != null) "Custom icon active" else "Default icon active",
                     icon = Icons.Rounded.AddPhotoAlternate,
                     onClick = { launcher.launch("image/*") }
@@ -303,7 +306,7 @@ fun AppearanceSettingsScreen(
             }
             SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {
                 SettingsActionItem(
-                    title = "Reset icon",
+                    title = translatedText("Reset icon"),
                     icon = Icons.Rounded.Restore,
                     onClick = {
                         LauncherPreferences.prefs.edit { remove("drawer_pull_icon_path") }
@@ -313,10 +316,10 @@ fun AppearanceSettingsScreen(
                 )
             }
 
-            PreferenceCategory(title = "Pointer Settings")
+            PreferenceCategory(title = translatedText("Pointer Settings"))
             SettingsCard(position = CardPosition.TOP, useSurface = true) {
                 SettingsSliderItem(
-                    title = "Pointer Size",
+                    title = translatedText("Pointer Size"),
                     icon = Icons.Rounded.AspectRatio,
                     value = mouseScale,
                     valueRange = 25f..300f,
@@ -347,7 +350,7 @@ fun AppearanceSettingsScreen(
                     }
                 }
                 SettingsActionItem(
-                    title = "Change pointer image",
+                    title = translatedText("Change pointer image"),
                     summary = if (pointerIconPath != null) "Custom pointer active" else "Default pointer active",
                     icon = Icons.Rounded.AddPhotoAlternate,
                     onClick = { launcher.launch("image/*") }
@@ -355,15 +358,15 @@ fun AppearanceSettingsScreen(
             }
             SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
                 SettingsActionItem(
-                    title = "Adjust Hotspot",
-                    summary = "Set the point where clicks occur",
+                    title = translatedText("Adjust Hotspot"),
+                    summary = translatedText("Set the point where clicks occur"),
                     icon = Icons.Rounded.DragIndicator,
                     onClick = { showHotspotDialog = true }
                 )
             }
             SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {
                 SettingsActionItem(
-                    title = "Reset pointer",
+                    title = translatedText("Reset pointer"),
                     icon = Icons.Rounded.Restore,
                     onClick = {
                         LauncherPreferences.prefs.edit {
@@ -386,7 +389,7 @@ fun AppearanceSettingsScreen(
 
     if (showThemeDialog) {
         SingleChoiceDialog(
-            title = stringResource(R.string.preference_app_theme_title),
+            title = translatedText(stringResource(R.string.preference_app_theme_title)),
             options = themeOptionNames,
             optionValues = themeOptions,
             selectedValue = appTheme,
@@ -401,7 +404,7 @@ fun AppearanceSettingsScreen(
 
     if (showLanguageDialog) {
         SingleChoiceDialog(
-            title = stringResource(R.string.preference_language_title),
+            title = translatedText(stringResource(R.string.preference_language_title)),
             options = languageOptionNames,
             optionValues = languageOptions,
             selectedValue = appLanguage,
@@ -409,6 +412,7 @@ fun AppearanceSettingsScreen(
                 appLanguage = newValue
                 LauncherPreferences.prefs.edit { putString("app_language", newValue) }
                 LauncherPreferences.loadPreferences(context)
+                Translator.prefetchTranslations(context)
             },
             onDismiss = { showLanguageDialog = false }
         )
@@ -416,7 +420,7 @@ fun AppearanceSettingsScreen(
 
     if (showTransitionDialog) {
         SingleChoiceDialog(
-            title = stringResource(R.string.preference_screen_transition_title),
+            title = translatedText(stringResource(R.string.preference_screen_transition_title)),
             options = transitionOptionNames,
             optionValues = transitionOptions,
             selectedValue = screenTransition,
@@ -431,7 +435,7 @@ fun AppearanceSettingsScreen(
 
     if (showHotspotDialog) {
         PointerHotspotPickerDialog(
-            title = "Adjust Hotspot",
+            title = translatedText("Adjust Hotspot"),
             imagePath = pointerIconPath,
             initialX = pointerHotspotX,
             initialY = pointerHotspotY,

@@ -1,5 +1,7 @@
 package com.ashmeet.hyperlauncher.screens.layouts.settings
 
+import com.ashmeet.hyperlauncher.utils.translatedText
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
@@ -34,7 +36,7 @@ fun ExperimentalSettingsScreen(
     var alsoftForceOpenSL by remember { mutableStateOf(LauncherPreferences.PREF_ALSOFT_FORCE_OPENSL) }
 
     SettingsScreenWrapper(
-        title = stringResource(R.string.preference_experimental_title),
+        title = translatedText(stringResource(R.string.preference_experimental_title)),
         onBack = onBack,
         addTopGap = true
     ) {
@@ -43,8 +45,8 @@ fun ExperimentalSettingsScreen(
 
             items.add {
                 SettingsSwitchItem(
-                    title = stringResource(R.string.preference_shader_dump_title),
-                    summary = stringResource(R.string.preference_shader_dump_description),
+                    title = translatedText(stringResource(R.string.preference_shader_dump_title)),
+                    summary = translatedText(stringResource(R.string.preference_shader_dump_description)),
                     icon = Icons.Default.Settings,
                     checked = dumpShaders,
                     warningTooltip = "Experimental: Shader dumping can significantly impact performance and fill up storage space.",
@@ -58,8 +60,8 @@ fun ExperimentalSettingsScreen(
 
             items.add {
                 SettingsSwitchItem(
-                    title = stringResource(R.string.preference_force_big_core_title),
-                    summary = stringResource(R.string.preference_force_big_core_desc),
+                    title = translatedText(stringResource(R.string.preference_force_big_core_title)),
+                    summary = translatedText(stringResource(R.string.preference_force_big_core_desc)),
                     icon = Icons.Default.Settings,
                     checked = bigCoreAffinity,
                     warningTooltip = "Experimental: Forcing big core affinity may lead to increased heat and battery drain.",
@@ -74,8 +76,8 @@ fun ExperimentalSettingsScreen(
             if (isFreedrenoAvailable) {
                 items.add {
                     SettingsSwitchItem(
-                        title = stringResource(R.string.preference_sysmem_title),
-                        summary = stringResource(R.string.preference_sysmem_summary),
+                        title = translatedText(stringResource(R.string.preference_sysmem_title)),
+                        summary = translatedText(stringResource(R.string.preference_sysmem_summary)),
                         icon = Icons.Default.Settings,
                         checked = freedrenoSysmem,
                         warningTooltip = "Experimental: Freedreno System Memory rendering can be unstable and cause crashes on certain drivers.",
@@ -90,8 +92,8 @@ fun ExperimentalSettingsScreen(
 
             items.add {
                 SettingsSwitchItem(
-                    title = stringResource(R.string.preference_alsoft_opensl_title),
-                    summary = stringResource(R.string.preference_alsoft_opensl_summary),
+                    title = translatedText(stringResource(R.string.preference_alsoft_opensl_title)),
+                    summary = translatedText(stringResource(R.string.preference_alsoft_opensl_summary)),
                     icon = ImageVector.vectorResource(R.drawable.ic_px_dynamic),
                     checked = alsoftForceOpenSL,
                     warningTooltip = "Experimental: Forcing OpenSL may solve audio issues on some devices but could cause latency or crashes on others.",

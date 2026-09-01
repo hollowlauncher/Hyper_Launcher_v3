@@ -1,6 +1,7 @@
 package com.ashmeet.hyperlauncher.screens.layouts.installer
 
 import androidx.compose.animation.AnimatedContent
+import com.ashmeet.hyperlauncher.utils.translatedText
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
@@ -152,7 +153,7 @@ fun ContentInstallerScreen(
             },
             title = {
                 Text(
-                    text = "Unsupported Instance",
+                    text = translatedText("Unsupported Instance"),
                     fontWeight = FontWeight.Bold
                 )
             },
@@ -428,7 +429,7 @@ private fun VersionList(
             }
         } else if (selectedProjectMCVersion == null) {
             Text(
-                text = "Select Game Version",
+                text = translatedText("Select Game Version"),
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(16.dp)
             )
@@ -510,7 +511,7 @@ private fun VersionList(
 fun ContentInstallerScreenPreview() {
     val sampleProject = ModrinthProject(
         id = "1",
-        title = "Sample Mod",
+        title = translatedText("Sample Mod"),
         description = "A sample mod for testing the installer screen.",
         iconUrl = null,
         fullDescription = "This is a detailed description of the sample mod."
@@ -526,7 +527,7 @@ fun ContentInstallerScreenPreview() {
             onImportModpack = {},
             projects = listOf(
                 sampleProject,
-                sampleProject.copy(id = "2", title = "Another Mod", description = "Description for the second mod.")
+                sampleProject.copy(id = "2", title = translatedText("Another Mod"), description = "Description for the second mod.")
             ),
             isLoading = false,
             selectedVersion = "1.20.1",
@@ -542,7 +543,7 @@ fun ContentInstallerScreenPreview() {
 fun ContentInstallerScreenDetailPreview() {
     val sampleProject = ModrinthProject(
         id = "1",
-        title = "Sample Mod",
+        title = translatedText("Sample Mod"),
         description = "A sample mod for testing the installer screen.",
         iconUrl = null,
         fullDescription = "This is a detailed description of the sample mod."

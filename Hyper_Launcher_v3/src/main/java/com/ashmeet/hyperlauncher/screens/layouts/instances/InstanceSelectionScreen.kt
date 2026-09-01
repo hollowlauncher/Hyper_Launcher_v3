@@ -1,6 +1,7 @@
 package com.ashmeet.hyperlauncher.screens.layouts.instances
 
 import androidx.compose.animation.core.tween
+import com.ashmeet.hyperlauncher.utils.translatedText
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -199,7 +200,7 @@ private fun InstanceSelectionContent(
                                 )
                                 Spacer(modifier = Modifier.height(16.dp))
                                 Text(
-                                    text = "No instances found",
+                                    text = translatedText("No instances found"),
                                     style = MaterialTheme.typography.bodyLarge,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )

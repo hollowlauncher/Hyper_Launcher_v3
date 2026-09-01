@@ -1,6 +1,7 @@
 package com.ashmeet.hyperlauncher.screens.activity.game
 
 import android.content.Context
+import com.ashmeet.hyperlauncher.utils.translatedText
 import android.os.Handler
 import android.os.Looper
 import android.util.AttributeSet
@@ -132,7 +133,7 @@ fun LoggerViewCompose(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = stringResource(id = R.string.log_view_label_log_output),
+                    text = translatedText(stringResource(R.string.log_view_label_log_output)),
                     color = Color.White,
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.weight(1f)
@@ -175,7 +176,7 @@ fun LoggerViewCompose(
                 IconButton(onClick = onDismiss) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = "Close",
+                        contentDescription = translatedText("Close"),
                         tint = Color.White
                     )
                 }

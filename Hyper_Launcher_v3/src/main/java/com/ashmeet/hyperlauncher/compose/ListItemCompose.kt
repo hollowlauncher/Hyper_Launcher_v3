@@ -1,6 +1,7 @@
 package com.ashmeet.hyperlauncher.compose
 
 import androidx.compose.animation.core.Animatable
+import com.ashmeet.hyperlauncher.utils.translatedText
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -156,7 +157,7 @@ fun InstanceListItem(
                 IconButton(onClick = { menuExpanded = true }) {
                     Icon(
                         imageVector = Icons.Rounded.MoreVert,
-                        contentDescription = "Options",
+                        contentDescription = translatedText("Options"),
                         modifier = Modifier.size(24.dp),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -180,7 +181,7 @@ fun InstanceListItem(
                                 )
                                 Spacer(modifier = Modifier.width(12.dp))
                                 Text(
-                                    text = stringResource(id = R.string.global_edit),
+                                    text = translatedText(stringResource(R.string.global_edit)),
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
                             }
@@ -201,7 +202,7 @@ fun InstanceListItem(
                                 )
                                 Spacer(modifier = Modifier.width(12.dp))
                                 Text(
-                                    text = stringResource(id = R.string.global_name),
+                                    text = translatedText(stringResource(R.string.global_name)),
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
                             }
@@ -222,7 +223,7 @@ fun InstanceListItem(
                                 )
                                 Spacer(modifier = Modifier.width(12.dp))
                                 Text(
-                                    text = stringResource(id = R.string.global_delete),
+                                    text = translatedText(stringResource(R.string.global_delete)),
                                     color = MaterialTheme.colorScheme.error
                                 )
                             }

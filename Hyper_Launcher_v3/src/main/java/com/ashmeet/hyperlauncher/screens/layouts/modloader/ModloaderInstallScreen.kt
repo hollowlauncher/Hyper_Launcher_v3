@@ -1,5 +1,7 @@
 package com.ashmeet.hyperlauncher.screens.layouts.modloader
 
+import com.ashmeet.hyperlauncher.utils.translatedText
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -69,7 +71,7 @@ fun <T> ModloaderInstallScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Refresh,
-                            contentDescription = stringResource(R.string.global_retry)
+                            contentDescription = translatedText(stringResource(R.string.global_retry))
                         )
                     }
                 }
@@ -94,13 +96,13 @@ fun <T> ModloaderInstallScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = stringResource(R.string.modloader_dl_failed_to_load_list),
+                            text = translatedText(stringResource(R.string.modloader_dl_failed_to_load_list)),
                             color = MaterialTheme.colorScheme.error,
                             textAlign = TextAlign.Center
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Button(onClick = onRetry) {
-                            Text(stringResource(R.string.global_retry))
+                            Text(translatedText(stringResource(R.string.global_retry)))
                         }
                     }
                 } else {

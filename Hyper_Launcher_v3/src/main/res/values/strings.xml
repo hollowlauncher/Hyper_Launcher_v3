@@ -217,6 +217,7 @@
     <string name="multirt_title">Runtime Manager</string>
     <string name="multirt_subtitle">Manage installed Java Runtimes.</string>
     <string name="multirt_progress_caching">Caching…</string>
+    <string name="translation_prefetching">Downloading translations: %1$s (%2$d/%3$d)</string>
     <string name="multirt_config_setdefault">Set default</string>
     <string name="multirt_config_setdefault_already">Default</string>
     <string name="multirt_config_removeerror_last">You must have at least one Java Runtime installed.</string>

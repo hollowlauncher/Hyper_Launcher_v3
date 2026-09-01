@@ -1,6 +1,7 @@
 package com.ashmeet.hyperlauncher.screens.activity.launcher
 
 import android.widget.FrameLayout
+import com.ashmeet.hyperlauncher.utils.translatedText
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -68,7 +69,7 @@ fun PojavLauncherScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.Download,
-                                contentDescription = "Content Installer",
+                                contentDescription = translatedText("Content Installer"),
                                 tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
@@ -79,7 +80,7 @@ fun PojavLauncherScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.Folder,
-                                contentDescription = "Instance Directory",
+                                contentDescription = translatedText("Instance Directory"),
                                 tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
@@ -91,7 +92,7 @@ fun PojavLauncherScreen(
                     ) {
                         Icon(
                             painter = painterResource(id = settingsIconRes),
-                            contentDescription = "Settings",
+                            contentDescription = translatedText("Settings"),
                             tint = MaterialTheme.colorScheme.onSurface
                         )
                     }

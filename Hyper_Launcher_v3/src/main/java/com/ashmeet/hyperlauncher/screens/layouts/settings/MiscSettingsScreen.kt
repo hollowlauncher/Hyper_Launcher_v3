@@ -1,5 +1,7 @@
 package com.ashmeet.hyperlauncher.screens.layouts.settings
 
+import com.ashmeet.hyperlauncher.utils.translatedText
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
@@ -50,7 +52,7 @@ fun MiscSettingsScreen(
         val names = stringArrayResource(R.array.download_source_names)
         val values = stringArrayResource(R.array.download_source_values)
         SingleChoiceDialog(
-            title = stringResource(R.string.preference_download_source_title),
+            title = translatedText(stringResource(R.string.preference_download_source_title)),
             options = names.toList(),
             optionValues = values.toList(),
             selectedValue = downloadSource,
@@ -64,15 +66,15 @@ fun MiscSettingsScreen(
     }
 
     SettingsScreenWrapper(
-        title = stringResource(R.string.preference_misc_title),
+        title = translatedText(stringResource(R.string.preference_misc_title)),
         onBack = onBack,
         addTopGap = true
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             SettingsCard(position = CardPosition.TOP, useSurface = true) {
                 SettingsSwitchItem(
-                    title = stringResource(R.string.preference_verify_game_files_title),
-                    summary = stringResource(R.string.preference_verify_game_files_description),
+                    title = translatedText(stringResource(R.string.preference_verify_game_files_title)),
+                    summary = translatedText(stringResource(R.string.preference_verify_game_files_description)),
                     icon = Icons.Default.Numbers,
                     checked = checkGameFiles,
                     onCheckedChange = {
@@ -85,8 +87,8 @@ fun MiscSettingsScreen(
 
             SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
                 SettingsSwitchItem(
-                    title = stringResource(R.string.preference_go_vroom_title),
-                    summary = stringResource(R.string.preference_go_vroom_description),
+                    title = translatedText(stringResource(R.string.preference_go_vroom_title)),
+                    summary = translatedText(stringResource(R.string.preference_go_vroom_description)),
                     icon = Icons.Default.Bolt,
                     checked = fastStartupCheck,
                     onCheckedChange = {
@@ -99,7 +101,7 @@ fun MiscSettingsScreen(
 
             SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
                 SettingsActionItem(
-                    title = stringResource(R.string.preference_download_source_title),
+                    title = translatedText(stringResource(R.string.preference_download_source_title)),
                     summary = downloadSource,
                     icon = Icons.Default.Download,
                     onClick = { showDownloadSourceDialog = true }
@@ -108,8 +110,8 @@ fun MiscSettingsScreen(
 
             SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {
                 SettingsSwitchItem(
-                    title = stringResource(R.string.preference_verify_manifest_title),
-                    summary = stringResource(R.string.preference_verify_manifest_description),
+                    title = translatedText(stringResource(R.string.preference_verify_manifest_title)),
+                    summary = translatedText(stringResource(R.string.preference_verify_manifest_description)),
                     icon = Icons.Default.Verified,
                     checked = verifyManifest,
                     onCheckedChange = {
@@ -127,8 +129,8 @@ fun MiscSettingsScreen(
             if (isZinkPreferSystemDriverVisible) {
                 visibleItems.add {
                     SettingsSwitchItem(
-                        title = stringResource(R.string.preference_vulkan_driver_system_title),
-                        summary = stringResource(R.string.preference_vulkan_driver_system_description),
+                        title = translatedText(stringResource(R.string.preference_vulkan_driver_system_title)),
+                        summary = translatedText(stringResource(R.string.preference_vulkan_driver_system_description)),
                         icon = Icons.Default.Settings,
                         checked = zinkPreferSystemDriver,
                         onCheckedChange = {
@@ -143,8 +145,8 @@ fun MiscSettingsScreen(
             if (!isMicrophonePermissionGranted) {
                 visibleItems.add {
                     SettingsActionItem(
-                        title = stringResource(R.string.preference_microphone_access_title),
-                        summary = stringResource(R.string.preference_microphone_access_description),
+                        title = translatedText(stringResource(R.string.preference_microphone_access_title)),
+                        summary = translatedText(stringResource(R.string.preference_microphone_access_description)),
                         icon = Icons.Default.Mic,
                         onClick = onMicrophoneAccessClick
                     )
@@ -153,8 +155,8 @@ fun MiscSettingsScreen(
 
             visibleItems.add {
                 SettingsActionItem(
-                    title = stringResource(R.string.preference_data_migration_title),
-                    summary = stringResource(R.string.preference_data_migration_summary),
+                    title = translatedText(stringResource(R.string.preference_data_migration_title)),
+                    summary = translatedText(stringResource(R.string.preference_data_migration_summary)),
                     icon = Icons.AutoMirrored.Filled.Input,
                     warningTooltip = "Data migration may overwrite existing instances and control maps. Ensure you have backups before proceeding.",
                     onClick = onRunDataMigrationClick

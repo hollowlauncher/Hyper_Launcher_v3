@@ -1,5 +1,7 @@
 package com.ashmeet.hyperlauncher.fragments.selection
 
+import com.ashmeet.hyperlauncher.utils.translatedText
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -163,20 +165,20 @@ fun ProfileTypeContent(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
-            text = stringResource(R.string.create_profile_vanilla_like_versions),
+            text = translatedText(stringResource(R.string.create_profile_vanilla_like_versions)),
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface
         )
 
         MineButton(
-            text = stringResource(R.string.create_instance_vanilla),
+            text = translatedText(stringResource(R.string.create_instance_vanilla)),
             onClick = onVanillaClick,
             modifier = Modifier.fillMaxWidth()
         )
 
         MineButton(
-            text = stringResource(R.string.mod_dl_install_optifine),
+            text = translatedText(stringResource(R.string.mod_dl_install_optifine)),
             onClick = onOptiFineClick,
             modifier = Modifier.fillMaxWidth()
         )
@@ -184,50 +186,50 @@ fun ProfileTypeContent(
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = stringResource(R.string.create_profile_modded_versions),
+            text = translatedText(stringResource(R.string.create_profile_modded_versions)),
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface
         )
 
         MineButton(
-            text = stringResource(R.string.modloader_dl_install_fabric_instance),
+            text = translatedText(stringResource(R.string.modloader_dl_install_fabric_instance)),
             onClick = onFabricClick,
             modifier = Modifier.fillMaxWidth()
         )
 
         MineButton(
-            text = stringResource(R.string.modloader_dl_install_quilt_instance),
+            text = translatedText(stringResource(R.string.modloader_dl_install_quilt_instance)),
             onClick = onQuiltClick,
             modifier = Modifier.fillMaxWidth()
         )
 
         MineButton(
-            text = stringResource(R.string.modloader_dl_install_legacy_fabric_instance),
+            text = translatedText(stringResource(R.string.modloader_dl_install_legacy_fabric_instance)),
             onClick = onLegacyFabricClick,
             modifier = Modifier.fillMaxWidth()
         )
 
         MineButton(
-            text = stringResource(R.string.modloader_dl_install_forge_instance),
+            text = translatedText(stringResource(R.string.modloader_dl_install_forge_instance)),
             onClick = onForgeClick,
             modifier = Modifier.fillMaxWidth()
         )
 
         MineButton(
-            text = stringResource(R.string.modloader_dl_install_neoforge_instance),
+            text = translatedText(stringResource(R.string.modloader_dl_install_neoforge_instance)),
             onClick = onNeoForgeClick,
             modifier = Modifier.fillMaxWidth()
         )
 
         MineButton(
-            text = stringResource(R.string.modpack_install_instance_button),
+            text = translatedText(stringResource(R.string.modpack_install_instance_button)),
             onClick = onModpackClick,
             modifier = Modifier.fillMaxWidth()
         )
 
         MineButton(
-            text = stringResource(R.string.create_bta_instance),
+            text = translatedText(stringResource(R.string.create_bta_instance)),
             onClick = onBTAClick,
             modifier = Modifier.fillMaxWidth()
         )

@@ -1,6 +1,7 @@
 package com.ashmeet.hyperlauncher.compose
 
 import android.graphics.BitmapFactory
+import com.ashmeet.hyperlauncher.utils.translatedText
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -278,7 +279,7 @@ fun AccountSpinnerUI(
                         )
                         Spacer(modifier = Modifier.width(16.dp))
                         Text(
-                            text = stringResource(id = R.string.main_add_account),
+                            text = translatedText(stringResource(R.string.main_add_account)),
                             color = MaterialTheme.colorScheme.onSurface,
                             fontSize = 16.sp
                         )
@@ -328,7 +329,7 @@ fun AccountSpinnerUI(
                         )
                         Spacer(modifier = Modifier.width(16.dp))
                         Text(
-                            text = stringResource(id = R.string.main_add_account),
+                            text = translatedText(stringResource(R.string.main_add_account)),
                             color = MaterialTheme.colorScheme.onSurface
                         )
                     }
@@ -350,7 +351,7 @@ fun AccountSpinnerUI(
                             IconButton(onClick = { onAccountDelete(account) }) {
                                 Icon(
                                     Icons.Default.Delete,
-                                    contentDescription = "Delete",
+                                    contentDescription = translatedText("Delete"),
                                     tint = MaterialTheme.colorScheme.error
                                 )
                             }
