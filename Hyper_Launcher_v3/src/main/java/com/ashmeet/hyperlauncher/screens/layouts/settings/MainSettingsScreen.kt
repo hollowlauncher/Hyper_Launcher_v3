@@ -27,6 +27,7 @@ import com.ashmeet.hyperlauncher.screens.layouts.settings.layouts.SettingsScreen
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.PreferenceCategory
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SettingsActionItem
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SettingsSwitchItem
+import com.ashmeet.hyperlauncher.utils.translatedText
 import net.ashmeet.hyperlauncher.R
 import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences
 
@@ -47,14 +48,14 @@ fun MainSettingsScreen(
     val context = LocalContext.current
 
     SettingsScreenWrapper(
-        title = stringResource(R.string.mcl_options),
+        title = translatedText(stringResource(R.string.mcl_options)),
         onBack = null
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             SettingsCard(position = CardPosition.TOP, useSurface = true) {
                 SettingsActionItem(
-                    title = stringResource(R.string.preference_video_title),
-                    summary = stringResource(R.string.preference_video_description),
+                    title = translatedText(stringResource(R.string.preference_video_title)),
+                    summary = translatedText(stringResource(R.string.preference_video_description)),
                     icon = Icons.Default.Image,
                     onClick = onNavigateToVideo
                 )
@@ -62,8 +63,8 @@ fun MainSettingsScreen(
 
             SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
                 SettingsActionItem(
-                    title = stringResource(R.string.preference_control_title),
-                    summary = stringResource(R.string.preference_control_description),
+                    title = translatedText(stringResource(R.string.preference_control_title)),
+                    summary = translatedText(stringResource(R.string.preference_control_description)),
                     icon = Icons.Default.VideogameAsset,
                     onClick = onNavigateToControl
                 )
@@ -71,8 +72,8 @@ fun MainSettingsScreen(
 
             SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
                 SettingsActionItem(
-                    title = stringResource(R.string.preference_java_title),
-                    summary = stringResource(R.string.preference_java_description),
+                    title = translatedText(stringResource(R.string.preference_java_title)),
+                    summary = translatedText(stringResource(R.string.preference_java_description)),
                     icon = Icons.Default.Coffee,
                     onClick = onNavigateToJava
                 )
@@ -80,8 +81,8 @@ fun MainSettingsScreen(
 
             SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
                 SettingsActionItem(
-                    title = stringResource(R.string.preference_misc_title),
-                    summary = stringResource(R.string.preference_misc_description),
+                    title = translatedText(stringResource(R.string.preference_misc_title)),
+                    summary = translatedText(stringResource(R.string.preference_misc_description)),
                     icon = Icons.Default.SettingsApplications,
                     onClick = onNavigateToMisc
                 )
@@ -89,8 +90,8 @@ fun MainSettingsScreen(
 
             SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
                 SettingsActionItem(
-                    title = stringResource(R.string.preference_experimental_title),
-                    summary = stringResource(R.string.preference_experimental_description),
+                    title = translatedText(stringResource(R.string.preference_experimental_title)),
+                    summary = translatedText(stringResource(R.string.preference_experimental_description)),
                     icon = Icons.Default.Science,
                     onClick = onNavigateToExperimental
                 )
@@ -98,8 +99,8 @@ fun MainSettingsScreen(
 
             SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
                 SettingsActionItem(
-                    title = "Plugins",
-                    summary = "Manage installed native plugins",
+                    title = translatedText("Plugins"),
+                    summary = translatedText("Manage installed native plugins"),
                     icon = Icons.Default.Extension,
                     onClick = onNavigateToPlugins
                 )
@@ -107,21 +108,21 @@ fun MainSettingsScreen(
 
             SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {
                 SettingsActionItem(
-                    title = stringResource(R.string.preference_appearance_title),
-                    summary = stringResource(R.string.preference_appearance_description),
+                    title = translatedText(stringResource(R.string.preference_appearance_title)),
+                    summary = translatedText(stringResource(R.string.preference_appearance_description)),
                     icon = Icons.Default.Palette,
                     onClick = onNavigateToAppearance
                 )
             }
         }
 
-        PreferenceCategory(title = stringResource(R.string.preference_category_miscellaneous))
+        PreferenceCategory(title = translatedText(stringResource(R.string.preference_category_miscellaneous)))
 
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             SettingsCard(position = if (showNotificationRequest) CardPosition.TOP else CardPosition.SINGLE, useSurface = true) {
                 SettingsSwitchItem(
-                    title = stringResource(R.string.preference_force_english_title),
-                    summary = stringResource(R.string.preference_force_english_description),
+                    title = translatedText(stringResource(R.string.preference_force_english_title)),
+                    summary = translatedText(stringResource(R.string.preference_force_english_description)),
                     icon = Icons.Default.Translate,
                     checked = forceEnglish,
                     onCheckedChange = {
@@ -135,8 +136,8 @@ fun MainSettingsScreen(
             if (showNotificationRequest) {
                 SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {
                     SettingsActionItem(
-                        title = stringResource(R.string.preference_ask_for_notification_title),
-                        summary = stringResource(R.string.preference_ask_for_notification_description),
+                        title = translatedText(stringResource(R.string.preference_ask_for_notification_title)),
+                        summary = translatedText(stringResource(R.string.preference_ask_for_notification_description)),
                         icon = Icons.Default.Notifications,
                         onClick = onNotificationRequestClick
                     )
