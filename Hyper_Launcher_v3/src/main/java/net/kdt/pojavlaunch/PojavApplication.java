@@ -2,6 +2,7 @@ package net.kdt.pojavlaunch;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
@@ -62,7 +63,8 @@ public class PojavApplication extends Application {
 		});
 	}
 
-	@Override
+	@SuppressLint("SuspiciousIndentation")
+    @Override
 	public void onCreate() {
 		ContextExecutor.setApplication(this);
 		// Disable fatal errors on gplay. This is necessary so that Google can collect crash report data and send it to me

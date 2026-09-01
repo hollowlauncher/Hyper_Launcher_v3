@@ -110,11 +110,16 @@ android {
         }
 
         release {
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             resValue 'string', 'storageProviderAuthorities', 'net.ashmeet.hyperlauncher.scoped.gamefolder'
             resValue 'string', 'application_package', 'net.ashmeet.hyperlauncher'
+        }
+
+        gplay {
+            initWith release
+            matchingFallbacks += List.of("release")
         }
     }
 
@@ -294,7 +299,7 @@ afterEvaluate {
         registrar.setVariant(variant)
 
         registrar.projectJarDependency project(":forge_installer"), "components/forge_installer"
-        registrar.projectJarDependency project(":MioLibPatcher"), "components/launcher"
+        registrar.projectJarDependency project(":MioLibPatcher"), "components/MioLibPatcher"
 
 		if (variant.getName().toLowerCase().contains("full")) {
             registrar.jreRuntimeDependency 8, "components/jre"

@@ -5,17 +5,24 @@ import static net.kdt.pojavlaunch.Architecture.archAsString;
 import static net.kdt.pojavlaunch.Architecture.archAsStringAndroid;
 import static net.kdt.pojavlaunch.Architecture.getDeviceArchitecture;
 import static net.kdt.pojavlaunch.PojavApplication.sExecutorService;
+
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Log;
+
 import com.kdt.mcgui.ProgressLayout;
+
 import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.multirt.MultiRTUtils;
+
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 public class AsyncAssetManager {
 
@@ -46,7 +53,7 @@ public class AsyncAssetManager {
             try {
                 MultiRTUtils.installRuntimeNamedBinpack(
                         am.open("components/jre/universal.tar.xz"),
-                        am.open("components/jre/bin-" + archAsString(getDeviceArchitecture()) + ".tar.xz"),
+                        am.open("components/jre/bin-" + archAsString(Tools.DEVICE_ARCHITECTURE) + ".tar.xz"),
                         "Internal", finalRt_version);
                 MultiRTUtils.postPrepare("Internal");
             }catch (IOException e) {
@@ -85,23 +92,50 @@ public class AsyncAssetManager {
         ProgressLayout.setProgress(ProgressLayout.EXTRACT_COMPONENTS, 0);
         sExecutorService.execute(() -> {
             try {
-                unpackComponent(ctx, "caciocavallo", false);
-                unpackComponent(ctx, "caciocavallo17", false);
+                tryUnpackComponent(ctx, "caciocavallo", false);
+                tryUnpackComponent(ctx, "caciocavallo17", false);
                 // Since the Java module system doesn't allow multiple JARs to declare the same module,
                 // we repack them to a single file here
                 unpackLwjglNatives(ctx);
-                unpackComponent(ctx, "lwjgl3/3.3.3", false);
-                unpackComponent(ctx, "lwjgl3/3.4.1", false);
-                unpackComponent(ctx, "security", true);
-                unpackComponent(ctx, "arc_dns_injector", true);
-                unpackComponent(ctx, "MioLibPatcher", true);
-                unpackComponent(ctx, "forge_installer", true);
+                tryUnpackComponent(ctx, "lwjgl3/3.3.3", false);
+                tryUnpackComponent(ctx, "lwjgl3/3.4.1", false);
+                tryUnpackComponent(ctx, "security", true);
+                tryUnpackComponent(ctx, "arc_dns_injector", true);
+                tryUnpackComponent(ctx, "MioLibPatcher", true);
+                tryUnpackComponent(ctx, "forge_installer", true);
+                tryUnpackComponent(ctx, "authlib-injector", true);
             } catch (IOException e) {
                 Log.e("AsyncAssetManager", "Failed to unpack components !",e );
             }
             ProgressLayout.clearProgress(ProgressLayout.EXTRACT_COMPONENTS);
         });
     }
+
+    private static String readInstalledComponentVersion(File componentRoot) {
+        File localVersionFile = new File(componentRoot, "version");
+        if (!localVersionFile.exists()) return null;
+        try(FileInputStream fileInputStream = new FileInputStream(localVersionFile)) {
+            return IOUtils.toString(fileInputStream, StandardCharsets.UTF_8);
+        }catch (IOException ignored) {}
+        return null;
+    }
+
+    private static String readBuiltinComponentVersion(AssetManager assetManager, String componentName) {
+        String componentVersionLocation = "components/"+componentName+"/version";
+        try (InputStream inputStream = assetManager.open(componentVersionLocation)) {
+            return IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+        }catch (IOException ignored) {}
+        return null;
+    }
+
+    private static void tryUnpackComponent(Context ctx, String component, boolean privateDirectory) {
+        try {
+            unpackComponent(ctx, component, privateDirectory);
+        }catch (IOException e) {
+            Log.e("AssetUnpacker", "Failed to unpack component "+component, e);
+        }
+    }
+
     // Piggybacks off of the java modules extracting later to use their version files for update checks
     // This is indeed prone to breaking.
     private static void unpackLwjglNatives(Context ctx) throws IOException {
@@ -141,41 +175,38 @@ public class AsyncAssetManager {
     private static void unpackComponent(Context ctx, String component, boolean privateDirectory) throws IOException {
         AssetManager am = ctx.getAssets();
         String rootDir = privateDirectory ? Tools.DIR_DATA : Tools.DIR_GAME_HOME;
+        File componentTarget = new File(rootDir, component);
+        String installedVersion = readInstalledComponentVersion(componentTarget);
+        String builtinVersion = readBuiltinComponentVersion(am, component);
 
-        File versionFile = new File(rootDir + "/" + component + "/version");
-        InputStream is = am.open("components/" + component + "/version");
-        if(!versionFile.exists()) {
-            if (versionFile.getParentFile() != null && versionFile.getParentFile().exists() && versionFile.getParentFile().isDirectory()) {
-                FileUtils.deleteDirectory(versionFile.getParentFile());
-            }
-            if (versionFile.getParentFile() != null) versionFile.getParentFile().mkdirs();
+        if(installedVersion != null && installedVersion.equals(builtinVersion)) {
+            Log.i("AssetUnpacker", "Component "+component+" is up-to-date, continuing...");
+            return;
+        }
+        Log.i("AssetUnpacker", "Updating "+component);
 
-            Log.i("UnpackPrep", component + ": Pack was installed manually, or does not exist, unpacking new...");
-            String[] fileList = am.list("components/" + component);
-            if (fileList != null) {
-                for(String s : fileList) {
-                    Tools.copyAssetFile(ctx, "components/" + component + "/" + s, rootDir + "/" + component, true);
-                }
-            }
-        } else {
-            FileInputStream fis = new FileInputStream(versionFile);
-            String release1 = Tools.read(is);
-            String release2 = Tools.read(fis);
-            if (!release1.equals(release2)) {
-                if (versionFile.getParentFile() != null && versionFile.getParentFile().exists() && versionFile.getParentFile().isDirectory()) {
-                    FileUtils.deleteDirectory(versionFile.getParentFile());
-                }
-                if (versionFile.getParentFile() != null) versionFile.getParentFile().mkdirs();
+        if(componentTarget.exists()) {
+            FileUtils.deleteDirectory(componentTarget);
+        }
+        if(!componentTarget.mkdirs()) {
+            throw new IOException("Failed to create directory for "+component);
+        }
 
-                String[] fileList = am.list("components/" + component);
-                if (fileList != null) {
-                    for (String fileName : fileList) {
-                        Tools.copyAssetFile(ctx, "components/" + component + "/" + fileName, rootDir + "/" + component, true);
-                    }
-                }
-            } else {
-                Log.i("UnpackPrep", component + ": Pack is up-to-date with the launcher, continuing...");
+        String componentSource = "components/" + component;
+
+        String[] fileList = am.list(componentSource);
+        if (fileList != null) {
+            for (String fileName : fileList) {
+                if (fileName.equals("version")) continue;
+                String sourcePath = componentSource + "/" + fileName;
+                Tools.copyAssetFile(ctx, sourcePath, componentTarget.getAbsolutePath(), true);
             }
+        }
+
+        // Always write the version file separately after extracting everything else, to improve
+        // reliability.
+        if (builtinVersion != null) {
+            Tools.write(new File(componentTarget, "version"), builtinVersion);
         }
     }
 

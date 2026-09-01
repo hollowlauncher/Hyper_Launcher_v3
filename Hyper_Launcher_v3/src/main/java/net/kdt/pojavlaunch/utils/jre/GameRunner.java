@@ -23,7 +23,7 @@ import net.kdt.pojavlaunch.lifecycle.LifecycleAwareAlertDialog;
 import net.kdt.pojavlaunch.multirt.MultiRTUtils;
 import net.kdt.pojavlaunch.multirt.Runtime;
 import net.kdt.pojavlaunch.plugins.NativePluginManager;
-import net.kdt.pojavlaunch.utils.DateUtils;
+import com.ashmeet.hyperlauncher.utils.DateUtils;
 import net.kdt.pojavlaunch.utils.FileUtils;
 import net.kdt.pojavlaunch.utils.GLInfoUtils;
 import net.kdt.pojavlaunch.utils.GameOptionsUtils;
@@ -35,7 +35,6 @@ import net.kdt.pojavlaunch.utils.RendererCompatUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -90,7 +89,7 @@ public class GameRunner {
      * @return whether the GPU is affected by the Large Thin Wrapper render distance issue on vanilla
      */
 
-    private static boolean affectedByRenderDistanceIssue(JVersionList.Version version) throws ParseException {
+    private static boolean affectedByRenderDistanceIssue(JVersionList.Version version) {
         if(LauncherPreferences.PREF_USE_ANGLE) return false;
         GLInfoUtils.GLInfo info = GLInfoUtils.getGlInfo();
         return info.isAdreno() &&
@@ -99,7 +98,7 @@ public class GameRunner {
                 DateUtils.dateBefore(DateUtils.getOriginalReleaseDate(version), 2025, 2, 25);
     }
 
-    private static boolean checkRenderDistance(JVersionList.Version version, File gamedir) throws ParseException {
+    private static boolean checkRenderDistance(JVersionList.Version version, File gamedir) {
         if(!affectedByRenderDistanceIssue(version)) return false;
         if(hasSodium(gamedir)) return false;
         try {
@@ -113,11 +112,11 @@ public class GameRunner {
         return renderDistance > 7;
     }
 
-    private static boolean isGl4esCompatible(JVersionList.Version version) throws Exception{
+    private static boolean isGl4esCompatible(JVersionList.Version version) {
         return DateUtils.dateBefore(DateUtils.getOriginalReleaseDate(version), 2025, 1, 7);
     }
 
-    private static boolean isCompatContext(JVersionList.Version version) throws Exception{
+    private static boolean isCompatContext(JVersionList.Version version) {
         // Day before the release date of 21w10a, the first OpenGL 3 Core Minecraft version
         return DateUtils.dateBefore(DateUtils.getOriginalReleaseDate(version), 2021, 3, 9);
     }
@@ -530,16 +529,12 @@ public class GameRunner {
         }
 
         String userType = "mojang";
-        try {
-            Date creationDate = DateUtils.getOriginalReleaseDate(versionInfo);
-            // Minecraft 22w43a which adds chat reporting (and signing) was released on
-            // 26th October 2022. So, if the date is not before that (meaning it is equal or higher)
-            // change the userType to MSA to fix the missing signature
-            if(creationDate != null && !DateUtils.dateBefore(creationDate, 2022, 9, 26)) {
-                userType = "msa";
-            }
-        }catch (ParseException e) {
-            Log.e("CheckForProfileKey", "Failed to determine profile creation date, using \"mojang\"", e);
+        Date creationDate = DateUtils.getOriginalReleaseDate(versionInfo);
+        // Minecraft 22w43a which adds chat reporting (and signing) was released on
+        // 26th October 2022. So, if the date is not before that (meaning it is equal or higher)
+        // change the userType to MSA to fix the missing signature
+        if(!DateUtils.dateBefore(creationDate, 2022, 9, 26)) {
+            userType = "msa";
         }
 
 
