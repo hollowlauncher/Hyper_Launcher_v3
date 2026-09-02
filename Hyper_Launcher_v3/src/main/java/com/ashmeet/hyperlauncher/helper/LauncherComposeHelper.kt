@@ -22,6 +22,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.lifecycle.setViewTreeLifecycleOwner
@@ -29,6 +30,7 @@ import androidx.lifecycle.setViewTreeViewModelStoreOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import com.ashmeet.hyperlauncher.components.SideNavigationRail
 import com.ashmeet.hyperlauncher.screens.activity.game.ExitScreen
+import com.ashmeet.hyperlauncher.screens.activity.game.GameBasemainScreen
 import com.ashmeet.hyperlauncher.screens.activity.game.LoggerView
 import com.ashmeet.hyperlauncher.screens.activity.game.controls.ControlsEditorScreen
 import com.ashmeet.hyperlauncher.screens.activity.game.controls.GameControlsScreen
@@ -132,6 +134,7 @@ object LauncherComposeHelper {
         isInEditor: Boolean,
         controlLayout: ControlLayout,
         loggerView: LoggerView,
+        instanceName: String,
         onDrawerControllerCreated: (DrawerController) -> Unit,
         onAction: (Int) -> Unit
     ) {
@@ -153,52 +156,52 @@ object LauncherComposeHelper {
                     override fun isOpen(): Boolean = drawerState.isOpen
                 })
 
-                CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
-                    ModalNavigationDrawer(
-                        drawerState = drawerState,
-                        drawerContent = {
-                            CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-                                SideNavigationRail(
-                                    isEditor = isInEditor,
-                                    onAction = { action ->
-                                        onAction(action)
-                                        scope.launch { drawerState.close() }
-                                    },
-                                    isExport = isInEditor
-                                )
-                            }
-                        },
-                        gesturesEnabled = false
-                    ) {
-                        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-                            Box(modifier = Modifier.fillMaxSize()) {
-                                if (isInEditor) {
-                                    ControlsEditorScreen(
-                                        controlLayout = controlLayout,
-                                        onDrawerButtonTap = null,
-                                        drawerState = drawerState
-                                    )
-                                } else {
-                                    GameControlsScreen(
-                                        drawerState = drawerState,
-                                        controlLayout = controlLayout,
-                                        loggerView = loggerView,
-                                        onDrawerButtonTap = null
+                GameBasemainScreen(instanceName = instanceName) {
+                    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+                        ModalNavigationDrawer(
+                            drawerState = drawerState,
+                            drawerContent = {
+                                CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+                                    SideNavigationRail(
+                                        isEditor = isInEditor,
+                                        onAction = { action ->
+                                            onAction(action)
+                                            scope.launch { drawerState.close() }
+                                        },
+                                        isExport = isInEditor
                                     )
                                 }
+                            },
+                            gesturesEnabled = false
+                        ) {
+                            CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+                                Box(modifier = Modifier.fillMaxSize()) {
+                                    if (isInEditor) {
+                                        ControlsEditorScreen(
+                                            controlLayout = controlLayout,
+                                            drawerState = drawerState
+                                        )
+                                    } else {
+                                        GameControlsScreen(
+                                            drawerState = drawerState,
+                                            controlLayout = controlLayout,
+                                            loggerView = loggerView
+                                        )
+                                    }
 
-                                if (drawerState.targetValue != DrawerValue.Closed) {
-                                    Box(
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                            .background(Color.Black.copy(alpha = 0.01f))
-                                            .clickable(
-                                                interactionSource = remember { MutableInteractionSource() },
-                                                indication = null
-                                            ) {
-                                                scope.launch { drawerState.close() }
-                                            }
-                                    )
+                                    if (drawerState.targetValue != DrawerValue.Closed) {
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                                .background(Color.Black.copy(alpha = 0.01f))
+                                                .clickable(
+                                                    interactionSource = remember { MutableInteractionSource() },
+                                                    indication = null
+                                                ) {
+                                                    scope.launch { drawerState.close() }
+                                                }
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -241,12 +244,6 @@ object LauncherComposeHelper {
                             Box(modifier = Modifier.fillMaxSize()) {
                                 ControlsEditorScreen(
                                     controlLayout = controlLayout,
-                                    onDrawerButtonTap = {
-                                        scope.launch {
-                                            if (drawerState.isOpen) drawerState.close()
-                                            else drawerState.open()
-                                        }
-                                    },
                                     drawerState = drawerState
                                 )
 

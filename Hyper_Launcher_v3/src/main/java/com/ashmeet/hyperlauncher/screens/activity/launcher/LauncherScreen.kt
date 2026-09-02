@@ -15,20 +15,29 @@ import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material.icons.rounded.Folder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
-import com.ashmeet.hyperlauncher.compose.AccountSpinnerCompose
-import com.ashmeet.hyperlauncher.compose.ProgressLayoutCompose
+import com.ashmeet.hyperlauncher.screens.layouts.compose.AccountSpinnerCompose
+import com.ashmeet.hyperlauncher.screens.layouts.compose.ProgressLayoutCompose
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 import net.ashmeet.hyperlauncher.R
+import net.kdt.pojavlaunch.progresskeeper.ProgressKeeper
+import net.kdt.pojavlaunch.progresskeeper.TaskCountListener
 
 @Composable
 fun PojavLauncherScreen(
@@ -39,6 +48,18 @@ fun PojavLauncherScreen(
     onInstanceDirectoryClick: () -> Unit,
     onFragmentViewCreated: (FrameLayout) -> Unit
 ) {
+    var taskCount by remember { mutableIntStateOf(ProgressKeeper.getTaskCount()) }
+    DisposableEffect(Unit) {
+        val listener = TaskCountListener { count ->
+            taskCount = count
+            false
+        }
+        ProgressKeeper.addTaskCountListener(listener)
+        onDispose {
+            ProgressKeeper.removeTaskCountListener(listener)
+        }
+    }
+
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
@@ -55,7 +76,8 @@ fun PojavLauncherScreen(
                     .zIndex(1f)
             ) {
                 AccountSpinnerCompose(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
+                    hideDivider = taskCount > 0
                 )
 
                 Row(
@@ -65,7 +87,7 @@ fun PojavLauncherScreen(
                     if (isFileManagerVisible) {
                         IconButton(
                             onClick = onContentInstallerClick,
-                            modifier = Modifier.Companion.size(56.dp)
+                            modifier = Modifier.size(56.dp)
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.Download,
@@ -99,7 +121,17 @@ fun PojavLauncherScreen(
                 }
             }
 
-            Box(modifier = Modifier.Companion.weight(1f).fillMaxWidth()) {
+            if (taskCount > 0) {
+                LinearProgressIndicator(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(2.dp),
+                    color = MaterialTheme.colorScheme.primary,
+                    trackColor = Color.Transparent
+                )
+            }
+
+            Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
                 AndroidView(
                     factory = { context ->
                         FrameLayout(context).apply {
@@ -108,7 +140,7 @@ fun PojavLauncherScreen(
                         }
                     },
                     update = {},
-                    modifier = Modifier.Companion.fillMaxSize()
+                    modifier = Modifier.fillMaxSize()
                 )
             }
 

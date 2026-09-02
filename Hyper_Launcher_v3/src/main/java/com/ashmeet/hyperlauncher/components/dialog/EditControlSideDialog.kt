@@ -1,10 +1,11 @@
-package com.ashmeet.hyperlauncher.dialog
+package com.ashmeet.hyperlauncher.components.dialog
 
 import com.ashmeet.hyperlauncher.utils.translatedText
 
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -53,6 +54,7 @@ import net.kdt.pojavlaunch.customcontrols.ControlJoystickData
 import net.kdt.pojavlaunch.customcontrols.buttons.ControlDrawer
 import net.kdt.pojavlaunch.customcontrols.buttons.ControlInterface
 import net.kdt.pojavlaunch.utils.CropperUtils
+import kotlin.math.abs
 import androidx.compose.ui.graphics.Color as ComposeColor
 
 class EditControlSideDialog(context: Context, parent: ViewGroup) :
@@ -163,15 +165,15 @@ private fun EditControlContent(
 
     val view = button.controlView
     DisposableEffect(view, properties) {
-        val listener = android.view.View.OnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+        val listener = View.OnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
             val w = properties.width
             val h = properties.height
             val currentW = widthText.toFloatOrNull() ?: -1f
-            if (kotlin.math.abs(w - currentW) > 0.5f) {
+            if (abs(w - currentW) > 0.5f) {
                 widthText = if (w % 1f == 0f) w.toInt().toString() else w.toString()
             }
             val currentH = heightText.toFloatOrNull() ?: -1f
-            if (kotlin.math.abs(h - currentH) > 0.5f) {
+            if (abs(h - currentH) > 0.5f) {
                 heightText = if (h % 1f == 0f) h.toInt().toString() else h.toString()
             }
         }

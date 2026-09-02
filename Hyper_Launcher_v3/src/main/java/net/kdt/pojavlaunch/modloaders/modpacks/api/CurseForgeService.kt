@@ -140,6 +140,26 @@ object CurseForgeService {
         )
     }
 
+    suspend fun getMods(modIds: List<Int>): List<ModrinthProject> = withContext(Dispatchers.IO) {
+        val handler = getHandler()
+        val body = hashMapOf<String, Any>()
+        body["modIds"] = modIds
+        
+        val response = handler.post("mods", body as Any, JsonObject::class.java) ?: return@withContext emptyList()
+        val data = response.getAsJsonArray("data") ?: return@withContext emptyList()
+        
+        data.map {
+            val item = it.asJsonObject
+            ModrinthProject(
+                id = item.get("id").asString,
+                title = item.get("name").asString,
+                description = item.get("summary").asString,
+                iconUrl = item.getAsJsonObject("logo")?.get("thumbnailUrl")?.asString,
+                gallery = emptyList()
+            )
+        }
+    }
+
     suspend fun getProjectVersions(projectId: String): List<ModrinthVersion> = withContext(Dispatchers.IO) {
         val handler = getHandler()
         
@@ -171,7 +191,26 @@ object CurseForgeService {
                     2 -> "beta"
                     3 -> "alpha"
                     else -> "release"
-                }
+                },
+                dependencies = file.getAsJsonArray("dependencies")?.mapNotNull { dep ->
+                    val d = dep.asJsonObject
+                    val relationType = d.get("relationType").asInt
+                    if (relationType == 5) return@mapNotNull null // Incompatible
+                    
+                    com.ashmeet.hyperlauncher.screens.layouts.installer.models.ModDependency(
+                        projectId = d.get("modId").asString,
+                        versionId = null,
+                        fileName = null,
+                        dependencyType = when(relationType) {
+                            1 -> "embedded"
+                            2 -> "optional"
+                            3 -> "required"
+                            4 -> "tool"
+                            6 -> "include"
+                            else -> "optional"
+                        }
+                    )
+                } ?: emptyList()
             )
         }
     }

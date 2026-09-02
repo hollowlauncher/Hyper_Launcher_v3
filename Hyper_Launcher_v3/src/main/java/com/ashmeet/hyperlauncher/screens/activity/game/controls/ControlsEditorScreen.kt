@@ -3,7 +3,6 @@ package com.ashmeet.hyperlauncher.screens.activity.game.controls
 import com.ashmeet.hyperlauncher.utils.translatedText
 
 import android.content.Context
-import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -29,19 +28,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.viewinterop.AndroidView
 import com.ashmeet.hyperlauncher.components.ActionRow
-import com.ashmeet.hyperlauncher.dialog.EditControlSideDialog
+import com.ashmeet.hyperlauncher.components.dialog.EditControlSideDialog
 import kotlinx.coroutines.launch
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.customcontrols.ControlData
 import net.kdt.pojavlaunch.customcontrols.ControlLayout
 import net.kdt.pojavlaunch.customcontrols.buttons.ControlDrawer
 import net.kdt.pojavlaunch.customcontrols.buttons.ControlInterface
-import net.kdt.pojavlaunch.customcontrols.handleview.DrawerPullButton
 
 @Composable
 fun ControlsEditorScreen(
     controlLayout: ControlLayout,
-    onDrawerButtonTap: (() -> Unit)? = null,
     drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 ) {
     val scope = rememberCoroutineScope()
@@ -75,25 +72,6 @@ fun ControlsEditorScreen(
             factory = { controlLayout },
             modifier = Modifier.fillMaxSize()
         )
-
-        if (onDrawerButtonTap != null) {
-            AndroidView(
-                factory = { ctx ->
-                    // Use a match_parent container so the button can move freely
-                    FrameLayout(ctx).apply {
-                        layoutParams = ViewGroup.LayoutParams(
-                            ViewGroup.LayoutParams.MATCH_PARENT,
-                            ViewGroup.LayoutParams.MATCH_PARENT
-                        )
-                        val button = DrawerPullButton(ctx).apply {
-                            setOnClickListener { onDrawerButtonTap() }
-                        }
-                        addView(button)
-                    }
-                },
-                modifier = Modifier.fillMaxSize()
-            )
-        }
 
         ActionRow(
             followedButton = followedButton,

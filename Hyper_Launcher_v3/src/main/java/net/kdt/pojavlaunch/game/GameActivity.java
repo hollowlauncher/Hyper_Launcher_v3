@@ -42,10 +42,11 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.ashmeet.hyperlauncher.dialog.QuickSettingSideDialog;
+import com.ashmeet.hyperlauncher.components.dialog.QuickSettingSideDialog;
 import com.ashmeet.hyperlauncher.helper.LauncherComposeHelper;
 import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences;
 import com.ashmeet.hyperlauncher.screens.activity.game.LoggerView;
+import com.ashmeet.hyperlauncher.utils.LoggerProxy;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import net.ashmeet.hyperlauncher.R;
@@ -100,7 +101,7 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
     public GLFWCursorView cursor;
     public LoggerView loggerView;
     public LauncherComposeHelper.DrawerController drawerController;
-    public ComposeView navDrawer;
+    public ComposeView mMainComposeView;
     public View mDrawerPullButton;
     private GyroControl mGyroControl = null;
     public ControlLayout mControlLayout;
@@ -124,6 +125,7 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LoggerProxy.INSTANCE.init();
         instance = Instances.loadSelectedInstance();
         account = Accounts.getCurrent();
         if(instance == null) {
@@ -137,7 +139,7 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
         Intent gameServiceIntent = new Intent(this, GameService.class);
         // Start the service a bit early
         ContextCompat.startForegroundService(this, gameServiceIntent);
-        initLayout(R.layout.activity_basemain);
+        initLayout();
         GLFW.addGrabListener(launcherGLView);
 
         mGyroControl = new GyroControl(this);
@@ -221,13 +223,17 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
         bindService(gameServiceIntent, this, 0);
     }
 
-    protected void initLayout(int resId) {
-        setContentView(resId);
+    protected void initLayout() {
+        mMainComposeView = new ComposeView(this);
+        mMainComposeView.setKeepScreenOn(true);
+        setContentView(mMainComposeView);
         bindValues();
         setDrawerContent();
 
         mControlLayout.setMenuListener(this);
-        mDrawerPullButton.setOnClickListener(v -> onClickedMenu());
+        if (mDrawerPullButton != null) {
+            mDrawerPullButton.setOnClickListener(v -> onClickedMenu());
+        }
         cursor.setCursorScale(LauncherPreferences.PREF_MOUSESCALE);
         updatePointerIcon();
 
@@ -305,13 +311,13 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
     }
 
     private void setDrawerContent() {
-        ComposeView composeView = findViewById(R.id.main_compose_view);
-        if (composeView == null) return;
+        if (mMainComposeView == null) return;
         LauncherComposeHelper.setBaseMainContent(
-                composeView,
+                mMainComposeView,
                 isInEditor,
                 mControlLayout,
                 loggerView,
+                instance.name,
                 controller -> { drawerController = controller; return Unit.INSTANCE; },
                 position -> {
                     runOnUiThread(() -> {
@@ -367,18 +373,17 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
         touchCharInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE | InputType.TYPE_TEXT_FLAG_AUTO_COMPLETE | InputType.TYPE_TEXT_FLAG_AUTO_CORRECT | InputType.TYPE_TEXT_VARIATION_FILTER);
         mControlLayout.addView(touchCharInput);
 
-        mDrawerPullButton = findViewById(R.id.drawer_button);
-        if (mDrawerPullButton == null) {
-            mDrawerPullButton = new DrawerPullButton(this);
-            mDrawerPullButton.setId(R.id.drawer_button);
-            FrameLayout.LayoutParams pullParams = new FrameLayout.LayoutParams((int)(40 * density), (int)(20 * density));
-            pullParams.gravity = Gravity.END;
-            mDrawerPullButton.setLayoutParams(pullParams);
-            int p = (int)(8 * density);
-            mDrawerPullButton.setPadding(p, p, p, p);
-            mDrawerPullButton.setElevation(10f * density);
-            mControlLayout.addView(mDrawerPullButton);
-        }
+        mDrawerPullButton = new DrawerPullButton(this);
+        mDrawerPullButton.setId(R.id.drawer_button);
+        FrameLayout.LayoutParams pullParams = new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        pullParams.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
+        pullParams.topMargin = (int) (8 * density);
+        mDrawerPullButton.setLayoutParams(pullParams);
+        mDrawerPullButton.setElevation(10f * density);
+        mControlLayout.addView(mDrawerPullButton);
 
         mHotbarView = new HotbarView(this);
         mHotbarView.setId(R.id.hotbar_view);
@@ -388,8 +393,6 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
         loggerView = new LoggerView(this);
         loggerView.setId(R.id.mainLoggerView);
         loggerView.setVisibility(View.GONE);
-
-        navDrawer = new ComposeView(this);
     }
 
     @Override

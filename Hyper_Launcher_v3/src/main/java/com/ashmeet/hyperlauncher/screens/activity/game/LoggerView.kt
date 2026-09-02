@@ -29,14 +29,7 @@ import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -47,6 +40,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.Logger
+import com.ashmeet.hyperlauncher.utils.LoggerProxy
+
+@Stable
+data class LogLine(val text: String, val color: Color)
 
 class LoggerView @JvmOverloads constructor(
     context: Context,
@@ -73,6 +70,26 @@ class LoggerView @JvmOverloads constructor(
     }
 }
 
+private fun parseLog(text: String): LogLine {
+    val lowerText = text.lowercase()
+    
+    val color = when {
+        lowerText.contains("error") -> Color(0xFFF44336) // Red
+        lowerText.contains("warn") -> Color(0xFFFFEB3B) // Yellow
+        lowerText.contains("success") -> Color(0xFF4CAF50) // Green
+        else -> Color.White
+    }
+
+    // Remove metadata like L<logs:, thread:WARN>, <logs>, etc.
+    val cleanText = text
+        .replace(Regex("^.*?<.*?:"), "") // Remove L<logs:
+        .replace(Regex("^.*?:.*?>"), "") // Remove thread:WARN>
+        .replace(Regex("<.*?>"), "")      // Remove standard tags like <logs>
+        .trim()
+    
+    return LogLine(cleanText, color)
+}
+
 @Composable
 fun LoggerViewCompose(
     isOutputOn: Boolean,
@@ -80,7 +97,7 @@ fun LoggerViewCompose(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val logs = remember { mutableStateListOf<String>() }
+    val logs = remember { mutableStateListOf<LogLine>() }
     var isAutoScrollOn by remember { mutableStateOf(true) }
 
     val listState = rememberLazyListState()
@@ -89,21 +106,22 @@ fun LoggerViewCompose(
     DisposableEffect(isOutputOn) {
         if (isOutputOn) {
             val listener = Logger.eventLogListener { text ->
+                val parsed = parseLog(text ?: "")
                 handler.post {
-                    logs.add(text)
+                    logs.add(parsed)
                     if (logs.size > 1500) {
                         repeat(100) { if (logs.isNotEmpty()) logs.removeAt(0) }
                     }
                 }
             }
-            Logger.setLogListener(listener)
+            LoggerProxy.addListener(listener)
+            
+            onDispose {
+                LoggerProxy.removeListener(listener)
+            }
         } else {
-            Logger.setLogListener(null)
             logs.clear()
-        }
-
-        onDispose {
-            Logger.setLogListener(null)
+            onDispose { }
         }
     }
 
@@ -123,7 +141,7 @@ fun LoggerViewCompose(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),
-            color = Color(0xFF333333),
+            color = MaterialTheme.colorScheme.surface,
             tonalElevation = 4.dp
         ) {
             Row(
@@ -193,8 +211,8 @@ fun LoggerViewCompose(
         ) {
             items(logs) { line ->
                 Text(
-                    text = line,
-                    color = Color.White,
+                    text = line.text,
+                    color = line.color,
                     fontFamily = FontFamily.Monospace,
                     fontSize = 11.sp,
                     lineHeight = 14.sp

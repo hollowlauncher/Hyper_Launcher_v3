@@ -83,7 +83,16 @@ object ModrinthService {
                 gameVersions = v.getAsJsonArray("game_versions").map { gv -> gv.asString },
                 loaders = v.getAsJsonArray("loaders").map { l -> l.asString },
                 downloadUrl = primaryFile.get("url").asString,
-                versionType = v.get("version_type").asString
+                versionType = v.get("version_type").asString,
+                dependencies = v.getAsJsonArray("dependencies")?.map { dep ->
+                    val d = dep.asJsonObject
+                    com.ashmeet.hyperlauncher.screens.layouts.installer.models.ModDependency(
+                        projectId = if (d.has("project_id") && !d.get("project_id").isJsonNull) d.get("project_id").asString else null,
+                        versionId = if (d.has("version_id") && !d.get("version_id").isJsonNull) d.get("version_id").asString else null,
+                        fileName = if (d.has("file_name") && !d.get("file_name").isJsonNull) d.get("file_name").asString else null,
+                        dependencyType = d.get("dependency_type").asString
+                    )
+                } ?: emptyList()
             )
         }
     }
@@ -98,6 +107,22 @@ object ModrinthService {
             fullDescription = response.get("body")?.asString,
             gallery = response.getAsJsonArray("gallery")?.map { it.asJsonObject.get("url").asString } ?: emptyList()
         )
+    }
+
+    suspend fun getProjects(projectIds: List<String>): List<ModrinthProject> = withContext(Dispatchers.IO) {
+        if (projectIds.isEmpty()) return@withContext emptyList()
+        val params = hashMapOf<String, Any>()
+        params["ids"] = "[\"" + projectIds.joinToString("\",\"") + "\"]"
+        val response = apiHandler.get("projects", params, JsonArray::class.java) ?: return@withContext emptyList()
+        response.map {
+            val p = it.asJsonObject
+            ModrinthProject(
+                id = p.get("id").asString,
+                title = p.get("title").asString,
+                description = p.get("description").asString,
+                iconUrl = p.get("icon_url")?.let { if (it.isJsonNull) null else it.asString }
+            )
+        }
     }
 
     suspend fun loadIcon(url: String): Bitmap? = withContext(Dispatchers.IO) {

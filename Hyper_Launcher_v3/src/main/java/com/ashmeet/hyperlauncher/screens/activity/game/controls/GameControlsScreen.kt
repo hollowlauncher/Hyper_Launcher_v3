@@ -1,6 +1,5 @@
 package com.ashmeet.hyperlauncher.screens.activity.game.controls
 
-import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,13 +18,11 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.ashmeet.hyperlauncher.screens.activity.game.LoggerView
 import kotlinx.coroutines.launch
 import net.kdt.pojavlaunch.customcontrols.ControlLayout
-import net.kdt.pojavlaunch.customcontrols.handleview.DrawerPullButton
 
 @Composable
 fun GameControlsScreen(
     controlLayout: ControlLayout,
     loggerView: LoggerView,
-    onDrawerButtonTap: (() -> Unit)? = null,
     drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 ) {
     val scope = rememberCoroutineScope()
@@ -36,25 +33,6 @@ fun GameControlsScreen(
             factory = { controlLayout },
             modifier = Modifier.fillMaxSize()
         )
-
-        if (onDrawerButtonTap != null) {
-            AndroidView(
-                factory = { ctx ->
-                    // Use a match_parent container so the button can move freely
-                    FrameLayout(ctx).apply {
-                        layoutParams = ViewGroup.LayoutParams(
-                            ViewGroup.LayoutParams.MATCH_PARENT,
-                            ViewGroup.LayoutParams.MATCH_PARENT
-                        )
-                        val button = DrawerPullButton(ctx).apply {
-                            setOnClickListener { onDrawerButtonTap() }
-                        }
-                        addView(button)
-                    }
-                },
-                modifier = Modifier.fillMaxSize()
-            )
-        }
 
         AndroidView(
             factory = { loggerView },

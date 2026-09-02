@@ -43,12 +43,12 @@ public class ApiHandler {
         return getFullUrl(additionalHeaders, baseUrl + "/" + endpoint, query, tClass);
     }
 
-    public <T> T post(String endpoint, T body, Class<T> tClass) {
-        return postFullUrl(additionalHeaders, baseUrl + "/" + endpoint, body, tClass);
+    public <T> T post(String endpoint, Object body, Class<T> responseClass) {
+        return postFullUrl(additionalHeaders, baseUrl + "/" + endpoint, body, responseClass);
     }
 
-    public <T> T post(String endpoint, HashMap<String, Object> query, T body, Class<T> tClass) {
-        return postFullUrl(additionalHeaders, baseUrl + "/" + endpoint, query, body, tClass);
+    public <T> T post(String endpoint, HashMap<String, Object> query, Object body, Class<T> responseClass) {
+        return postFullUrl(additionalHeaders, baseUrl + "/" + endpoint, query, body, responseClass);
     }
 
     //Make a get request and return the response as a raw string;
@@ -130,11 +130,11 @@ public class ApiHandler {
         return getFullUrl(null, url, query, tClass);
     }
 
-    public static <T> T postFullUrl(String url, T body, Class<T> tClass) {
+    public static <T> T postFullUrl(String url, Object body, Class<T> tClass) {
         return postFullUrl(null, url, body, tClass);
     }
 
-    public static <T> T postFullUrl(String url, HashMap<String, Object> query, T body, Class<T> tClass) {
+    public static <T> T postFullUrl(String url, HashMap<String, Object> query, Object body, Class<T> tClass) {
         return postFullUrl(null, url, query, body, tClass);
     }
 
@@ -146,12 +146,12 @@ public class ApiHandler {
         return getFullUrl(headers, url + parseQueries(query), tClass);
     }
 
-    public static <T> T postFullUrl(Map<String, String> headers, String url, T body, Class<T> tClass) {
-        return new Gson().fromJson(postRaw(headers, url, body.toString()), tClass);
+    public static <T> T postFullUrl(Map<String, String> headers, String url, Object body, Class<T> tClass) {
+        return new Gson().fromJson(postRaw(headers, url, new Gson().toJson(body)), tClass);
     }
 
-    public static <T> T postFullUrl(Map<String, String> headers, String url, HashMap<String, Object> query, T body, Class<T> tClass) {
-        return new Gson().fromJson(postRaw(headers, url + parseQueries(query), body.toString()), tClass);
+    public static <T> T postFullUrl(Map<String, String> headers, String url, HashMap<String, Object> query, Object body, Class<T> tClass) {
+        return new Gson().fromJson(postRaw(headers, url + parseQueries(query), new Gson().toJson(body)), tClass);
     }
 
     private static String urlEncodeUTF8(String input) {

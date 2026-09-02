@@ -1,4 +1,4 @@
-package com.ashmeet.hyperlauncher.compose
+package com.ashmeet.hyperlauncher.screens.layouts.compose
 
 import androidx.compose.animation.core.Animatable
 import com.ashmeet.hyperlauncher.utils.translatedText

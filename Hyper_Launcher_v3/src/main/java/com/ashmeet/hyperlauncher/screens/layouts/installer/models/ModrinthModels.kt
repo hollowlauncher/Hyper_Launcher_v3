@@ -40,5 +40,13 @@ data class ModrinthVersion(
     val gameVersions: List<String>,
     val loaders: List<String>,
     val downloadUrl: String,
-    val versionType: String = "release"
+    val versionType: String = "release",
+    val dependencies: List<ModDependency> = emptyList()
+)
+
+data class ModDependency(
+    val projectId: String?,
+    val versionId: String?,
+    val fileName: String?,
+    val dependencyType: String // "required", "optional", etc.
 )

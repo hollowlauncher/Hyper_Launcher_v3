@@ -108,7 +108,7 @@ fun ProjectItemView(
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = project.title,
+                    text = translatedText(project.title),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
@@ -116,7 +116,7 @@ fun ProjectItemView(
                     fontSize = 15.sp
                 )
                 Text(
-                    text = project.description,
+                    text = translatedText(project.description),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 2,
@@ -296,7 +296,7 @@ fun ProjectDetailsSidebar(project: ModrinthProject) {
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = project.title,
+            text = translatedText(project.title),
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
@@ -304,7 +304,7 @@ fun ProjectDetailsSidebar(project: ModrinthProject) {
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = project.description,
+            text = translatedText(project.description),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.primary,
             fontWeight = FontWeight.Medium,

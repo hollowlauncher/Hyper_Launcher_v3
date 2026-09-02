@@ -5,17 +5,34 @@ import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.edit
 import androidx.fragment.app.Fragment
+import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences
 import com.ashmeet.hyperlauncher.screens.layouts.installer.ContentInstallerScreen
+import com.ashmeet.hyperlauncher.screens.layouts.installer.components.DependencyDialog
+import com.ashmeet.hyperlauncher.screens.layouts.installer.components.MissingDependency
 import com.ashmeet.hyperlauncher.screens.layouts.installer.models.ContentInstallerType
 import com.ashmeet.hyperlauncher.screens.layouts.installer.models.ContentSource
 import com.ashmeet.hyperlauncher.screens.layouts.installer.models.ModrinthProject
@@ -31,19 +48,19 @@ import net.kdt.pojavlaunch.PojavApplication
 import net.kdt.pojavlaunch.Tools
 import net.kdt.pojavlaunch.instances.Instance
 import net.kdt.pojavlaunch.instances.Instances
-import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences
 import net.kdt.pojavlaunch.modloaders.modpacks.api.CommonApi
 import net.kdt.pojavlaunch.modloaders.modpacks.api.CurseForgeService
-import net.kdt.pojavlaunch.modloaders.modpacks.api.ModrinthService
-import net.kdt.pojavlaunch.modloaders.modpacks.api.ModrinthApi
 import net.kdt.pojavlaunch.modloaders.modpacks.api.CurseforgeApi
 import net.kdt.pojavlaunch.modloaders.modpacks.api.ModpackApi
+import net.kdt.pojavlaunch.modloaders.modpacks.api.ModrinthApi
+import net.kdt.pojavlaunch.modloaders.modpacks.api.ModrinthService
 import net.kdt.pojavlaunch.modloaders.modpacks.models.ModItem
+import com.ashmeet.hyperlauncher.utils.Translator
 import net.kdt.pojavlaunch.progresskeeper.ProgressKeeper
+import net.kdt.pojavlaunch.utils.ModMetadataReader
 import java.io.File
 import java.io.IOException
 import java.net.URL
-import kotlin.collections.map
 
 class ContentInstallerFragment : Fragment() {
 
@@ -82,6 +99,10 @@ class ContentInstallerFragment : Fragment() {
                     var projectVersions by remember { mutableStateOf<List<ModrinthVersion>>(emptyList()) }
                     var selectedProjectMCVersion by remember { mutableStateOf<String?>(null) }
                     var searchQuery by remember { mutableStateOf("") }
+                    
+                    var missingDependencies by remember { mutableStateOf<List<MissingDependency>>(emptyList()) }
+                    var pendingDownloadVersion by remember { mutableStateOf<Pair<ModrinthVersion, ContentInstallerType>?>(null) }
+                    var isDependencyChecking by remember { mutableStateOf(false) }
 
                     val instance = remember { Instances.loadSelectedInstance() }
                     val instanceVersion = remember(instance) {
@@ -128,6 +149,14 @@ class ContentInstallerFragment : Fragment() {
                     }
 
                     var refreshTrigger by remember { mutableIntStateOf(0) }
+                    
+                    val translationTrigger by Translator.refreshTrigger
+                    LaunchedEffect(translationTrigger) {
+                        if (translationTrigger > 0) {
+                            refreshTrigger++
+                        }
+                    }
+
                     LaunchedEffect(selectedType, selectedVersion, selectedLoader, searchQuery, selectedSource, refreshTrigger) {
                         if (searchQuery.isNotEmpty() && refreshTrigger == 0) {
                             delay(500)
@@ -245,6 +274,7 @@ class ContentInstallerFragment : Fragment() {
                             scope.launch(Dispatchers.IO) {
                                 val progressKey = "download_content"
                                 if (selectedType == ContentInstallerType.MODPACKS) {
+                                    // ... existing modpack logic ...
                                     try {
                                         val modpackApi = if (selectedSource == ContentSource.MODRINTH) {
                                             ModrinthApi()
@@ -279,6 +309,17 @@ class ContentInstallerFragment : Fragment() {
                                     }
                                 } else if (selectedType == ContentInstallerType.WORLDS) {
                                     installWorld(version, instance, progressKey)
+                                } else if (selectedType == ContentInstallerType.MODS) {
+                                    isDependencyChecking = true
+                                    val missing = checkDependencies(version, instance, selectedSource, instanceVersion, instanceLoader)
+                                    isDependencyChecking = false
+                                    
+                                    if (missing.isNotEmpty()) {
+                                        missingDependencies = missing
+                                        pendingDownloadVersion = version to selectedType
+                                    } else {
+                                        performDirectDownload(version, instance, selectedType, progressKey)
+                                    }
                                 } else {
                                     performDirectDownload(version, instance, selectedType, progressKey)
                                 }
@@ -308,9 +349,140 @@ class ContentInstallerFragment : Fragment() {
                             importLauncher.launch("*/*")
                         }
                     )
+
+                    if (missingDependencies.isNotEmpty()) {
+                        DependencyDialog(
+                            dependencies = missingDependencies,
+                            onDismiss = {
+                                scope.launch {
+                                    pendingDownloadVersion?.let { (version, type) ->
+                                        performDirectDownload(version, instance, type, "download_content")
+                                    }
+                                    missingDependencies = emptyList()
+                                    pendingDownloadVersion = null
+                                }
+                            },
+                            onConfirm = {
+                                val deps = missingDependencies
+                                val target = pendingDownloadVersion
+                                missingDependencies = emptyList()
+                                pendingDownloadVersion = null
+                                
+                                scope.launch(Dispatchers.IO) {
+                                    downloadMissingDependencies(deps, instance, selectedSource, instanceVersion, instanceLoader)
+                                    target?.let { (version, type) ->
+                                        performDirectDownload(version, instance, type, "download_content")
+                                    }
+                                }
+                            },
+                            onCancel = {
+                                missingDependencies = emptyList()
+                                pendingDownloadVersion = null
+                            }
+                        )
+                    }
+
+                    if (isDependencyChecking) {
+                        AlertDialog(
+                            onDismissRequest = {},
+                            confirmButton = {},
+                            title = { Text("Checking Dependencies...") },
+                            text = { 
+                                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                                    CircularProgressIndicator()
+                                }
+                            }
+                        )
+                    }
                 }
             }
         }
+    }
+
+    private suspend fun checkDependencies(
+        version: ModrinthVersion,
+        instance: Instance,
+        source: ContentSource,
+        mcVersion: String?,
+        loader: String?
+    ): List<MissingDependency> {
+        val requiredDeps = version.dependencies.filter { it.dependencyType == "required" }
+        if (requiredDeps.isEmpty()) return emptyList()
+
+        val modsFolder = File(instance.gameDirectory, "mods")
+        if (!modsFolder.exists()) modsFolder.mkdirs()
+
+        val installedMods = modsFolder.listFiles()?.mapNotNull { file ->
+            ModMetadataReader.getMetadata(file)
+        } ?: emptyList()
+
+        val missing = mutableListOf<MissingDependency>()
+
+        if (source == ContentSource.MODRINTH) {
+            val projectIds = requiredDeps.mapNotNull { it.projectId }
+            val projects = ModrinthService.getProjects(projectIds)
+            
+            requiredDeps.forEach { dep ->
+                val project = projects.find { it.id == dep.projectId }
+                val isInstalled = installedMods.any { 
+                    it.id == dep.projectId || it.name == project?.title 
+                }
+                if (!isInstalled) {
+                    missing.add(MissingDependency(dep.projectId ?: "", project?.title ?: "Unknown Mod", dep.dependencyType, project?.iconUrl))
+                }
+            }
+        } else {
+            val modIds = requiredDeps.mapNotNull { it.projectId?.toIntOrNull() }
+            val mods = CurseForgeService.getMods(modIds)
+            
+            requiredDeps.forEach { dep ->
+                val mod = mods.find { it.id == dep.projectId }
+                val isInstalled = installedMods.any { 
+                    it.id == dep.projectId || it.name == mod?.title 
+                }
+                if (!isInstalled) {
+                    missing.add(MissingDependency(dep.projectId ?: "", mod?.title ?: "Unknown Mod", dep.dependencyType, mod?.iconUrl))
+                }
+            }
+        }
+
+        return missing
+    }
+
+    private suspend fun downloadMissingDependencies(
+        missing: List<MissingDependency>,
+        instance: Instance,
+        source: ContentSource,
+        mcVersion: String?,
+        loader: String?
+    ) {
+        missing.forEach { dep ->
+            try {
+                val versions = if (source == ContentSource.MODRINTH) {
+                    ModrinthService.getProjectVersions(dep.id)
+                } else {
+                    CurseForgeService.getProjectVersions(dep.id)
+                }
+
+                val bestVersion = versions.find { v ->
+                    (mcVersion == null || v.gameVersions.any { isMcVersionCompatible(mcVersion, it) }) &&
+                            (loader == null || v.loaders.any { it.equals(loader, ignoreCase = true) })
+                } ?: versions.firstOrNull()
+
+                bestVersion?.let {
+                    performDirectDownload(it, instance, ContentInstallerType.MODS, "download_content")
+                }
+            } catch (e: Exception) {
+                Log.e("ContentInstaller", "Failed to download dependency ${dep.name}", e)
+            }
+        }
+    }
+
+    private fun isMcVersionCompatible(v1: String, v2: String): Boolean {
+        if (v1 == v2) return true
+        val parts1 = v1.split(".")
+        val parts2 = v2.split(".")
+        return parts1.size >= 2 && parts2.size >= 2 && parts1[1] == parts2[1]
     }
 
     private suspend fun installWorld(version: ModrinthVersion, instance: Instance, progressKey: String) {

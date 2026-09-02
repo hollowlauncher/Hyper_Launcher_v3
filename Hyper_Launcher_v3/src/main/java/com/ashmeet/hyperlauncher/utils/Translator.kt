@@ -23,6 +23,7 @@ import java.util.concurrent.ConcurrentHashMap
 import net.kdt.pojavlaunch.progresskeeper.ProgressKeeper
 import net.ashmeet.hyperlauncher.R
 import java.io.File
+import kotlin.time.Duration.Companion.milliseconds
 
 @Serializable
 data class TranslationResponse(
@@ -271,7 +272,7 @@ object Translator {
                             if (e is CancellationException) throw e
                             retryCount++
                             Log.e("Translator", "Batch translation failed (retry $retryCount/3)", e)
-                            if (retryCount < 3) delay(2000L * retryCount)
+                            if (retryCount < 3) delay((2000L * retryCount).milliseconds)
                             else throw e
                         }
                     }
@@ -281,7 +282,7 @@ object Translator {
                     ProgressKeeper.submitProgress(PROGRESS_KEY, progress, R.string.translation_prefetching, capitalizedTarget, completed, totalCount)
                     
                     // Respect rate limit (2 requests per 2 seconds)
-                    delay(1100L)
+                    delay(1100L.milliseconds)
                 }
 
                 saveCache(context)

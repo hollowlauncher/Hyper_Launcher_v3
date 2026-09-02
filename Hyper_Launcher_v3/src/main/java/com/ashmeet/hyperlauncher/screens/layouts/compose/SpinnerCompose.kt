@@ -1,6 +1,5 @@
-package com.ashmeet.hyperlauncher.compose
+package com.ashmeet.hyperlauncher.screens.layouts.compose
 
-import android.graphics.BitmapFactory
 import com.ashmeet.hyperlauncher.utils.translatedText
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -56,7 +55,6 @@ import net.kdt.pojavlaunch.Tools
 import net.kdt.pojavlaunch.authenticator.AuthType
 import net.kdt.pojavlaunch.authenticator.accounts.Account
 import net.kdt.pojavlaunch.authenticator.accounts.Accounts
-import net.kdt.pojavlaunch.authenticator.accounts.SkinHeadRenderer
 import net.kdt.pojavlaunch.authenticator.listener.LoginListener
 import net.kdt.pojavlaunch.extra.ExtraConstants
 import net.kdt.pojavlaunch.extra.ExtraCore
@@ -69,7 +67,8 @@ import com.ashmeet.hyperlauncher.theme.PojavTheme
 
 @Composable
 fun AccountSpinnerCompose(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    hideDivider: Boolean = false
 ) {
     val context = LocalContext.current
     var accounts by remember { mutableStateOf<List<Account>>(emptyList()) }
@@ -236,6 +235,7 @@ fun AccountSpinnerCompose(
                 }
                 .show()
         },
+        hideDivider = hideDivider,
         modifier = modifier
     )
 }
@@ -251,6 +251,7 @@ fun AccountSpinnerUI(
     onAddAccountClick: () -> Unit,
     onAccountSelected: (Account) -> Unit,
     onAccountDelete: (Account) -> Unit,
+    hideDivider: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     Box(modifier = modifier) {
@@ -296,7 +297,7 @@ fun AccountSpinnerUI(
                         color = MaterialTheme.colorScheme.primary,
                         trackColor = Color.Transparent,
                     )
-                } else {
+                } else if (!hideDivider) {
                     Box(
                         modifier = Modifier
                             .align(Alignment.BottomStart)
