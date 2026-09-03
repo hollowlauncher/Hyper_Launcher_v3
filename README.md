@@ -91,9 +91,9 @@ Build the launcher (it will automatically download all required components):
 - [x] mrpack/CurseForge zip import
 - [x] Modern Material 3 expressive interface
 - [x] Mod manager
-- [ ] Better controller support
-- [ ] Enhanced renderer compatibility
-- [ ] Download manager improvements
+- [x] Better controller support
+- [x] Enhanced renderer compatibility
+- [x] Download manager improvements
 - [ ] MMC-compatible instance import
 - [ ] Replace Holy-GL4ES 1.1.5 with KW (maybe? need to figure out requirements)
 
