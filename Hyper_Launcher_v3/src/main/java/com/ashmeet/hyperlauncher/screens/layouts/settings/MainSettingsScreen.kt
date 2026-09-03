@@ -36,7 +36,6 @@ import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferenc
 
 @Composable
 fun MainSettingsScreen(
-    onBack: () -> Unit,
     onNavigateToVideo: () -> Unit,
     onNavigateToControl: () -> Unit,
     onNavigateToJava: () -> Unit,
