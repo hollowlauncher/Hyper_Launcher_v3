@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Science
 import androidx.compose.material.icons.filled.SettingsApplications
 import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material.icons.filled.VideogameAsset
+import androidx.compose.material.icons.filled.Architecture
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,6 +28,7 @@ import com.ashmeet.hyperlauncher.screens.layouts.settings.layouts.SettingsScreen
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.PreferenceCategory
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SettingsActionItem
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SettingsSwitchItem
+import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SingleChoiceDialog
 import com.ashmeet.hyperlauncher.utils.Translator
 import com.ashmeet.hyperlauncher.utils.translatedText
 import net.ashmeet.hyperlauncher.R
@@ -46,6 +48,8 @@ fun MainSettingsScreen(
     onNotificationRequestClick: () -> Unit
 ) {
     var forceEnglish by remember { mutableStateOf(LauncherPreferences.PREF_FORCE_ENGLISH) }
+    var graphicsBackend by remember { mutableStateOf(LauncherPreferences.PREF_GRAPHICS_BACKEND) }
+    var showBackendDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
     SettingsScreenWrapper(
@@ -120,7 +124,21 @@ fun MainSettingsScreen(
         PreferenceCategory(title = translatedText(stringResource(R.string.preference_category_miscellaneous)))
 
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            SettingsCard(position = if (showNotificationRequest) CardPosition.TOP else CardPosition.SINGLE, useSurface = true) {
+            SettingsCard(position = CardPosition.TOP, useSurface = true) {
+                val backendOptions = listOf("Default", "Vulkan", "OpenGL", "Let MC Decide")
+                val backendValues = listOf("default", "vulkan", "opengl", "minecraft")
+                val currentBackendLabel = backendOptions[backendValues.indexOf(graphicsBackend).coerceAtLeast(0)]
+
+                SettingsActionItem(
+                    title = translatedText("Preferred Graphics Backend"),
+                    summary = currentBackendLabel,
+                    icon = Icons.Default.Architecture,
+                    warningTooltip = if (graphicsBackend == "vulkan") "Your device must support Vulkan to use this option." else null,
+                    onClick = { showBackendDialog = true }
+                )
+            }
+
+            SettingsCard(position = if (showNotificationRequest) CardPosition.MIDDLE else CardPosition.BOTTOM, useSurface = true) {
                 SettingsSwitchItem(
                     title = translatedText(stringResource(R.string.preference_force_english_title)),
                     summary = translatedText(stringResource(R.string.preference_force_english_description)),
@@ -148,5 +166,20 @@ fun MainSettingsScreen(
                 }
             }
         }
+    }
+
+    if (showBackendDialog) {
+        SingleChoiceDialog(
+            title = translatedText("Preferred Graphics Backend"),
+            options = listOf("Default", "Vulkan", "OpenGL", "Let MC Decide"),
+            optionValues = listOf("default", "vulkan", "opengl", "minecraft"),
+            selectedValue = graphicsBackend,
+            onValueChange = { newValue ->
+                graphicsBackend = newValue
+                LauncherPreferences.prefs.edit { putString("preferredGraphicsBackend", newValue) }
+                LauncherPreferences.loadPreferences(context)
+            },
+            onDismiss = { showBackendDialog = false }
+        )
     }
 }
