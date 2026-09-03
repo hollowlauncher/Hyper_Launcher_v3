@@ -43,6 +43,7 @@ fun VideoSettingsScreen(
 ) {
     val context = LocalContext.current
     var renderer by remember { mutableStateOf(LauncherPreferences.PREF_RENDERER) }
+    var graphicsBackend by remember { mutableStateOf(LauncherPreferences.PREF_GRAPHICS_BACKEND) }
     var ignoreNotch by remember { mutableStateOf(LauncherPreferences.PREF_IGNORE_NOTCH) }
     var fullscreenLauncher by remember { mutableStateOf(LauncherPreferences.PREF_FULLSCREEN_LAUNCHER) }
     var resolutionRatio by remember { mutableFloatStateOf(LauncherPreferences.PREF_SCALE_FACTOR * 100f) }
@@ -53,6 +54,7 @@ fun VideoSettingsScreen(
     var vsyncInZink by remember { mutableStateOf(LauncherPreferences.PREF_VSYNC_IN_ZINK) }
     var zinkForceLegacy by remember { mutableStateOf(LauncherPreferences.PREF_ZINK_FORCE_LEGACY) }
     var showRendererDialog by remember { mutableStateOf(false) }
+    var showBackendDialog by remember { mutableStateOf(false) }
 
     SettingsScreenWrapper(
         title = translatedText(stringResource(R.string.preference_category_video)),
@@ -72,6 +74,20 @@ fun VideoSettingsScreen(
                     summary = rendererDisplayName,
                     icon = Icons.Default.Brush,
                     onClick = { showRendererDialog = true }
+                )
+            }
+
+            SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
+                val backendOptions = listOf("Default", "Vulkan", "OpenGL", "Let MC Decide")
+                val backendValues = listOf("default", "vulkan", "opengl", "minecraft")
+                val currentBackendLabel = backendOptions[backendValues.indexOf(graphicsBackend).coerceAtLeast(0)]
+
+                SettingsActionItem(
+                    title = translatedText("Preferred Graphics Backend"),
+                    summary = currentBackendLabel,
+                    icon = Icons.Default.Architecture,
+                    warningTooltip = if (graphicsBackend == "vulkan") "Your device must support Vulkan to use this option." else null,
+                    onClick = { showBackendDialog = true }
                 )
             }
 
@@ -244,6 +260,21 @@ fun VideoSettingsScreen(
                 LauncherPreferences.loadPreferences(context)
             },
             onDismiss = { showRendererDialog = false }
+        )
+    }
+
+    if (showBackendDialog) {
+        SingleChoiceDialog(
+            title = translatedText("Preferred Graphics Backend"),
+            options = listOf("Default", "Vulkan", "OpenGL", "Let MC Decide"),
+            optionValues = listOf("default", "vulkan", "opengl", "minecraft"),
+            selectedValue = graphicsBackend,
+            onValueChange = { newValue ->
+                graphicsBackend = newValue
+                LauncherPreferences.prefs.edit { putString("preferredGraphicsBackend", newValue) }
+                LauncherPreferences.loadPreferences(context)
+            },
+            onDismiss = { showBackendDialog = false }
         )
     }
 }
