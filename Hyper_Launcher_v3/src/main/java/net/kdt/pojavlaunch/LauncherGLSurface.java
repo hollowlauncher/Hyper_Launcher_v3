@@ -345,6 +345,7 @@ public class LauncherGLSurface extends View implements GrabListener, GamepadEnab
         MCOptionUtils.set("fullscreen", "false");
         MCOptionUtils.set("overrideWidth", String.valueOf(windowWidth));
         MCOptionUtils.set("overrideHeight", String.valueOf(windowHeight));
+        MCOptionUtils.set("preferredGraphicsBackend", LauncherPreferences.PREF_GRAPHICS_BACKEND);
         MCOptionUtils.save();
         getMcScale();
 
