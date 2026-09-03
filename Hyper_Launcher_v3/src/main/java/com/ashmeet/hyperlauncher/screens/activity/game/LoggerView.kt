@@ -75,9 +75,9 @@ private fun parseLog(text: String): LogLine {
     
     val color = when {
         lowerText.contains("error") -> Color(0xFFF44336) // Red
-        lowerText.contains("warn") -> Color(0xFFFFEB3B) // Yellow
+        lowerText.contains("warn") -> Color(0xFFFFB300)  // Amber/Darker Yellow for better contrast
         lowerText.contains("success") -> Color(0xFF4CAF50) // Green
-        else -> Color.White
+        else -> Color.Unspecified
     }
 
     // Remove metadata like L<logs:, thread:WARN>, <logs>, etc.
@@ -134,7 +134,7 @@ fun LoggerViewCompose(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.8f))
+            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.95f))
     ) {
 
         Surface(
@@ -212,7 +212,7 @@ fun LoggerViewCompose(
             items(logs) { line ->
                 Text(
                     text = line.text,
-                    color = line.color,
+                    color = if (line.color == Color.Unspecified) MaterialTheme.colorScheme.onSurface else line.color,
                     fontFamily = FontFamily.Monospace,
                     fontSize = 11.sp,
                     lineHeight = 14.sp
