@@ -16,7 +16,6 @@ import net.kdt.pojavlaunch.Logger
 
 @Composable
 fun GameBasemainScreen(
-    instanceName: String,
     content: @Composable BoxScope.() -> Unit
 ) {
     var isSplashVisible by remember { mutableStateOf(true) }
@@ -51,7 +50,7 @@ fun GameBasemainScreen(
                 CircularProgressIndicator(
                     modifier = Modifier.size(32.dp),
                     strokeWidth = 3.dp,
-                    color = MaterialTheme.colorScheme.primary
+                    color = Color.White
                 )
             }
         }

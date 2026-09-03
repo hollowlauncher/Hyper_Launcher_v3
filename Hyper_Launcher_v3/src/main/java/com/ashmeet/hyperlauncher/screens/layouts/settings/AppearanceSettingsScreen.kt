@@ -304,7 +304,7 @@ fun AppearanceSettingsScreen(
                     onClick = { launcher.launch("image/*") }
                 )
             }
-            SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {
+            SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
                 SettingsActionItem(
                     title = translatedText("Reset icon"),
                     icon = Icons.Rounded.Restore,
@@ -312,6 +312,20 @@ fun AppearanceSettingsScreen(
                         LauncherPreferences.prefs.edit { remove("drawer_pull_icon_path") }
                         LauncherPreferences.PREF_DRAWER_PULL_ICON_PATH = null
                         drawerIconPath = null
+                    }
+                )
+            }
+            SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {
+                SettingsActionItem(
+                    title = translatedText("Reset position"),
+                    icon = Icons.Rounded.Restore,
+                    onClick = {
+                        LauncherPreferences.prefs.edit {
+                            remove("drawer_pull_pos_x")
+                            remove("drawer_pull_pos_y")
+                        }
+                        LauncherPreferences.PREF_DRAWER_PULL_POS_X = -1f
+                        LauncherPreferences.PREF_DRAWER_PULL_POS_Y = -1f
                     }
                 )
             }

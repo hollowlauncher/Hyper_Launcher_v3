@@ -21,7 +21,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.text.InputType;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -102,7 +101,6 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
     public LoggerView loggerView;
     public LauncherComposeHelper.DrawerController drawerController;
     public ComposeView mMainComposeView;
-    public View mDrawerPullButton;
     private GyroControl mGyroControl = null;
     public ControlLayout mControlLayout;
     public HotbarView mHotbarView;
@@ -231,9 +229,6 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
         setDrawerContent();
 
         mControlLayout.setMenuListener(this);
-        if (mDrawerPullButton != null) {
-            mDrawerPullButton.setOnClickListener(v -> onClickedMenu());
-        }
         cursor.setCursorScale(LauncherPreferences.PREF_MOUSESCALE);
         updatePointerIcon();
 
@@ -297,7 +292,6 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
         } catch (Throwable th) {
             Tools.showError(this, th);
         }
-        mDrawerPullButton.setVisibility(mControlLayout.hasMenuButton() ? View.GONE : View.VISIBLE);
         mControlLayout.toggleControlVisible();
     }
 
@@ -372,18 +366,6 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
         touchCharInput.setImeOptions(imeOpts);
         touchCharInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE | InputType.TYPE_TEXT_FLAG_AUTO_COMPLETE | InputType.TYPE_TEXT_FLAG_AUTO_CORRECT | InputType.TYPE_TEXT_VARIATION_FILTER);
         mControlLayout.addView(touchCharInput);
-
-        mDrawerPullButton = new DrawerPullButton(this);
-        mDrawerPullButton.setId(R.id.drawer_button);
-        FrameLayout.LayoutParams pullParams = new FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-        );
-        pullParams.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
-        pullParams.topMargin = (int) (8 * density);
-        mDrawerPullButton.setLayoutParams(pullParams);
-        mDrawerPullButton.setElevation(10f * density);
-        mControlLayout.addView(mDrawerPullButton);
 
         mHotbarView = new HotbarView(this);
         mHotbarView.setId(R.id.hotbar_view);
@@ -516,7 +498,6 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
         setDrawerContent();
         // navDrawer.setAdapter(ingameControlsEditorArrayAdapter);
         // navDrawer.setOnItemClickListener(ingameControlsEditorListener);
-        mDrawerPullButton.setVisibility(View.VISIBLE);
     }
 
     private void openLogOutput() {
@@ -628,7 +609,6 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
             mControlLayout.setModifiable(false);
             System.gc();
             mControlLayout.loadLayout(instance.getLaunchControls());
-            mDrawerPullButton.setVisibility(mControlLayout.hasMenuButton() ? View.GONE : View.VISIBLE);
         } catch (Exception e) {
             Tools.showError(this,e);
         }

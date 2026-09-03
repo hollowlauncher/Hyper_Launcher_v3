@@ -134,7 +134,7 @@ fun LoggerViewCompose(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.95f))
+            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.50f))
     ) {
 
         Surface(

@@ -1,5 +1,6 @@
 package net.kdt.pojavlaunch.customcontrols.handleview
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.BitmapFactory
@@ -24,6 +25,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.core.content.edit
 import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences
 import java.io.File
+import kotlin.math.abs
 
 class DrawerPullButton @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
@@ -48,10 +50,20 @@ class DrawerPullButton @JvmOverloads constructor(
             "drawer_pull_background", "drawer_pull_icon_path" -> {
                 updateAppearance()
             }
+            "drawer_pull_pos_x", "drawer_pull_pos_y" -> {
+                if (LauncherPreferences.PREF_DRAWER_PULL_POS_X == -1f || LauncherPreferences.PREF_DRAWER_PULL_POS_Y == -1f) {
+                    mHasMoved = false
+                    requestLayout()
+                } else {
+                    x = LauncherPreferences.PREF_DRAWER_PULL_POS_X
+                    y = LauncherPreferences.PREF_DRAWER_PULL_POS_Y
+                }
+            }
         }
     }
 
     init {
+        isClickable = true
         addView(composeView)
         composeView.setContent {
             DrawerPullButtonContent(
@@ -87,18 +99,18 @@ class DrawerPullButton @JvmOverloads constructor(
         showBackground = LauncherPreferences.PREF_DRAWER_PULL_BACKGROUND
         iconPath = LauncherPreferences.PREF_DRAWER_PULL_ICON_PATH
 
+        requestLayout()
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val dm = resources.displayMetrics
-        // 10% -> 25dp, 100% -> 60dp. Removed the * 2 that made it too big.
         val dpSize = (25 + (pullSizePerc - 10) * (35f / 90f))
         val size = (dpSize * dm.density).toInt()
         
-        layoutParams?.let {
-            if (it.width != size || it.height != size) {
-                it.width = size
-                it.height = size
-                layoutParams = it
-            }
-        }
+        val newWidthSpec = MeasureSpec.makeMeasureSpec(size, MeasureSpec.EXACTLY)
+        val newHeightSpec = MeasureSpec.makeMeasureSpec(size, MeasureSpec.EXACTLY)
+        super.onMeasure(newWidthSpec, newHeightSpec)
+        setMeasuredDimension(size, size)
     }
 
     @Composable
@@ -151,23 +163,12 @@ class DrawerPullButton @JvmOverloads constructor(
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
-        if (!LauncherPreferences.PREF_DRAWER_PULL_HOLD_TO_MOVE) return false
-        
-        // Only intercept if we actually move a bit, to allow clicks to pass through if not held
-        when (ev.action) {
-            MotionEvent.ACTION_DOWN -> {
-                mInitialTouchX = ev.rawX
-                mInitialTouchY = ev.rawY
-            }
-            MotionEvent.ACTION_MOVE -> {
-                val dx = Math.abs(ev.rawX - mInitialTouchX)
-                val dy = Math.abs(ev.rawY - mInitialTouchY)
-                if (dx > 10 || dy > 10) return true
-            }
-        }
-        return false
+        // We must intercept the touch event to ensure onTouchEvent is called, 
+        // as children (like ComposeView) might consume it otherwise.
+        return true
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (!LauncherPreferences.PREF_DRAWER_PULL_HOLD_TO_MOVE) {
             return super.onTouchEvent(event)
@@ -186,7 +187,7 @@ class DrawerPullButton @JvmOverloads constructor(
                 val dx = event.rawX - mInitialTouchX
                 val dy = event.rawY - mInitialTouchY
                 
-                if (Math.abs(dx) > 10 || Math.abs(dy) > 10) {
+                if (abs(dx) > 10 || abs(dy) > 10) {
                     x = mInitialX + dx
                     y = mInitialY + dy
                     mHasMoved = true
@@ -225,6 +226,9 @@ class DrawerPullButton @JvmOverloads constructor(
         if (!mHasMoved && LauncherPreferences.PREF_DRAWER_PULL_POS_X != -1f && LauncherPreferences.PREF_DRAWER_PULL_POS_Y != -1f) {
             x = LauncherPreferences.PREF_DRAWER_PULL_POS_X
             y = LauncherPreferences.PREF_DRAWER_PULL_POS_Y
+        } else if (!mHasMoved) {
+            translationX = 0f
+            translationY = 0f
         }
     }
 }

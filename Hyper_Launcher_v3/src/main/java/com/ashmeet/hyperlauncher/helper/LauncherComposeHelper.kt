@@ -156,7 +156,7 @@ object LauncherComposeHelper {
                     override fun isOpen(): Boolean = drawerState.isOpen
                 })
 
-                GameBasemainScreen(instanceName = instanceName) {
+                GameBasemainScreen {
                     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
                         ModalNavigationDrawer(
                             drawerState = drawerState,

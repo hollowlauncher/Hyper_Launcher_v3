@@ -1,5 +1,7 @@
 package com.ashmeet.hyperlauncher.screens.activity.game.controls
 
+import android.view.Gravity
+import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -12,12 +14,15 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.ashmeet.hyperlauncher.screens.activity.game.LoggerView
 import kotlinx.coroutines.launch
 import net.kdt.pojavlaunch.customcontrols.ControlLayout
+import net.kdt.pojavlaunch.customcontrols.handleview.DrawerPullButton
 
 @Composable
 fun GameControlsScreen(
@@ -36,6 +41,27 @@ fun GameControlsScreen(
 
         AndroidView(
             factory = { loggerView },
+            modifier = Modifier.fillMaxSize()
+        )
+
+        AndroidView(
+            factory = { ctx ->
+                val container = FrameLayout(ctx)
+                val button = DrawerPullButton(ctx).apply {
+                    setOnClickListener {
+                        scope.launch { drawerState.open() }
+                    }
+                }
+                val lp = FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                )
+                lp.gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
+                lp.topMargin = (8 * ctx.resources.displayMetrics.density).toInt()
+                button.layoutParams = lp
+                container.addView(button)
+                container
+            },
             modifier = Modifier.fillMaxSize()
         )
 
