@@ -152,7 +152,7 @@ fun LoggerViewCompose(
             ) {
                 Text(
                     text = translatedText(stringResource(R.string.log_view_label_log_output)),
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onSurface,
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.weight(1f)
                 )
@@ -168,7 +168,7 @@ fun LoggerViewCompose(
                             id = if (isAutoScrollOn) R.string.log_view_button_scroll_on
                                  else R.string.log_view_button_scroll_off
                         ),
-                        tint = if (isAutoScrollOn) MaterialTheme.colorScheme.primary else Color.LightGray
+                        tint = if (isAutoScrollOn) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
@@ -185,7 +185,7 @@ fun LoggerViewCompose(
                             id = if (isOutputOn) R.string.log_view_button_output_on
                                  else R.string.log_view_button_output_off
                         ),
-                        tint = if (isOutputOn) MaterialTheme.colorScheme.primary else Color.LightGray
+                        tint = if (isOutputOn) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
@@ -195,7 +195,7 @@ fun LoggerViewCompose(
                     Icon(
                         imageVector = Icons.Default.Close,
                         contentDescription = translatedText("Close"),
-                        tint = Color.White
+                        tint = MaterialTheme.colorScheme.onSurface
                     )
                 }
             }
