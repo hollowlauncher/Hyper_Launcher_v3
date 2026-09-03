@@ -58,6 +58,7 @@ import net.kdt.pojavlaunch.modloaders.modpacks.models.ModItem
 import com.ashmeet.hyperlauncher.utils.Translator
 import net.kdt.pojavlaunch.progresskeeper.ProgressKeeper
 import net.kdt.pojavlaunch.utils.ModMetadataReader
+import net.kdt.pojavlaunch.instances.MMCInstanceImporter
 import java.io.File
 import java.io.IOException
 import java.net.URL
@@ -655,9 +656,17 @@ class ContentInstallerFragment : Fragment() {
         }
 
         try {
-            val modpackApi: ModpackApi =
-                CommonApi(getString(R.string.curseforge_api_key))
-            modpackApi.installLocalModpack(fileName, outFile, null)
+            if (MMCInstanceImporter.isMMCInstance(outFile)) {
+                ProgressKeeper.submitProgress(progressKey, 50, -1, "Importing MMC Instance...")
+                MMCInstanceImporter.importInstance(fileName.substringBeforeLast("."), outFile)
+                Tools.runOnUiThread {
+                    Toast.makeText(context, "MMC Instance imported successfully", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                val modpackApi: ModpackApi =
+                    CommonApi(getString(R.string.curseforge_api_key))
+                modpackApi.installLocalModpack(fileName, outFile, null)
+            }
         } catch (e: IOException) {
             Tools.showErrorRemote("Error", e)
         } finally {
