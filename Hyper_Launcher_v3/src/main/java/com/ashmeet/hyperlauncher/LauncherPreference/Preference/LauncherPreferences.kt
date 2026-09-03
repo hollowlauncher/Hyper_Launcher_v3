@@ -29,6 +29,9 @@ object LauncherPreferences {
     var PREF_RENDERER = "opengles2"
 
     @JvmField
+    var PREF_GRAPHICS_BACKEND = "default"
+
+    @JvmField
     var PREF_IGNORE_NOTCH = false
 
     @JvmField
@@ -218,6 +221,7 @@ object LauncherPreferences {
         val pref = DEFAULT_PREF ?: return
 
         PREF_RENDERER = pref.getString("renderer", "holy") ?: "holy"
+        PREF_GRAPHICS_BACKEND = pref.getString("preferredGraphicsBackend", "default") ?: "default"
         PREF_BUTTONSIZE = pref.getInt("buttonscale", 100).toFloat()
         PREF_MOUSESCALE = pref.getInt("mousescale", 100) / 100f
         PREF_MOUSESPEED = pref.getInt("mousespeed", 100).toFloat() / 100f
