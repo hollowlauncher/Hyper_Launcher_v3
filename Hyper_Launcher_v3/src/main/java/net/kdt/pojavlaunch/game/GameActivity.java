@@ -16,6 +16,7 @@ import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.hardware.input.InputManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -24,6 +25,7 @@ import android.util.Log;
 import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.PointerIcon;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewPropertyAnimator;
@@ -119,6 +121,49 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
 
     public static boolean mForceFullPanning = false;
     public static int mImeHeight = 0;
+
+    private final InputManager.InputDeviceListener mInputDeviceListener = new InputManager.InputDeviceListener() {
+        @Override
+        public void onInputDeviceAdded(int deviceId) {
+            updateSystemCursor(hasWindowFocus());
+        }
+
+        @Override
+        public void onInputDeviceRemoved(int deviceId) {
+            updateSystemCursor(hasWindowFocus());
+        }
+
+        @Override
+        public void onInputDeviceChanged(int deviceId) {
+            updateSystemCursor(hasWindowFocus());
+        }
+    };
+
+    private void updateSystemCursor(boolean hasFocus) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            boolean shouldHide = false;
+            int[] ids = InputDevice.getDeviceIds();
+            for (int id : ids) {
+                InputDevice device = InputDevice.getDevice(id);
+                if (device != null && (device.getSources() & InputDevice.SOURCE_MOUSE) == InputDevice.SOURCE_MOUSE) {
+                    shouldHide = true;
+                    break;
+                }
+            }
+
+            if (shouldHide && hasFocus) {
+                getWindow().getDecorView().setPointerIcon(PointerIcon.getSystemIcon(this, PointerIcon.TYPE_NULL));
+            } else {
+                getWindow().getDecorView().setPointerIcon(null);
+            }
+        }
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        updateSystemCursor(hasFocus);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -217,6 +262,8 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
         // Set the activity for the executor. Must do this here, or else Tools.showErrorRemote() may not
         // execute the correct method
         ContextExecutor.setActivity(this);
+        InputManager im = (InputManager) getSystemService(Context.INPUT_SERVICE);
+        im.registerInputDeviceListener(mInputDeviceListener, null);
         //Now, attach to the service. The game will only start when this happens, to make sure that we know the right state.
         bindService(gameServiceIntent, this, 0);
     }
@@ -364,7 +411,7 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
             imeOpts |= EditorInfo.IME_FLAG_NO_PERSONALIZED_LEARNING;
         }
         touchCharInput.setImeOptions(imeOpts);
-        touchCharInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE | InputType.TYPE_TEXT_FLAG_AUTO_COMPLETE | InputType.TYPE_TEXT_FLAG_AUTO_CORRECT | InputType.TYPE_TEXT_VARIATION_FILTER);
+        touchCharInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_AUTO_COMPLETE | InputType.TYPE_TEXT_FLAG_AUTO_CORRECT | InputType.TYPE_TEXT_VARIATION_FILTER);
         mControlLayout.addView(touchCharInput);
 
         mHotbarView = new HotbarView(this);
@@ -415,6 +462,8 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        InputManager im = (InputManager) getSystemService(Context.INPUT_SERVICE);
+        im.unregisterInputDeviceListener(mInputDeviceListener);
         ContextExecutor.clearActivity();
     }
 

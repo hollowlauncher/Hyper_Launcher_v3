@@ -126,9 +126,8 @@ public class TouchCharInput extends androidx.appcompat.widget.AppCompatEditText 
         addTextChangedListener(new InputTextWatcher());
         setOnEditorActionListener((textView, i, keyEvent) -> {
             sendEnter();
-            clear();
             disable();
-            return false;
+            return true;
         });
         clear();
         disable();
@@ -148,11 +147,20 @@ public class TouchCharInput extends androidx.appcompat.widget.AppCompatEditText 
         public void onTextChanged(CharSequence text, int start, int lengthBefore, int lengthAfter) {
             if(mIsDoingInternalChanges) return;
             if(mCharacterSender != null){
-                for(int i=0; i < lengthBefore; ++i){
-                    mCharacterSender.sendBackspace();
+                // Detect if a newline was added
+                if (lengthAfter > 0) {
+                    for (int j = 0; j < lengthAfter; j++) {
+                        if (text.charAt(start + j) == '\n') {
+                            sendEnter();
+                            disable();
+                            return;
+                        }
+                    }
                 }
 
-
+                for(int j=0; j < lengthBefore; ++j){
+                    mCharacterSender.sendBackspace();
+                }
 
                 mCharacterSender.sendChars(text.subSequence(start, start + lengthAfter));
             }
