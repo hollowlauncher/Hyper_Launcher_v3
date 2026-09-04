@@ -141,19 +141,15 @@ fun AccountSpinnerCompose(
     }
 
     DisposableEffect(Unit) {
-        val refreshListener = object : ExtraListener<Any> {
-            override fun onValueSet(key: String, value: Any): Boolean {
-                reloadAccounts(false)
-                return false
-            }
+        val refreshListener = ExtraListener<Any> { _, _ ->
+            reloadAccounts(false)
+            false
         }
 
-        val microsoftLoginListener = object : ExtraListener<String> {
-            override fun onValueSet(key: String, value: String): Boolean {
-                val backgroundLogin = AuthType.MICROSOFT.createAuth()
-                backgroundLogin.createAccount(loginListener, value)
-                return false
-            }
+        val microsoftLoginListener = ExtraListener<String> { _, value ->
+            val backgroundLogin = AuthType.MICROSOFT.createAuth()
+            backgroundLogin.createAccount(loginListener, value)
+            false
         }
 
         val elyByLoginListener = ExtraListener<String> { _, value ->
@@ -162,17 +158,15 @@ fun AccountSpinnerCompose(
             false
         }
 
-        val mojangLoginListener = object : ExtraListener<Array<String>> {
-            override fun onValueSet(key: String, value: Array<String>): Boolean {
-                try {
-                    val account = Accounts.create { acc: Account -> acc.username = value[0] }
-                    Accounts.setCurrent(account)
-                    loginListener.onLoginDone(account)
-                } catch (e: IOException) {
-                    loginListener.onLoginError(e)
-                }
-                return false
+        val mojangLoginListener = ExtraListener<Array<String>> { _, value ->
+            try {
+                val account = Accounts.create { acc: Account -> acc.username = value[0] }
+                Accounts.setCurrent(account)
+                loginListener.onLoginDone(account)
+            } catch (e: IOException) {
+                loginListener.onLoginError(e)
             }
+            false
         }
 
         ExtraCore.addExtraListener(ExtraConstants.REFRESH_ACCOUNT_SPINNER, refreshListener)
@@ -229,8 +223,8 @@ fun AccountSpinnerUI(
     onAddAccountClick: () -> Unit,
     onAccountSelected: (Account) -> Unit,
     onAccountDelete: (Account) -> Unit,
-    hideDivider: Boolean = false,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    hideDivider: Boolean = false
 ) {
     Box(modifier = modifier) {
         Surface(
@@ -248,7 +242,10 @@ fun AccountSpinnerUI(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     if (selectedAccount != null) {
-                        AccountItemContent(selectedAccount)
+                        AccountItemContent(
+                            account = selectedAccount,
+                            modifier = Modifier.fillMaxWidth()
+                        )
                     } else {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_add),
@@ -314,9 +311,10 @@ fun AccountSpinnerUI(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                AccountItemContent(account)
-                            }
+                            AccountItemContent(
+                                account = account,
+                                modifier = Modifier.weight(1f)
+                            )
                             IconButton(onClick = { onAccountDelete(account) }) {
                                 Icon(
                                     Icons.Default.Delete,
@@ -334,50 +332,58 @@ fun AccountSpinnerUI(
 }
 
 @Composable
-fun AccountItemContent(account: Account) {
+fun AccountItemContent(
+    account: Account,
+    modifier: Modifier = Modifier
+) {
     val skinHead by SkinUtils.rememberSkinHead(account)
 
-    Box(modifier = Modifier.size(32.dp)) {
-        if (skinHead != null) {
-            Image(
-                bitmap = skinHead!!.asImageBitmap(),
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clip(RoundedCornerShape(4.dp)),
-                contentScale = ContentScale.FillBounds
-            )
-        } else {
-            Box(modifier = Modifier.fillMaxSize().background(Color.Gray, RoundedCornerShape(4.dp)))
-        }
-
-        if (account.authType != AuthType.LOCAL && account.authType.iconResource != 0) {
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .offset(x = 2.dp, y = 2.dp)
-                    .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(4.dp))
-                    .padding(2.dp)
-            ) {
-                Icon(
-                    painter = painterResource(id = account.authType.iconResource),
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(modifier = Modifier.size(32.dp)) {
+            if (skinHead != null) {
+                Image(
+                    bitmap = skinHead!!.asImageBitmap(),
                     contentDescription = null,
-                    modifier = Modifier.size(10.dp),
-                    tint = Color.Unspecified
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(4.dp)),
+                    contentScale = ContentScale.FillBounds
                 )
+            } else {
+                Box(modifier = Modifier.fillMaxSize().background(Color.Gray, RoundedCornerShape(4.dp)))
+            }
+
+            if (account.authType != AuthType.LOCAL && account.authType.iconResource != 0) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .offset(x = 2.dp, y = 2.dp)
+                        .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(4.dp))
+                        .padding(2.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(id = account.authType.iconResource),
+                        contentDescription = null,
+                        modifier = Modifier.size(10.dp),
+                        tint = Color.Unspecified
+                    )
+                }
             }
         }
-    }
 
-    Spacer(modifier = Modifier.width(16.dp))
+        Spacer(modifier = Modifier.width(16.dp))
 
-    Column {
-        Text(
-            text = account.username,
-            color = MaterialTheme.colorScheme.onSurface,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold
-        )
+        Column {
+            Text(
+                text = account.username,
+                color = MaterialTheme.colorScheme.onSurface,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
     }
 }
 
