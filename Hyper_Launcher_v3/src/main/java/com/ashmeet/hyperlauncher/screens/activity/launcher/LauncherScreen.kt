@@ -1,9 +1,11 @@
 package com.ashmeet.hyperlauncher.screens.activity.launcher
 
-import android.widget.FrameLayout
 import android.graphics.BitmapFactory
 import android.content.SharedPreferences
 import android.widget.VideoView
+import android.widget.FrameLayout
+import android.view.ViewGroup
+import android.view.Gravity
 import android.media.MediaPlayer
 import com.ashmeet.hyperlauncher.utils.translatedText
 import androidx.compose.foundation.Image
@@ -51,6 +53,7 @@ import com.ashmeet.hyperlauncher.theme.PojavTheme
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.progresskeeper.ProgressKeeper
 import net.kdt.pojavlaunch.progresskeeper.TaskCountListener
+import java.io.File
 
 @Composable
 fun PojavLauncherScreen(
@@ -130,45 +133,48 @@ fun PojavLauncherScreen(
             } else if (launcherBgType == "video" && launcherBgPath != null) {
                 AndroidView(
                     factory = { context ->
-                        VideoView(context).apply {
-                            setVideoPath(launcherBgPath)
-                            setOnPreparedListener { mp ->
-                                mp.isLooping = launcherVideoLoop
-                                if (launcherVideoMuted) {
-                                    mp.setVolume(0f, 0f)
-                                } else {
-                                    val vol = launcherVideoVolume / 100f
-                                    mp.setVolume(vol, vol)
-                                }
-                                
-                                mp.setVideoScalingMode(MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING)
-                                
-                                post {
-                                    val videoWidth = mp.videoWidth.toFloat()
-                                    val videoHeight = mp.videoHeight.toFloat()
-                                    val viewWidth = width.toFloat()
-                                    val viewHeight = height.toFloat()
-                                    
-                                    if (videoWidth > 0 && videoHeight > 0 && viewWidth > 0 && viewHeight > 0) {
-                                        val scaleX = viewWidth / videoWidth
-                                        val scaleY = viewHeight / videoHeight
-                                        val finalScale = maxOf(scaleX, scaleY) / minOf(scaleX, scaleY)
-                                        
-                                        this.scaleX = finalScale
-                                        this.scaleY = finalScale
-                                    }
-                                }
-                                
-                                start()
+                        val root = FrameLayout(context)
+                        val videoView = VideoView(context)
+                        videoView.setOnPreparedListener { mp ->
+                            mp.isLooping = launcherVideoLoop
+                            if (launcherVideoMuted) {
+                                mp.setVolume(0f, 0f)
+                            } else {
+                                val vol = launcherVideoVolume / 100f
+                                mp.setVolume(vol, vol)
                             }
+
+                            val videoWidth = mp.videoWidth.toFloat()
+                            val videoHeight = mp.videoHeight.toFloat()
+                            val viewWidth = root.width.toFloat()
+                            val viewHeight = root.height.toFloat()
+
+                            if (videoWidth > 0 && videoHeight > 0 && viewWidth > 0 && viewHeight > 0) {
+                                val scale = Math.max(viewWidth / videoWidth, viewHeight / videoHeight)
+                                videoView.layoutParams = FrameLayout.LayoutParams(
+                                    (videoWidth * scale).toInt(),
+                                    (videoHeight * scale).toInt(),
+                                    Gravity.CENTER
+                                )
+                            }
+                            mp.start()
                         }
+                        videoView.tag = launcherBgPath
+                        if (launcherBgPath != null) {
+                            videoView.setVideoPath(launcherBgPath)
+                        }
+                        root.addView(videoView)
+                        root
                     },
-                    update = { view ->
-                        if (view.tag != launcherBgPath) {
+                    update = { root ->
+                        val vv = root.getChildAt(0) as? VideoView
+                        if (vv != null && vv.tag != launcherBgPath) {
+                            vv.tag = launcherBgPath
                             if (launcherBgPath != null) {
-                                view.setVideoPath(launcherBgPath)
+                                vv.setVideoPath(launcherBgPath)
+                            } else {
+                                vv.stopPlayback()
                             }
-                            view.tag = launcherBgPath
                         }
                     },
                     modifier = Modifier.fillMaxSize()
@@ -193,86 +199,86 @@ fun PojavLauncherScreen(
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-                    .background(MaterialTheme.colorScheme.surface)
-                    .zIndex(1f)
-            ) {
-                AccountSpinnerCompose(
-                    modifier = Modifier.fillMaxSize(),
-                    hideDivider = taskCount > 0
-                )
-
-                Row(
-                    modifier = Modifier
-                        .align(Alignment.CenterEnd)
-                ) {
-                    if (isFileManagerVisible) {
-                        IconButton(
-                            onClick = onContentInstallerClick,
-                            modifier = Modifier.size(56.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Rounded.Download,
-                                contentDescription = translatedText("Content Installer"),
-                                tint = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
-
-                        IconButton(
-                            onClick = onInstanceDirectoryClick,
-                            modifier = Modifier.size(56.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Rounded.Folder,
-                                contentDescription = translatedText("Instance Directory"),
-                                tint = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
-                    }
-
-                    IconButton(
-                        onClick = onSettingsClick,
-                        modifier = Modifier.size(56.dp)
-                    ) {
-                        Icon(
-                            painter = painterResource(id = settingsIconRes),
-                            contentDescription = translatedText("Settings"),
-                            tint = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                }
-            }
-
-            if (taskCount > 0) {
-                LinearProgressIndicator(
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(2.dp),
-                    color = MaterialTheme.colorScheme.primary,
-                    trackColor = Color.Transparent
-                )
-            }
+                        .height(56.dp)
+                        .background(MaterialTheme.colorScheme.surface)
+                        .zIndex(1f)
+                ) {
+                    AccountSpinnerCompose(
+                        modifier = Modifier.fillMaxSize(),
+                        hideDivider = taskCount > 0
+                    )
 
-            Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
-                AndroidView(
-                    factory = { context ->
-                        FrameLayout(context).apply {
-                            id = R.id.container_fragment
-                            onFragmentViewCreated(this)
+                    Row(
+                        modifier = Modifier
+                            .align(Alignment.CenterEnd)
+                    ) {
+                        if (isFileManagerVisible) {
+                            IconButton(
+                                onClick = onContentInstallerClick,
+                                modifier = Modifier.size(56.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Rounded.Download,
+                                    contentDescription = translatedText("Content Installer"),
+                                    tint = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
+
+                            IconButton(
+                                onClick = onInstanceDirectoryClick,
+                                modifier = Modifier.size(56.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Rounded.Folder,
+                                    contentDescription = translatedText("Instance Directory"),
+                                    tint = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
                         }
-                    },
-                    update = {},
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
 
-            ProgressLayoutCompose()
+                        IconButton(
+                            onClick = onSettingsClick,
+                            modifier = Modifier.size(56.dp)
+                        ) {
+                            Icon(
+                                painter = painterResource(id = settingsIconRes),
+                                contentDescription = translatedText("Settings"),
+                                tint = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+                    }
+                }
+
+                if (taskCount > 0) {
+                    LinearProgressIndicator(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(2.dp),
+                        color = MaterialTheme.colorScheme.primary,
+                        trackColor = Color.Transparent
+                    )
+                }
+
+                Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
+                    AndroidView(
+                        factory = { context ->
+                            FrameLayout(context).apply {
+                                id = R.id.container_fragment
+                                onFragmentViewCreated(this)
+                            }
+                        },
+                        update = {},
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+
+                ProgressLayoutCompose()
+            }
         }
     }
-}
 }
 
 @Preview(showBackground = true, name = "File Manager Visible")
