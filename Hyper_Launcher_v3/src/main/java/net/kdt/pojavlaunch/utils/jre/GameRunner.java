@@ -42,6 +42,8 @@ import java.util.List;
 import java.util.Map;
 
 public class GameRunner {
+    private static SkinManager sSkinManager;
+
     /**
      * Optimization mods based on Sodium can mitigate the render distance issue. Check if Sodium
      * or its derivative is currently installed to skip the render distance check.
@@ -94,7 +96,7 @@ public class GameRunner {
         GLInfoUtils.GLInfo info = GLInfoUtils.getGlInfo();
         return info.isAdreno() &&
                 info.glesMajorVersion >= 3 &&
-                // 1.21.5 fixes the RD issue, released on march 25 2025
+                // 1.21.5 fixes the RD issue, released on March 25, 2025
                 DateUtils.dateBefore(DateUtils.getOriginalReleaseDate(version), 2025, 2, 25);
     }
 
@@ -269,23 +271,34 @@ public class GameRunner {
 
         addAuthlibInjectorArgs(javaArgList, account);
         if (account.authType == AuthType.LOCAL) {
-            SkinManager skinManager = new SkinManager(SkinManagerKt.androidSkinAnalyzerFacade);
-            skinManager.startServer();
+            Log.i("GameRunner", "Setting up local skin server for " + account.username);
+            sSkinManager = new SkinManager(SkinManagerKt.androidSkinAnalyzerFacade);
+            sSkinManager.startServer();
 
             PlayerSkin playerSkin = null;
             if (account.skinPath != null) {
                 File skinFile = new File(account.skinPath);
+                Log.i("GameRunner", "Loading local skin from: " + account.skinPath);
                 if (skinFile.exists()) {
                     try {
                         byte[] bytes = org.apache.commons.io.FileUtils.readFileToByteArray(skinFile);
                         playerSkin = SkinManagerKt.androidSkinAnalyzerFacade.prepareSkin(bytes);
+                        if (playerSkin != null) {
+                            Log.i("GameRunner", "Local skin loaded successfully, hash: " + playerSkin.getHash());
+                        } else {
+                            Log.w("GameRunner", "Failed to prepare skin (invalid dimensions?)");
+                        }
                     } catch (Exception e) {
                         Log.e("GameRunner", "Failed to load local skin", e);
                     }
+                } else {
+                    Log.w("GameRunner", "Local skin file does not exist!");
                 }
+            } else {
+                Log.i("GameRunner", "No local skin path defined for this account");
             }
 
-            skinManager.getServer().addCharacter(
+            sSkinManager.getServer().addCharacter(
                     account.username,
                     account.profileId,
                     playerSkin,
@@ -295,7 +308,9 @@ public class GameRunner {
             String injectorPath = Tools.DIR_DATA + "/authlib-injector/authlib-injector.jar";
             File injectorJar = new File(injectorPath);
             if (injectorJar.exists() && injectorJar.length() > 0) {
-                javaArgList.add("-javaagent:" + injectorPath + "=" + skinManager.getAuthlibUrl());
+                String agentArg = "-javaagent:" + injectorPath + "=" + sSkinManager.getAuthlibUrl();
+                javaArgList.add(agentArg);
+                Log.i("GameRunner", "Applied local authlib-injector: " + agentArg);
             } else {
                 Log.e("GameRunner", "authlib-injector.jar is missing or empty! Skipping javaagent to prevent crash.");
             }

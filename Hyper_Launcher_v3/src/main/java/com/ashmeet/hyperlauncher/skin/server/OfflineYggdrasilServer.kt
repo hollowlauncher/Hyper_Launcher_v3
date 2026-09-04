@@ -142,10 +142,14 @@ class OfflineYggdrasilServer(
             val username = call.request.queryParameters["username"]
                 ?: return@get call.respond(HttpStatusCode.BadRequest)
 
-            Log.d(TAG, "GET /hasJoined - Profile for $username")
+            Log.i(TAG, "INJECTOR: GET /hasJoined for $username")
             val char = byName[username.lowercase()]
-                ?: return@get call.respond(HttpStatusCode.NoContent)
+                ?: run {
+                    Log.w(TAG, "INJECTOR: Character not found for $username")
+                    return@get call.respond(HttpStatusCode.NoContent)
+                }
 
+            Log.i(TAG, "INJECTOR: Serving profile for $username")
             call.respondText(
                 char.toProfileResponse(localBase(), ::signRsa, json),
                 ContentType.Application.Json.withCharset(Charsets.UTF_8)
@@ -159,11 +163,15 @@ class OfflineYggdrasilServer(
         get("/sessionserver/session/minecraft/profile/{uuid}") {
             val rawUuid = call.parameters["uuid"] ?: ""
             val uuid = rawUuid.replace("-", "").lowercase()
-            Log.d(TAG, "GET /profile/$rawUuid - Requested")
+            Log.i(TAG, "INJECTOR: GET /profile/$rawUuid requested")
 
             val char = byUuid[uuid]
-                ?: return@get call.respond(HttpStatusCode.NoContent)
+                ?: run {
+                    Log.w(TAG, "INJECTOR: Profile not found for UUID: $uuid")
+                    return@get call.respond(HttpStatusCode.NoContent)
+                }
 
+            Log.i(TAG, "INJECTOR: Serving profile for UUID: $uuid")
             call.respondText(
                 char.toProfileResponse(localBase(), ::signRsa, json),
                 ContentType.Application.Json.withCharset(Charsets.UTF_8)
@@ -198,6 +206,10 @@ class OfflineYggdrasilServer(
             put("implementationVersion", JsonPrimitive(implVersion))
             put("feature.non_email_login", JsonPrimitive(true))
             put("feature.legacy_skin_api", JsonPrimitive(true))
+            put("links", buildJsonObject {
+                put("homepage", JsonPrimitive("https://github.com/unmojang/drasl"))
+                put("register", JsonPrimitive("https://github.com/unmojang/drasl"))
+            })
         })
 
         val publicKeyBase64 = Base64.encodeToString(keyPair.public.encoded, Base64.DEFAULT).trim()
@@ -222,9 +234,13 @@ class OfflineYggdrasilServer(
         val cape: PlayerCape? = null
     ) {
         fun toProfileResponse(baseUrl: String, signer: (String) -> String, json: Json): String {
+            val formattedUuid = if (uuid.length == 32) {
+                "${uuid.take(8)}-${uuid.substring(8, 12)}-${uuid.substring(12, 16)}-${uuid.substring(16, 20)}-${uuid.substring(20)}"
+            } else uuid
+
             val texturesObj = buildJsonObject {
                 put("timestamp", JsonPrimitive(System.currentTimeMillis()))
-                put("profileId", JsonPrimitive(uuid))
+                put("profileId", JsonPrimitive(formattedUuid))
                 put("profileName", JsonPrimitive(name))
                 put("textures", buildJsonObject {
                     skin?.let { s ->
