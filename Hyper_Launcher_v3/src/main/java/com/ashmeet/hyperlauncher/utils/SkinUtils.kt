@@ -172,7 +172,7 @@ object SkinUtils {
     fun rememberSkinHead(account: Account?): State<Bitmap?> {
         val context = LocalContext.current
         val stableKey = "${account?.profileId}_${account?.skinPath}_${account?.username}_3D"
-        return produceState<Bitmap?>(initialValue = null, stableKey) {
+        return produceState(initialValue = null, stableKey) {
             value = renderHead(context, account)
         }
     }
@@ -184,7 +184,7 @@ object SkinUtils {
     fun rememberSkinHead2D(account: Account?): State<Bitmap?> {
         val context = LocalContext.current
         val stableKey = "${account?.profileId}_${account?.skinPath}_${account?.username}_2D"
-        return produceState<Bitmap?>(initialValue = null, stableKey) {
+        return produceState(initialValue = null, stableKey) {
             value = renderHead2D(context, account)
         }
     }

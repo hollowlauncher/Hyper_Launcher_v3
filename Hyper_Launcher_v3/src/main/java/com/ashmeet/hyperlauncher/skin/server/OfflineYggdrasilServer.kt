@@ -83,7 +83,7 @@ class OfflineYggdrasilServer(
 
     fun start(timeoutSec: Long = 10L): Int {
         val s = embeddedServer(CIO, host = "127.0.0.1", port = 0) {
-            environment.monitor.subscribe(ApplicationStarted) { startLatch.countDown() }
+            monitor.subscribe(ApplicationStarted) { startLatch.countDown() }
 
             install(ContentNegotiation) {
                 json(json)

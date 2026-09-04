@@ -338,33 +338,14 @@ public class GameRunner {
         try {
             String nativeLibDir = activity.getApplicationInfo().nativeLibraryDir;
             String pluginPath = NativePluginManager.getRuntimeJVMEnv().get("HYPERPLUGIN_PATH");
-            String[] possibleNames = {"libimgui-java.so", "libimgui.so", "libimgui-moulberry-java.so", "libimgui-moulberry92-java.so"};
-            File imguiLib = null;
-            
-            // Check app native dir first
-            for (String name : possibleNames) {
-                File f = new File(nativeLibDir, name);
-                if (f.exists()) {
-                    imguiLib = f;
-                    break;
-                }
-            }
-            
-            // Check plugin path second
-            if (imguiLib == null && pluginPath != null) {
-                for (String name : possibleNames) {
-                    File f = new File(pluginPath, name);
-                    if (f.exists()) {
-                        imguiLib = f;
-                        break;
-                    }
-                }
-            }
+            File imguiLib = findImguiNative(activity);
 
             if (imguiLib != null) {
                 Log.i("GameRunner", "Found ImGui native at: " + imguiLib.getAbsolutePath());
                 File imguiDir = new File(Tools.DIR_CACHE, "imgui_natives");
-                if (!imguiDir.exists()) imguiDir.mkdirs();
+                if (!imguiDir.exists() && !imguiDir.mkdirs()) {
+                    Log.e("GameRunner", "Failed to create ImGui natives directory");
+                }
                 
                 String[] forkNames = {"libimgui-moulberry92-java64.so", "libimgui-moulberry-java64.so", "libimgui-java64.so"};
                 for (String forkName : forkNames) {
@@ -424,7 +405,9 @@ public class GameRunner {
                 try {
                     String physxVersion = "2.3.2"; // From crash log
                     File physxCacheDir = new File(Tools.DIR_CACHE, "de.fabmax.physx-jni/" + physxVersion);
-                    if (!physxCacheDir.exists()) physxCacheDir.mkdirs();
+                    if (!physxCacheDir.exists() && !physxCacheDir.mkdirs()) {
+                        Log.e("GameRunner", "Failed to create PhysX cache directory");
+                    }
                     File physxCacheFile = new File(physxCacheDir, "libPhysXJniBindings_64.so");
                     if (!physxCacheFile.exists() || physxCacheFile.length() != rapierLib.length()) {
                         org.apache.commons.io.FileUtils.copyFile(rapierLib, physxCacheFile);
@@ -606,5 +589,30 @@ public class GameRunner {
             runtime = preferredRuntime;
         }
         return runtime;
+    }
+
+    private static File findImguiNative(AppCompatActivity activity) {
+        String nativeLibDir = activity.getApplicationInfo().nativeLibraryDir;
+        String pluginPath = NativePluginManager.getRuntimeJVMEnv().get("HYPERPLUGIN_PATH");
+        String[] possibleNames = {"libimgui-java.so", "libimgui.so", "libimgui-moulberry-java.so", "libimgui-moulberry92-java.so"};
+
+        // Check app native dir first
+        for (String name : possibleNames) {
+            File f = new File(nativeLibDir, name);
+            if (f.exists()) {
+                return f;
+            }
+        }
+
+        // Check plugin path second
+        if (pluginPath != null) {
+            for (String name : possibleNames) {
+                File f = new File(pluginPath, name);
+                if (f.exists()) {
+                    return f;
+                }
+            }
+        }
+        return null;
     }
 }

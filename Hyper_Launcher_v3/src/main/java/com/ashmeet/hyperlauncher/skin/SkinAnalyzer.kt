@@ -2,6 +2,7 @@ package com.ashmeet.hyperlauncher.skin
 
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import androidx.core.graphics.get
 import com.ashmeet.hyperlauncher.skin.model.SkinModelType
 import java.security.MessageDigest
 
@@ -51,7 +52,7 @@ object AndroidSkinAnalyzer {
         val bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.size, opts)
             ?: return SkinModelType.STEVE
         return try {
-            detectSkinModel(opts.outHeight) { x, y -> Color.alpha(bmp.getPixel(x, y)) }
+            detectSkinModel(opts.outHeight) { x, y -> Color.alpha(bmp[x, y]) }
         } finally {
             if (!bmp.isRecycled) bmp.recycle()
         }

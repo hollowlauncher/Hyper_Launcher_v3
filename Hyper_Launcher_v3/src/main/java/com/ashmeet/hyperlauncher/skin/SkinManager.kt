@@ -35,7 +35,7 @@ class SkinManager(private val analyzer: SkinAnalyzerFacade) {
 
         val skin: PlayerSkin? = skinBytes?.let {
             val base = analyzer.prepareSkin(it)
-                ?: throw InvalidSkinException("${skinFile?.name ?: "Skin file"} must be 64×64 or 64×32 pixels")
+                ?: throw InvalidSkinException("${skinFile.name ?: "Skin file"} must be 64×64 or 64×32 pixels")
 
             if (modelOverride != null && modelOverride != base.model)
                 base.copy(model = modelOverride)
@@ -85,9 +85,6 @@ class SkinManager(private val analyzer: SkinAnalyzerFacade) {
         port = server.start()
         return port
     }
-
-    /** Stop the server once the game process has exited. */
-    fun stopServer() = server.stop()
 
     /** The JVM argument base URL for authlib-injector. */
     val authlibUrl: String get() = "http://127.0.0.1:$port"
