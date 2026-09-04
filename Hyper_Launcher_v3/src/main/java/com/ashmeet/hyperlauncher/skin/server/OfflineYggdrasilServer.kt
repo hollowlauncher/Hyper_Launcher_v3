@@ -47,6 +47,7 @@ class OfflineYggdrasilServer(
     private val implName: String   = "drasl",
     private val implVersion: String = "1.4"
 ) {
+    @Suppress("PrivatePropertyName")
     private val TAG = "OfflineSkinServer"
     private val byUuid = ConcurrentHashMap<String, Character>()
     private val byName = ConcurrentHashMap<String, Character>()
@@ -139,11 +140,11 @@ class OfflineYggdrasilServer(
 
         get("/sessionserver/session/minecraft/hasJoined") {
             val username = call.request.queryParameters["username"]
-                ?: return@get call.respond(HttpStatusCode.Companion.BadRequest)
+                ?: return@get call.respond(HttpStatusCode.BadRequest)
 
             Log.d(TAG, "GET /hasJoined - Profile for $username")
             val char = byName[username.lowercase()]
-                ?: return@get call.respond(HttpStatusCode.Companion.NoContent)
+                ?: return@get call.respond(HttpStatusCode.NoContent)
 
             call.respondText(
                 char.toProfileResponse(localBase(), ::signRsa, json),
@@ -152,7 +153,7 @@ class OfflineYggdrasilServer(
         }
 
         post("/sessionserver/session/minecraft/join") {
-            call.respond(HttpStatusCode.Companion.NoContent)
+            call.respond(HttpStatusCode.NoContent)
         }
 
         get("/sessionserver/session/minecraft/profile/{uuid}") {
@@ -161,7 +162,7 @@ class OfflineYggdrasilServer(
             Log.d(TAG, "GET /profile/$rawUuid - Requested")
 
             val char = byUuid[uuid]
-                ?: return@get call.respond(HttpStatusCode.Companion.NoContent)
+                ?: return@get call.respond(HttpStatusCode.NoContent)
 
             call.respondText(
                 char.toProfileResponse(localBase(), ::signRsa, json),
@@ -171,11 +172,11 @@ class OfflineYggdrasilServer(
 
         get("/textures/{hash}") {
             val hash = call.parameters["hash"]
-                ?: return@get call.respond(HttpStatusCode.Companion.NotFound)
+                ?: return@get call.respond(HttpStatusCode.NotFound)
 
             Log.d(TAG, "GET /textures/$hash - Download requested")
             val bytes = textureStore[hash]
-                ?: return@get call.respond(HttpStatusCode.Companion.NotFound)
+                ?: return@get call.respond(HttpStatusCode.NotFound)
 
             call.response.header(HttpHeaders.CacheControl, "max-age=2592000, public")
             call.response.header(HttpHeaders.ETag, "\"$hash\"")
@@ -244,7 +245,7 @@ class OfflineYggdrasilServer(
                 })
             }
 
-            val texturesJson = json.encodeToString(JsonObject.Companion.serializer(), texturesObj)
+            val texturesJson = json.encodeToString(JsonObject.serializer(), texturesObj)
             val encoded = Base64.encodeToString(
                 texturesJson.toByteArray(Charsets.UTF_8),
                 Base64.NO_WRAP
@@ -262,7 +263,7 @@ class OfflineYggdrasilServer(
                     })
                 })
             }
-            return json.encodeToString(JsonObject.Companion.serializer(), response)
+            return json.encodeToString(JsonObject.serializer(), response)
         }
     }
 }

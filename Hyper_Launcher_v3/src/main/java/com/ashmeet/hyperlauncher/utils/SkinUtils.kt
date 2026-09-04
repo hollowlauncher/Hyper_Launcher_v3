@@ -3,9 +3,6 @@ package com.ashmeet.hyperlauncher.utils
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.Rect
 import android.graphics.drawable.BitmapDrawable
 import android.util.Log
 import androidx.compose.runtime.Composable
@@ -102,6 +99,16 @@ object SkinUtils {
     private suspend fun getSkinBitmap(context: Context, skinUrl: String?): Bitmap? = withContext(Dispatchers.IO) {
         if (skinUrl == null) return@withContext null
 
+        if (skinUrl.startsWith("file://")) {
+            val path = skinUrl.substring(7)
+            return@withContext try {
+                BitmapFactory.decodeFile(path)
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to decode file $path", e)
+                null
+            }
+        }
+
         return@withContext try {
             val loader = context.imageLoader
             val request = ImageRequest.Builder(context)
@@ -121,7 +128,7 @@ object SkinUtils {
             context.assets.open("steve.png").use { inputStream ->
                 BitmapFactory.decodeStream(inputStream)
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             Log.w(TAG, "steve.png not found in assets")
             null
         } ?: return null
@@ -142,7 +149,7 @@ object SkinUtils {
             context.assets.open("steve.png").use { inputStream ->
                 BitmapFactory.decodeStream(inputStream)
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             Log.w(TAG, "steve.png not found in assets")
             null
         } ?: return null

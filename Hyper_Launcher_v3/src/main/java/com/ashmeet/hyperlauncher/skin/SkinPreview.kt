@@ -1,10 +1,13 @@
 package com.ashmeet.hyperlauncher.skin
 
 import android.annotation.SuppressLint
+import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import java.io.File
+import java.io.FileInputStream
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import androidx.compose.foundation.background
@@ -58,6 +61,24 @@ fun SkinPreview(
                 setBackgroundColor(0)
 
                 webViewClient = object : WebViewClient() {
+                    override fun shouldInterceptRequest(view: WebView?, request: WebResourceRequest?): WebResourceResponse? {
+                        val url = request?.url ?: return null
+                        if (url.host == "local-skin.pojavlauncher.net") {
+                            val path = url.getQueryParameter("path")
+                            if (path != null) {
+                                val file = File(path)
+                                if (file.exists()) {
+                                    return try {
+                                        WebResourceResponse("image/png", "UTF-8", FileInputStream(file))
+                                    } catch (_: Exception) {
+                                        null
+                                    }
+                                }
+                            }
+                        }
+                        return super.shouldInterceptRequest(view, request)
+                    }
+
                     override fun onPageFinished(view: WebView?, url: String?) {
                         isPageLoaded = true
                         val finalSkinUrl = if (skinUrl?.startsWith("file://") == true) {

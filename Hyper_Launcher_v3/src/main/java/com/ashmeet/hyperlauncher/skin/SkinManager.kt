@@ -54,18 +54,29 @@ class SkinManager(private val analyzer: SkinAnalyzerFacade) {
             cape      = cape
         )
 
-        if (skinFile != null && skinFile.exists()) {
-            val permanentSkin = File(net.kdt.pojavlaunch.Tools.DIR_CACHE, "skin-$profileId.png")
-            if (skinFile.absolutePath != permanentSkin.absolutePath) {
-                skinFile.copyTo(permanentSkin, overwrite = true)
+        val permanentSkin = skinFile?.takeIf { it.exists() }?.let {
+            val file = File(net.kdt.pojavlaunch.Tools.DIR_CACHE, "skin-$profileId.png")
+            if (it.absolutePath != file.absolutePath) {
+                it.copyTo(file, overwrite = true)
             }
+            file.absolutePath
+        }
+
+        val permanentCape = capeFile?.takeIf { it.exists() }?.let {
+            val file = File(net.kdt.pojavlaunch.Tools.DIR_CACHE, "cape-$profileId.png")
+            if (it.absolutePath != file.absolutePath) {
+                it.copyTo(file, overwrite = true)
+            }
+            file.absolutePath
         }
 
         return PreparedAccount(
             username      = username,
             profileId     = profileId,
             formattedUuid = profileId.toFormattedUuid(),
-            skinModel     = model
+            skinModel     = model,
+            skinPath      = permanentSkin,
+            capePath      = permanentCape
         )
     }
 
@@ -87,7 +98,9 @@ data class PreparedAccount(
     val username: String,
     val profileId: String,
     val formattedUuid: String,
-    val skinModel: SkinModelType
+    val skinModel: SkinModelType,
+    val skinPath: String?,
+    val capePath: String?
 )
 
 class InvalidSkinException(message: String) : Exception(message)

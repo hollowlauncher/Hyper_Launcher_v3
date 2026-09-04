@@ -31,12 +31,12 @@ fun AuthLayout(
     onFragmentViewCreated: (FrameLayout) -> Unit
 ) {
     var currentAccount by remember {
-        mutableStateOf<Account?>(try { Accounts.getCurrent() } catch (e: Exception) { null })
+        mutableStateOf<Account?>(try { Accounts.getCurrent() } catch (_: Exception) { null })
     }
 
     DisposableEffect(Unit) {
         val accountListener = ExtraListener<Any> { _, _ ->
-            currentAccount = try { Accounts.getCurrent() } catch (e: Exception) { null }
+            currentAccount = try { Accounts.getCurrent() } catch (_: Exception) { null }
             false
         }
         ExtraCore.addExtraListener(ExtraConstants.REFRESH_ACCOUNT_SPINNER, accountListener)

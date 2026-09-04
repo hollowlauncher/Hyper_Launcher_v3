@@ -6,15 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
-import net.ashmeet.hyperlauncher.R
-import net.kdt.pojavlaunch.Tools
-import net.kdt.pojavlaunch.extra.ExtraConstants
-import net.kdt.pojavlaunch.extra.ExtraCore
 import com.ashmeet.hyperlauncher.screens.layouts.auth.methods.LocalLoginScreen
 import com.ashmeet.hyperlauncher.skin.SkinManager
 import com.ashmeet.hyperlauncher.skin.androidSkinAnalyzerFacade
 import com.ashmeet.hyperlauncher.theme.PojavTheme
+import net.ashmeet.hyperlauncher.R
+import net.kdt.pojavlaunch.Tools
 import net.kdt.pojavlaunch.authenticator.accounts.Accounts
+import net.kdt.pojavlaunch.extra.ExtraConstants
+import net.kdt.pojavlaunch.extra.ExtraCore
 import java.io.File
 import java.util.regex.Pattern
 
@@ -44,11 +44,12 @@ class LocalLoginFragment : Fragment() {
                                     Accounts.create { acc ->
                                         acc.username = prepared.username
                                         acc.profileId = prepared.profileId
-                                        acc.skinPath = skinPath
-                                        acc.capePath = capePath
+                                        acc.skinPath = prepared.skinPath
+                                        acc.capePath = prepared.capePath
                                         acc.skinModel = prepared.skinModel
                                     }.also {
                                         Accounts.setCurrent(it)
+                                        ExtraCore.setValue(ExtraConstants.REFRESH_ACCOUNT_SPINNER, true)
                                     }
                                     Tools.swapFragment(requireActivity(), MainMenuFragment::class.java, MainMenuFragment.TAG, null)
                                 } catch (e: Exception) {
