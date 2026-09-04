@@ -1,14 +1,28 @@
 package com.ashmeet.hyperlauncher.screens.layouts.auth
 
 import android.widget.FrameLayout
-import com.ashmeet.hyperlauncher.utils.translatedText
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -16,9 +30,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.ashmeet.hyperlauncher.skin.SkinPreview
 import com.ashmeet.hyperlauncher.utils.SkinUtils
+import com.ashmeet.hyperlauncher.utils.translatedText
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.authenticator.AuthType
-import net.kdt.pojavlaunch.authenticator.accounts.Account
 import net.kdt.pojavlaunch.authenticator.accounts.Accounts
 import net.kdt.pojavlaunch.extra.ExtraConstants
 import net.kdt.pojavlaunch.extra.ExtraCore
@@ -31,7 +45,7 @@ fun AuthLayout(
     onFragmentViewCreated: (FrameLayout) -> Unit
 ) {
     var currentAccount by remember {
-        mutableStateOf<Account?>(try { Accounts.getCurrent() } catch (_: Exception) { null })
+        mutableStateOf(try { Accounts.getCurrent() } catch (_: Exception) { null })
     }
 
     DisposableEffect(Unit) {
