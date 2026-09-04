@@ -217,10 +217,28 @@ object LauncherPreferences {
     var PREF_LAUNCHER_BACKGROUND_PATH: String? = null
 
     @JvmField
+    var PREF_LAUNCHER_BACKGROUND_TYPE: String = "image"
+
+    @JvmField
     var PREF_LAUNCHER_BACKGROUND_OVERLAY_OPACITY = 50
 
     @JvmField
     var PREF_LAUNCHER_BACKGROUND_OVERLAY_ENABLED = true
+
+    @JvmField
+    var PREF_LAUNCHER_BACKGROUND_BLUR = 0
+
+    @JvmField
+    var PREF_LAUNCHER_BACKGROUND_BLUR_ENABLED = false
+
+    @JvmField
+    var PREF_LAUNCHER_VIDEO_VOLUME = 50
+
+    @JvmField
+    var PREF_LAUNCHER_VIDEO_MUTED = true
+
+    @JvmField
+    var PREF_LAUNCHER_VIDEO_LOOP = true
 
     @JvmField
     var PREF_RECENT_LAUNCHER_BACKGROUNDS: MutableList<String> = mutableListOf()
@@ -308,8 +326,14 @@ object LauncherPreferences {
         PREF_POINTER_HOTSPOT_Y = pref.getInt("pointer_hotspot_y", 0)
 
         PREF_LAUNCHER_BACKGROUND_PATH = pref.getString("launcher_background_path", null)
+        PREF_LAUNCHER_BACKGROUND_TYPE = pref.getString("launcher_background_type", "image") ?: "image"
         PREF_LAUNCHER_BACKGROUND_OVERLAY_OPACITY = pref.getInt("launcher_background_overlay_opacity", 50)
         PREF_LAUNCHER_BACKGROUND_OVERLAY_ENABLED = pref.getBoolean("launcher_background_overlay_enabled", true)
+        PREF_LAUNCHER_BACKGROUND_BLUR = pref.getInt("launcher_background_blur", 0)
+        PREF_LAUNCHER_BACKGROUND_BLUR_ENABLED = pref.getBoolean("launcher_background_blur_enabled", false)
+        PREF_LAUNCHER_VIDEO_VOLUME = pref.getInt("launcher_video_volume", 50)
+        PREF_LAUNCHER_VIDEO_MUTED = pref.getBoolean("launcher_video_muted", true)
+        PREF_LAUNCHER_VIDEO_LOOP = pref.getBoolean("launcher_video_loop", true)
 
         val recentBgs = pref.getString("recent_launcher_backgrounds", "") ?: ""
         PREF_RECENT_LAUNCHER_BACKGROUNDS = if (recentBgs.isEmpty()) mutableListOf() else recentBgs.split(";").toMutableList()

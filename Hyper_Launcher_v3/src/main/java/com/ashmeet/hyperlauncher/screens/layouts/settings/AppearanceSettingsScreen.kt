@@ -21,11 +21,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ViewSidebar
+import androidx.compose.material.icons.automirrored.rounded.VolumeOff
+import androidx.compose.material.icons.automirrored.rounded.VolumeUp
 import androidx.compose.material.icons.filled.Animation
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.rounded.AddPhotoAlternate
 import androidx.compose.material.icons.rounded.AspectRatio
+import androidx.compose.material.icons.rounded.BlurOn
 import androidx.compose.material.icons.rounded.ColorLens
 import androidx.compose.material.icons.rounded.DragIndicator
 import androidx.compose.material.icons.rounded.Layers
@@ -107,8 +110,13 @@ fun AppearanceSettingsScreen(
     var mouseScale by remember { mutableFloatStateOf(LauncherPreferences.PREF_MOUSESCALE * 100f) }
 
     var launcherBgPath by remember { mutableStateOf(LauncherPreferences.PREF_LAUNCHER_BACKGROUND_PATH) }
+    var launcherBgType by remember { mutableStateOf(LauncherPreferences.PREF_LAUNCHER_BACKGROUND_TYPE) }
     var launcherBgOverlayEnabled by remember { mutableStateOf(LauncherPreferences.PREF_LAUNCHER_BACKGROUND_OVERLAY_ENABLED) }
     var launcherBgOverlayOpacity by remember { mutableFloatStateOf(LauncherPreferences.PREF_LAUNCHER_BACKGROUND_OVERLAY_OPACITY.toFloat()) }
+    var launcherBgBlurEnabled by remember { mutableStateOf(LauncherPreferences.PREF_LAUNCHER_BACKGROUND_BLUR_ENABLED) }
+    var launcherBgBlur by remember { mutableFloatStateOf(LauncherPreferences.PREF_LAUNCHER_BACKGROUND_BLUR.toFloat()) }
+    var launcherVideoMuted by remember { mutableStateOf(LauncherPreferences.PREF_LAUNCHER_VIDEO_MUTED) }
+    var launcherVideoVolume by remember { mutableFloatStateOf(LauncherPreferences.PREF_LAUNCHER_VIDEO_VOLUME.toFloat()) }
     var recentBackgrounds by remember { mutableStateOf(LauncherPreferences.PREF_RECENT_LAUNCHER_BACKGROUNDS.toList()) }
 
     val context = LocalContext.current
@@ -387,8 +395,13 @@ fun AppearanceSettingsScreen(
                                     .clip(RoundedCornerShape(12.dp))
                                     .clickable {
                                         launcherBgPath = path
-                                        LauncherPreferences.prefs.edit { putString("launcher_background_path", path) }
+                                        launcherBgType = "image"
+                                        LauncherPreferences.prefs.edit {
+                                            putString("launcher_background_path", path)
+                                            putString("launcher_background_type", "image")
+                                        }
                                         LauncherPreferences.PREF_LAUNCHER_BACKGROUND_PATH = path
+                                        LauncherPreferences.PREF_LAUNCHER_BACKGROUND_TYPE = "image"
 
                                         // Update recent order
                                         val updatedRecent = LauncherPreferences.PREF_RECENT_LAUNCHER_BACKGROUNDS.toMutableList()
@@ -408,7 +421,10 @@ fun AppearanceSettingsScreen(
             SettingsCard(position = if (recentBackgrounds.isNotEmpty()) CardPosition.MIDDLE else CardPosition.TOP, useSurface = true) {
                 val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
                     if (uri != null) {
-                        val destination = File(Tools.DIR_DATA, "launcher_background_${System.currentTimeMillis()}.png")
+                        val type = context.contentResolver.getType(uri)
+                        val isVideo = type?.startsWith("video") == true
+                        val extension = if (isVideo) "mp4" else "png"
+                        val destination = File(Tools.DIR_DATA, "launcher_background_${System.currentTimeMillis()}.$extension")
                         try {
                             context.contentResolver.openInputStream(uri)?.use { input ->
                                 FileOutputStream(destination).use { output ->
@@ -416,18 +432,26 @@ fun AppearanceSettingsScreen(
                                 }
                             }
                             val path = destination.absolutePath
-                            LauncherPreferences.prefs.edit { putString("launcher_background_path", path) }
+                            val bgType = if (isVideo) "video" else "image"
+                            LauncherPreferences.prefs.edit {
+                                putString("launcher_background_path", path)
+                                putString("launcher_background_type", bgType)
+                            }
                             LauncherPreferences.PREF_LAUNCHER_BACKGROUND_PATH = path
+                            LauncherPreferences.PREF_LAUNCHER_BACKGROUND_TYPE = bgType
                             launcherBgPath = path
+                            launcherBgType = bgType
 
-                            // Update recent backgrounds
-                            val updatedRecent = LauncherPreferences.PREF_RECENT_LAUNCHER_BACKGROUNDS.toMutableList()
-                            updatedRecent.remove(path)
-                            updatedRecent.add(0, path)
-                            if (updatedRecent.size > 5) updatedRecent.removeAt(5)
-                            LauncherPreferences.PREF_RECENT_LAUNCHER_BACKGROUNDS = updatedRecent
-                            LauncherPreferences.prefs.edit { putString("recent_launcher_backgrounds", updatedRecent.joinToString(";")) }
-                            recentBackgrounds = updatedRecent.toList()
+                            if (!isVideo) {
+                                // Update recent backgrounds (only for images)
+                                val updatedRecent = LauncherPreferences.PREF_RECENT_LAUNCHER_BACKGROUNDS.toMutableList()
+                                updatedRecent.remove(path)
+                                updatedRecent.add(0, path)
+                                if (updatedRecent.size > 5) updatedRecent.removeAt(5)
+                                LauncherPreferences.PREF_RECENT_LAUNCHER_BACKGROUNDS = updatedRecent
+                                LauncherPreferences.prefs.edit { putString("recent_launcher_backgrounds", updatedRecent.joinToString(";")) }
+                                recentBackgrounds = updatedRecent.toList()
+                            }
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }
@@ -437,7 +461,7 @@ fun AppearanceSettingsScreen(
                     title = translatedText("Change Background"),
                     summary = if (launcherBgPath != null) translatedText("Custom background active") else translatedText("Default background active"),
                     icon = Icons.Rounded.AddPhotoAlternate,
-                    onClick = { launcher.launch("image/*") }
+                    onClick = { launcher.launch("*/*") }
                 )
             }
             SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
@@ -464,7 +488,7 @@ fun AppearanceSettingsScreen(
                     }
                 )
             }
-            SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {
+            SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
                 SettingsSliderItem(
                     title = translatedText("Overlay Opacity"),
                     icon = Icons.Rounded.Opacity,
@@ -477,6 +501,67 @@ fun AppearanceSettingsScreen(
                     },
                     valueSuffix = "%",
                     enabled = launcherBgOverlayEnabled
+                )
+            }
+
+            SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
+                SettingsSwitchItem(
+                    title = translatedText("Background Blur"),
+                    summary = translatedText("Apply a blur effect to the background image"),
+                    icon = Icons.Rounded.BlurOn,
+                    checked = launcherBgBlurEnabled,
+                    onCheckedChange = {
+                        launcherBgBlurEnabled = it
+                        LauncherPreferences.prefs.edit { putBoolean("launcher_background_blur_enabled", it) }
+                        LauncherPreferences.PREF_LAUNCHER_BACKGROUND_BLUR_ENABLED = it
+                    },
+                    enabled = launcherBgType == "image"
+                )
+            }
+
+            SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
+                SettingsSliderItem(
+                    title = translatedText("Blur Intensity"),
+                    icon = Icons.Rounded.Opacity,
+                    value = launcherBgBlur,
+                    valueRange = 0f..25f,
+                    onValueChange = {
+                        launcherBgBlur = it
+                        LauncherPreferences.prefs.edit { putInt("launcher_background_blur", it.toInt()) }
+                        LauncherPreferences.PREF_LAUNCHER_BACKGROUND_BLUR = it.toInt()
+                    },
+                    enabled = launcherBgBlurEnabled && launcherBgType == "image"
+                )
+            }
+
+            SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
+                SettingsSwitchItem(
+                    title = translatedText("Mute Video"),
+                    summary = translatedText("Disable sound for the background video"),
+                    icon = if (launcherVideoMuted) Icons.AutoMirrored.Rounded.VolumeOff else Icons.AutoMirrored.Rounded.VolumeUp,
+                    checked = launcherVideoMuted,
+                    onCheckedChange = {
+                        launcherVideoMuted = it
+                        LauncherPreferences.prefs.edit { putBoolean("launcher_video_muted", it) }
+                        LauncherPreferences.PREF_LAUNCHER_VIDEO_MUTED = it
+                    },
+                    enabled = launcherBgType == "video"
+                )
+            }
+
+            SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {
+                SettingsSliderItem(
+                    title = translatedText("Video Volume"),
+                    icon = Icons.AutoMirrored.Rounded.VolumeUp,
+                    value = launcherVideoVolume,
+                    valueRange = 0f..100f,
+                    onValueChange = {
+                        launcherVideoVolume = it
+                        LauncherPreferences.prefs.edit { putInt("launcher_video_volume", it.toInt()) }
+                        LauncherPreferences.PREF_LAUNCHER_VIDEO_VOLUME = it.toInt()
+                    },
+                    valueSuffix = "%",
+                    enabled = !launcherVideoMuted && launcherBgType == "video"
                 )
             }
 

@@ -3,6 +3,7 @@ package com.ashmeet.hyperlauncher.screens.activity.launcher
 import android.widget.FrameLayout
 import android.graphics.BitmapFactory
 import android.content.SharedPreferences
+import android.widget.VideoView
 import com.ashmeet.hyperlauncher.utils.translatedText
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -35,6 +36,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -60,8 +62,13 @@ fun PojavLauncherScreen(
 ) {
     var taskCount by remember { mutableIntStateOf(ProgressKeeper.getTaskCount()) }
     var launcherBgPath by remember { mutableStateOf(LauncherPreferences.PREF_LAUNCHER_BACKGROUND_PATH) }
+    var launcherBgType by remember { mutableStateOf(LauncherPreferences.PREF_LAUNCHER_BACKGROUND_TYPE) }
     var launcherBgOverlayEnabled by remember { mutableStateOf(LauncherPreferences.PREF_LAUNCHER_BACKGROUND_OVERLAY_ENABLED) }
     var launcherBgOverlayOpacity by remember { mutableFloatStateOf(LauncherPreferences.PREF_LAUNCHER_BACKGROUND_OVERLAY_OPACITY.toFloat()) }
+    var launcherBgBlurEnabled by remember { mutableStateOf(LauncherPreferences.PREF_LAUNCHER_BACKGROUND_BLUR_ENABLED) }
+    var launcherBgBlur by remember { mutableFloatStateOf(LauncherPreferences.PREF_LAUNCHER_BACKGROUND_BLUR.toFloat()) }
+    var launcherVideoMuted by remember { mutableStateOf(LauncherPreferences.PREF_LAUNCHER_VIDEO_MUTED) }
+    var launcherVideoVolume by remember { mutableFloatStateOf(LauncherPreferences.PREF_LAUNCHER_VIDEO_VOLUME.toFloat()) }
 
     DisposableEffect(Unit) {
         val listener = TaskCountListener { count ->
@@ -71,8 +78,13 @@ fun PojavLauncherScreen(
         val prefListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
             when (key) {
                 "launcher_background_path" -> launcherBgPath = LauncherPreferences.prefs.getString("launcher_background_path", null)
+                "launcher_background_type" -> launcherBgType = LauncherPreferences.prefs.getString("launcher_background_type", "image") ?: "image"
                 "launcher_background_overlay_enabled" -> launcherBgOverlayEnabled = LauncherPreferences.prefs.getBoolean("launcher_background_overlay_enabled", true)
                 "launcher_background_overlay_opacity" -> launcherBgOverlayOpacity = LauncherPreferences.prefs.getInt("launcher_background_overlay_opacity", 50).toFloat()
+                "launcher_background_blur_enabled" -> launcherBgBlurEnabled = LauncherPreferences.prefs.getBoolean("launcher_background_blur_enabled", false)
+                "launcher_background_blur" -> launcherBgBlur = LauncherPreferences.prefs.getInt("launcher_background_blur", 0).toFloat()
+                "launcher_video_muted" -> launcherVideoMuted = LauncherPreferences.prefs.getBoolean("launcher_video_muted", true)
+                "launcher_video_volume" -> launcherVideoVolume = LauncherPreferences.prefs.getInt("launcher_video_volume", 50).toFloat()
             }
         }
         ProgressKeeper.addTaskCountListener(listener)
@@ -83,8 +95,8 @@ fun PojavLauncherScreen(
         }
     }
 
-    val backgroundBitmap = remember(launcherBgPath) {
-        if (launcherBgPath != null) {
+    val backgroundBitmap = remember(launcherBgPath, launcherBgType) {
+        if (launcherBgPath != null && launcherBgType == "image") {
             try {
                 BitmapFactory.decodeFile(launcherBgPath)
             } catch (_: Exception) {
@@ -99,27 +111,58 @@ fun PojavLauncherScreen(
         contentColor = MaterialTheme.colorScheme.onBackground
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            if (backgroundBitmap != null) {
+            if (launcherBgType == "image" && backgroundBitmap != null) {
                 Image(
                     bitmap = backgroundBitmap.asImageBitmap(),
                     contentDescription = null,
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .then(
+                            if (launcherBgBlurEnabled && launcherBgBlur > 0)
+                                Modifier.blur(launcherBgBlur.dp)
+                            else Modifier
+                        ),
                     contentScale = ContentScale.Crop
                 )
+            } else if (launcherBgType == "video" && launcherBgPath != null) {
+                AndroidView(
+                    factory = { context ->
+                        VideoView(context).apply {
+                            setVideoPath(launcherBgPath)
+                            setOnPreparedListener { mp ->
+                                mp.isLooping = true
+                                if (launcherVideoMuted) {
+                                    mp.setVolume(0f, 0f)
+                                } else {
+                                    val vol = launcherVideoVolume / 100f
+                                    mp.setVolume(vol, vol)
+                                }
+                                start()
+                            }
+                        }
+                    },
+                    update = { view ->
+                        if (view.tag != launcherBgPath) {
+                            view.setVideoPath(launcherBgPath)
+                            view.tag = launcherBgPath
+                        }
+                    },
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
 
-                if (launcherBgOverlayEnabled) {
-                    val isDark = MaterialTheme.colorScheme.surface.luminance() < 0.5f
-                    val overlayColor = if (isDark) {
-                        MaterialTheme.colorScheme.primary.copy(alpha = 0.5f).compositeOver(Color.Black)
-                    } else {
-                        MaterialTheme.colorScheme.primary
-                    }
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(overlayColor.copy(alpha = launcherBgOverlayOpacity / 100f))
-                    )
+            if (launcherBgPath != null && launcherBgOverlayEnabled) {
+                val isDark = MaterialTheme.colorScheme.surface.luminance() < 0.5f
+                val overlayColor = if (isDark) {
+                    MaterialTheme.colorScheme.primary.copy(alpha = 0.5f).compositeOver(Color.Black)
+                } else {
+                    MaterialTheme.colorScheme.primary
                 }
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(overlayColor.copy(alpha = launcherBgOverlayOpacity / 100f))
+                )
             }
 
             Column(
