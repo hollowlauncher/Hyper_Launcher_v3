@@ -99,7 +99,7 @@ fun MainMenuFragmentCompose(
     val isPreview = LocalInspectionMode.current
     var launcherBgPath by remember { mutableStateOf(LauncherPreferences.PREF_LAUNCHER_BACKGROUND_PATH) }
     val hasBackground = launcherBgPath != null
-    val backgroundTransparency = 1f
+    val backgroundTransparency = if (hasBackground) 0.5f else 1f
     var hideActionButtons by remember { mutableStateOf(LauncherPreferences.PREF_HIDE_SIDEBAR) }
 
     var selectedInstance by remember {
