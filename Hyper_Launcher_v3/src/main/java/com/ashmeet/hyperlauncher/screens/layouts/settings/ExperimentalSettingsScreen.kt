@@ -49,7 +49,6 @@ fun ExperimentalSettingsScreen(
                     summary = translatedText(stringResource(R.string.preference_shader_dump_description)),
                     icon = Icons.Default.Settings,
                     checked = dumpShaders,
-                    warningTooltip = "Experimental: Shader dumping can significantly impact performance and fill up storage space.",
                     onCheckedChange = {
                         dumpShaders = it
                         LauncherPreferences.prefs.edit { putBoolean("dump_shaders", it) }
@@ -64,7 +63,6 @@ fun ExperimentalSettingsScreen(
                     summary = translatedText(stringResource(R.string.preference_force_big_core_desc)),
                     icon = Icons.Default.Settings,
                     checked = bigCoreAffinity,
-                    warningTooltip = "Experimental: Forcing big core affinity may lead to increased heat and battery drain.",
                     onCheckedChange = {
                         bigCoreAffinity = it
                         LauncherPreferences.prefs.edit { putBoolean("bigCoreAffinity", it) }
@@ -80,7 +78,6 @@ fun ExperimentalSettingsScreen(
                         summary = translatedText(stringResource(R.string.preference_sysmem_summary)),
                         icon = Icons.Default.Settings,
                         checked = freedrenoSysmem,
-                        warningTooltip = "Experimental: Freedreno System Memory rendering can be unstable and cause crashes on certain drivers.",
                         onCheckedChange = {
                             freedrenoSysmem = it
                             LauncherPreferences.prefs.edit { putBoolean("freedrenoSysmem", it) }
@@ -96,7 +93,6 @@ fun ExperimentalSettingsScreen(
                     summary = translatedText(stringResource(R.string.preference_alsoft_opensl_summary)),
                     icon = ImageVector.vectorResource(R.drawable.ic_px_dynamic),
                     checked = alsoftForceOpenSL,
-                    warningTooltip = "Experimental: Forcing OpenSL may solve audio issues on some devices but could cause latency or crashes on others.",
                     onCheckedChange = {
                         alsoftForceOpenSL = it
                         LauncherPreferences.prefs.edit { putBoolean("alsoftForceOpenSL", it) }

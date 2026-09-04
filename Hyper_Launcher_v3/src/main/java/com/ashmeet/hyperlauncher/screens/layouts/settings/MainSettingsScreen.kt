@@ -93,6 +93,7 @@ fun MainSettingsScreen(
                     title = translatedText(stringResource(R.string.preference_experimental_title)),
                     summary = translatedText(stringResource(R.string.preference_experimental_description)),
                     icon = Icons.Default.Science,
+                    warningTooltip = "Warning: These settings are experimental and may cause instability or crashes.",
                     onClick = onNavigateToExperimental
                 )
             }

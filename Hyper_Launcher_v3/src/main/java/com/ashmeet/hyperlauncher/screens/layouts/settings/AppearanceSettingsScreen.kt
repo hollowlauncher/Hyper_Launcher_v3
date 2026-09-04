@@ -465,9 +465,14 @@ fun AppearanceSettingsScreen(
                     title = translatedText("Reset Background"),
                     icon = Icons.Rounded.Restore,
                     onClick = {
-                        LauncherPreferences.prefs.edit { remove("launcher_background_path") }
+                        LauncherPreferences.prefs.edit {
+                            remove("launcher_background_path")
+                            remove("launcher_background_type")
+                        }
                         LauncherPreferences.PREF_LAUNCHER_BACKGROUND_PATH = null
+                        LauncherPreferences.PREF_LAUNCHER_BACKGROUND_TYPE = "image"
                         launcherBgPath = null
+                        launcherBgType = "image"
                     }
                 )
             }
@@ -481,7 +486,8 @@ fun AppearanceSettingsScreen(
                         launcherBgOverlayEnabled = it
                         LauncherPreferences.prefs.edit { putBoolean("launcher_background_overlay_enabled", it) }
                         LauncherPreferences.PREF_LAUNCHER_BACKGROUND_OVERLAY_ENABLED = it
-                    }
+                    },
+                    enabled = launcherBgPath != null
                 )
             }
             SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
@@ -496,7 +502,7 @@ fun AppearanceSettingsScreen(
                         LauncherPreferences.PREF_LAUNCHER_BACKGROUND_OVERLAY_OPACITY = it.toInt()
                     },
                     valueSuffix = "%",
-                    enabled = launcherBgOverlayEnabled
+                    enabled = launcherBgPath != null && launcherBgOverlayEnabled
                 )
             }
 
@@ -511,7 +517,7 @@ fun AppearanceSettingsScreen(
                         LauncherPreferences.prefs.edit { putBoolean("launcher_background_blur_enabled", it) }
                         LauncherPreferences.PREF_LAUNCHER_BACKGROUND_BLUR_ENABLED = it
                     },
-                    enabled = launcherBgType == "image"
+                    enabled = launcherBgPath != null && launcherBgType == "image"
                 )
             }
 
@@ -526,7 +532,7 @@ fun AppearanceSettingsScreen(
                         LauncherPreferences.prefs.edit { putInt("launcher_background_blur", it.toInt()) }
                         LauncherPreferences.PREF_LAUNCHER_BACKGROUND_BLUR = it.toInt()
                     },
-                    enabled = launcherBgBlurEnabled && launcherBgType == "image"
+                    enabled = launcherBgPath != null && launcherBgBlurEnabled && launcherBgType == "image"
                 )
             }
 
@@ -541,7 +547,7 @@ fun AppearanceSettingsScreen(
                         LauncherPreferences.prefs.edit { putBoolean("launcher_video_muted", it) }
                         LauncherPreferences.PREF_LAUNCHER_VIDEO_MUTED = it
                     },
-                    enabled = launcherBgType == "video"
+                    enabled = launcherBgPath != null && launcherBgType == "video"
                 )
             }
 
@@ -556,7 +562,7 @@ fun AppearanceSettingsScreen(
                         LauncherPreferences.prefs.edit { putBoolean("launcher_video_loop", it) }
                         LauncherPreferences.PREF_LAUNCHER_VIDEO_LOOP = it
                     },
-                    enabled = launcherBgType == "video"
+                    enabled = launcherBgPath != null && launcherBgType == "video"
                 )
             }
 
@@ -572,7 +578,7 @@ fun AppearanceSettingsScreen(
                         LauncherPreferences.PREF_LAUNCHER_VIDEO_VOLUME = it.toInt()
                     },
                     valueSuffix = "%",
-                    enabled = !launcherVideoMuted && launcherBgType == "video"
+                    enabled = launcherBgPath != null && !launcherVideoMuted && launcherBgType == "video"
                 )
             }
 

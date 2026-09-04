@@ -1,13 +1,10 @@
 package com.ashmeet.hyperlauncher.screens.activity.launcher
 
-import android.graphics.BitmapFactory
 import android.content.SharedPreferences
-import android.widget.VideoView
-import android.widget.FrameLayout
-import android.view.ViewGroup
+import android.graphics.BitmapFactory
 import android.view.Gravity
-import android.media.MediaPlayer
-import com.ashmeet.hyperlauncher.utils.translatedText
+import android.widget.FrameLayout
+import android.widget.VideoView
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -35,11 +32,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.luminance
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -50,10 +47,11 @@ import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferenc
 import com.ashmeet.hyperlauncher.screens.layouts.compose.AccountSpinnerCompose
 import com.ashmeet.hyperlauncher.screens.layouts.compose.ProgressLayoutCompose
 import com.ashmeet.hyperlauncher.theme.PojavTheme
+import com.ashmeet.hyperlauncher.utils.translatedText
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.progresskeeper.ProgressKeeper
 import net.kdt.pojavlaunch.progresskeeper.TaskCountListener
-import java.io.File
+import kotlin.math.max
 
 @Composable
 fun PojavLauncherScreen(
@@ -116,7 +114,7 @@ fun PojavLauncherScreen(
         color = if (launcherBgPath != null) Color.Transparent else MaterialTheme.colorScheme.background,
         contentColor = MaterialTheme.colorScheme.onBackground
     ) {
-        Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
+        Box(modifier = Modifier.fillMaxSize().background(if (launcherBgPath != null) Color.Black else Color.Transparent)) {
             if (launcherBgType == "image" && backgroundBitmap != null) {
                 Image(
                     bitmap = backgroundBitmap.asImageBitmap(),
@@ -150,7 +148,7 @@ fun PojavLauncherScreen(
                             val viewHeight = root.height.toFloat()
 
                             if (videoWidth > 0 && videoHeight > 0 && viewWidth > 0 && viewHeight > 0) {
-                                val scale = Math.max(viewWidth / videoWidth, viewHeight / videoHeight)
+                                val scale = max(viewWidth / videoWidth, viewHeight / videoHeight)
                                 videoView.layoutParams = FrameLayout.LayoutParams(
                                     (videoWidth * scale).toInt(),
                                     (videoHeight * scale).toInt(),
@@ -258,7 +256,7 @@ fun PojavLauncherScreen(
                             .fillMaxWidth()
                             .height(2.dp),
                         color = MaterialTheme.colorScheme.primary,
-                        trackColor = Color.Transparent
+                        trackColor = MaterialTheme.colorScheme.surface
                     )
                 }
 

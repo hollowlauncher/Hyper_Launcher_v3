@@ -95,7 +95,7 @@ object Translator {
     private val _refreshTrigger = mutableIntStateOf(0)
     val refreshTrigger: State<Int> = _refreshTrigger
 
-    private fun getTargetLanguage(): String {
+    fun getTargetLanguage(): String {
         if (LauncherPreferences.PREF_FORCE_ENGLISH) return "english"
         var lang = LauncherPreferences.PREF_LANGUAGE ?: "system"
         if (lang == "system") {
@@ -142,9 +142,9 @@ object Translator {
         }
     }
 
-    suspend fun translate(text: String): String {
+    suspend fun translate(text: String, targetLanguage: String? = null): String {
         if (text.isBlank()) return text
-        val target = getTargetLanguage()
+        val target = targetLanguage ?: getTargetLanguage()
         if (target == "english") return text
         
         cache[target]?.get(text)?.let { return it }
@@ -326,13 +326,9 @@ object Translator {
  */
 @Composable
 fun translatedText(text: String): String {
-    val target = remember { 
-        if (LauncherPreferences.PREF_FORCE_ENGLISH) "english"
-        else {
-            val lang = LauncherPreferences.PREF_LANGUAGE ?: "system"
-            if (lang == "system") java.util.Locale.getDefault().language else lang
-        }
-    }
+    // Session-fixed language for this composable instance.
+    // It will only update if the composable is re-created (e.g. screen reload)
+    val target = remember { Translator.getTargetLanguage() }
     
     if (target == "en" || target == "english") return text
 
@@ -340,7 +336,7 @@ fun translatedText(text: String): String {
     val trigger by Translator.refreshTrigger
 
     val translated by produceState(initialValue = text, text, target, trigger) {
-        value = Translator.translate(text)
+        value = Translator.translate(text, target)
     }
     return translated
 }
