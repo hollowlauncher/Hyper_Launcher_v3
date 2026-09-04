@@ -117,15 +117,17 @@ class OfflineYggdrasilServer(
     private fun Routing.registerRoutes() {
 
         get("/") {
-            Log.d(TAG, "GET / - Metadata requested")
+            Log.i(TAG, "GET / - Metadata requested")
             call.respondText(buildRoot(), ContentType.Application.Json)
         }
 
         get("/api") {
+            Log.i(TAG, "GET /api requested")
             call.respondText(buildRoot(), ContentType.Application.Json)
         }
 
         post("/api/profiles/minecraft") {
+            Log.i(TAG, "POST /api/profiles/minecraft requested")
             val names = runCatching { call.receive<List<String>>() }.getOrDefault(emptyList())
             val result = buildJsonArray {
                 names.distinct().mapNotNull { byName[it.lowercase()] }.forEach { c ->

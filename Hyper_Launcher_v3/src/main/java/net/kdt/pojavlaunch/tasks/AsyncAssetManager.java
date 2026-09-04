@@ -91,22 +91,25 @@ public class AsyncAssetManager {
     public static void unpackComponents(Context ctx){
         ProgressLayout.setProgress(ProgressLayout.EXTRACT_COMPONENTS, 0);
         sExecutorService.execute(() -> {
+            tryUnpackComponent(ctx, "caciocavallo", false);
+            tryUnpackComponent(ctx, "caciocavallo17", false);
+            
             try {
-                tryUnpackComponent(ctx, "caciocavallo", false);
-                tryUnpackComponent(ctx, "caciocavallo17", false);
                 // Since the Java module system doesn't allow multiple JARs to declare the same module,
                 // we repack them to a single file here
                 unpackLwjglNatives(ctx);
-                tryUnpackComponent(ctx, "lwjgl3/3.3.3", false);
-                tryUnpackComponent(ctx, "lwjgl3/3.4.1", false);
-                tryUnpackComponent(ctx, "security", true);
-                tryUnpackComponent(ctx, "arc_dns_injector", true);
-                tryUnpackComponent(ctx, "MioLibPatcher", true);
-                tryUnpackComponent(ctx, "forge_installer", true);
-                tryUnpackComponent(ctx, "authlib-injector", true);
             } catch (IOException e) {
-                Log.e("AsyncAssetManager", "Failed to unpack components !",e );
+                Log.e("AsyncAssetManager", "Failed to unpack LWJGL natives !", e);
             }
+
+            tryUnpackComponent(ctx, "lwjgl3/3.3.3", false);
+            tryUnpackComponent(ctx, "lwjgl3/3.4.1", false);
+            tryUnpackComponent(ctx, "security", true);
+            tryUnpackComponent(ctx, "arc_dns_injector", true);
+            tryUnpackComponent(ctx, "MioLibPatcher", true);
+            tryUnpackComponent(ctx, "forge_installer", true);
+            tryUnpackComponent(ctx, "authlib-injector", true);
+
             ProgressLayout.clearProgress(ProgressLayout.EXTRACT_COMPONENTS);
         });
     }

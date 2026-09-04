@@ -307,6 +307,12 @@ public class GameRunner {
             
             String injectorPath = Tools.DIR_DATA + "/authlib-injector/authlib-injector.jar";
             File injectorJar = new File(injectorPath);
+
+            if (!injectorJar.exists() || injectorJar.length() == 0) {
+                injectorPath = Tools.DIR_DATA + "/launcher/authlib-injector.jar";
+                injectorJar = new File(injectorPath);
+            }
+
             if (injectorJar.exists() && injectorJar.length() > 0) {
                 String agentArg = "-javaagent:" + injectorPath + "=" + sSkinManager.getAuthlibUrl();
                 javaArgList.add(agentArg);
@@ -502,6 +508,12 @@ public class GameRunner {
         
         String injectorPath = Tools.DIR_DATA + "/authlib-injector/authlib-injector.jar";
         File injectorJar = new File(injectorPath);
+
+        if (!injectorJar.exists() || injectorJar.length() == 0) {
+            injectorPath = Tools.DIR_DATA + "/launcher/authlib-injector.jar";
+            injectorJar = new File(injectorPath);
+        }
+
         if (injectorJar.exists() && injectorJar.length() > 0) {
             javaArgList.add("-javaagent:" + injectorPath + "=" + injectorUrl);
         } else {
