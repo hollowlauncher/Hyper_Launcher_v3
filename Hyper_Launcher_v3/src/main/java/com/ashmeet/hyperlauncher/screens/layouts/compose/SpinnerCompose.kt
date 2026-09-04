@@ -156,7 +156,7 @@ fun AccountSpinnerCompose(
             }
         }
 
-        val elyByLoginListener = ExtraListener<String> { key, value ->
+        val elyByLoginListener = ExtraListener<String> { _, value ->
             val backgroundLogin = AuthType.ELY_BY.createAuth()
             backgroundLogin.createAccount(loginListener, value)
             false
