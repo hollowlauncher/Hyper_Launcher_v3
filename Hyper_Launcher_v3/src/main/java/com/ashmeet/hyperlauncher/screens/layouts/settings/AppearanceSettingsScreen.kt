@@ -1,23 +1,17 @@
 package com.ashmeet.hyperlauncher.screens.layouts.settings
 
-import com.ashmeet.hyperlauncher.utils.Translator
-import com.ashmeet.hyperlauncher.utils.translatedText
-
+import android.graphics.BitmapFactory
 import android.view.ViewGroup
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ViewSidebar
@@ -34,9 +28,9 @@ import androidx.compose.material.icons.rounded.DragIndicator
 import androidx.compose.material.icons.rounded.Layers
 import androidx.compose.material.icons.rounded.Opacity
 import androidx.compose.material.icons.rounded.RadioButtonUnchecked
+import androidx.compose.material.icons.rounded.Repeat
 import androidx.compose.material.icons.rounded.Restore
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
 import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.runtime.Composable
@@ -65,10 +59,11 @@ import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SettingsAc
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SettingsSliderItem
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SettingsSwitchItem
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SingleChoiceDialog
+import com.ashmeet.hyperlauncher.utils.Translator
+import com.ashmeet.hyperlauncher.utils.translatedText
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.Tools
 import net.kdt.pojavlaunch.colorselector.ColorSelector
-import android.graphics.BitmapFactory
 import java.io.File
 import java.io.FileOutputStream
 
@@ -117,6 +112,7 @@ fun AppearanceSettingsScreen(
     var launcherBgBlur by remember { mutableFloatStateOf(LauncherPreferences.PREF_LAUNCHER_BACKGROUND_BLUR.toFloat()) }
     var launcherVideoMuted by remember { mutableStateOf(LauncherPreferences.PREF_LAUNCHER_VIDEO_MUTED) }
     var launcherVideoVolume by remember { mutableFloatStateOf(LauncherPreferences.PREF_LAUNCHER_VIDEO_VOLUME.toFloat()) }
+    var launcherVideoLoop by remember { mutableStateOf(LauncherPreferences.PREF_LAUNCHER_VIDEO_LOOP) }
     var recentBackgrounds by remember { mutableStateOf(LauncherPreferences.PREF_RECENT_LAUNCHER_BACKGROUNDS.toList()) }
 
     val context = LocalContext.current
@@ -544,6 +540,21 @@ fun AppearanceSettingsScreen(
                         launcherVideoMuted = it
                         LauncherPreferences.prefs.edit { putBoolean("launcher_video_muted", it) }
                         LauncherPreferences.PREF_LAUNCHER_VIDEO_MUTED = it
+                    },
+                    enabled = launcherBgType == "video"
+                )
+            }
+
+            SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
+                SettingsSwitchItem(
+                    title = translatedText("Loop Video"),
+                    summary = translatedText("Automatically restart the video when it ends"),
+                    icon = Icons.Rounded.Repeat,
+                    checked = launcherVideoLoop,
+                    onCheckedChange = {
+                        launcherVideoLoop = it
+                        LauncherPreferences.prefs.edit { putBoolean("launcher_video_loop", it) }
+                        LauncherPreferences.PREF_LAUNCHER_VIDEO_LOOP = it
                     },
                     enabled = launcherBgType == "video"
                 )

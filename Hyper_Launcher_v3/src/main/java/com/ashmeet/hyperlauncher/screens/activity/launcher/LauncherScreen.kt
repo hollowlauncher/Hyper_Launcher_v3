@@ -69,6 +69,7 @@ fun PojavLauncherScreen(
     var launcherBgBlur by remember { mutableFloatStateOf(LauncherPreferences.PREF_LAUNCHER_BACKGROUND_BLUR.toFloat()) }
     var launcherVideoMuted by remember { mutableStateOf(LauncherPreferences.PREF_LAUNCHER_VIDEO_MUTED) }
     var launcherVideoVolume by remember { mutableFloatStateOf(LauncherPreferences.PREF_LAUNCHER_VIDEO_VOLUME.toFloat()) }
+    var launcherVideoLoop by remember { mutableStateOf(LauncherPreferences.PREF_LAUNCHER_VIDEO_LOOP) }
 
     DisposableEffect(Unit) {
         val listener = TaskCountListener { count ->
@@ -85,6 +86,7 @@ fun PojavLauncherScreen(
                 "launcher_background_blur" -> launcherBgBlur = LauncherPreferences.prefs.getInt("launcher_background_blur", 0).toFloat()
                 "launcher_video_muted" -> launcherVideoMuted = LauncherPreferences.prefs.getBoolean("launcher_video_muted", true)
                 "launcher_video_volume" -> launcherVideoVolume = LauncherPreferences.prefs.getInt("launcher_video_volume", 50).toFloat()
+                "launcher_video_loop" -> launcherVideoLoop = LauncherPreferences.prefs.getBoolean("launcher_video_loop", true)
             }
         }
         ProgressKeeper.addTaskCountListener(listener)
@@ -110,7 +112,7 @@ fun PojavLauncherScreen(
         color = if (launcherBgPath != null) Color.Transparent else MaterialTheme.colorScheme.background,
         contentColor = MaterialTheme.colorScheme.onBackground
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
             if (launcherBgType == "image" && backgroundBitmap != null) {
                 Image(
                     bitmap = backgroundBitmap.asImageBitmap(),
@@ -130,20 +132,47 @@ fun PojavLauncherScreen(
                         VideoView(context).apply {
                             setVideoPath(launcherBgPath)
                             setOnPreparedListener { mp ->
-                                mp.isLooping = true
+                                mp.isLooping = launcherVideoLoop
                                 if (launcherVideoMuted) {
                                     mp.setVolume(0f, 0f)
                                 } else {
                                     val vol = launcherVideoVolume / 100f
                                     mp.setVolume(vol, vol)
                                 }
+                                
+                                // Center Crop Logic
+                                val videoWidth = mp.videoWidth.toFloat()
+                                val videoHeight = mp.videoHeight.toFloat()
+                                val viewWidth = width.toFloat()
+                                val viewHeight = height.toFloat()
+                                
+                                if (videoWidth > 0 && videoHeight > 0 && viewWidth > 0 && viewHeight > 0) {
+                                    val videoAspectRatio = videoWidth / videoHeight
+                                    val viewAspectRatio = viewWidth / viewHeight
+                                    
+                                    val scaleX = if (videoAspectRatio > viewAspectRatio) {
+                                        viewHeight / videoHeight * videoWidth / viewWidth
+                                    } else {
+                                        1f
+                                    }
+                                    val scaleY = if (videoAspectRatio < viewAspectRatio) {
+                                        viewWidth / videoWidth * videoHeight / viewHeight
+                                    } else {
+                                        1f
+                                    }
+                                    scaleX.takeIf { it > 0 }?.let { this.scaleX = it }
+                                    scaleY.takeIf { it > 0 }?.let { this.scaleY = it }
+                                }
+                                
                                 start()
                             }
                         }
                     },
                     update = { view ->
                         if (view.tag != launcherBgPath) {
-                            view.setVideoPath(launcherBgPath)
+                            if (launcherBgPath != null) {
+                                view.setVideoPath(launcherBgPath)
+                            }
                             view.tag = launcherBgPath
                         }
                     },
