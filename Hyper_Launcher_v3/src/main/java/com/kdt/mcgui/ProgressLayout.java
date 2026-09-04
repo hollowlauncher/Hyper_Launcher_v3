@@ -31,7 +31,6 @@ import java.util.ArrayList;
 public class ProgressLayout extends ConstraintLayout implements View.OnClickListener, TaskCountListener{
     public static final String UNPACK_RUNTIME = "unpack_runtime";
     public static final String DOWNLOAD_GAME = "download_minecraft";
-    public static final String DOWNLOAD_VERSION_LIST = "download_verlist";
     public static final String AUTHENTICATE = "authenticate";
     public static final String INSTALL_MODPACK = "install_modpack";
     public static final String EXTRACT_COMPONENTS = "extract_components";

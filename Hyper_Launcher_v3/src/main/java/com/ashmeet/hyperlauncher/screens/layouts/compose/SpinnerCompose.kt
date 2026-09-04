@@ -23,7 +23,6 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -31,7 +30,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -74,15 +72,10 @@ fun AccountSpinnerCompose(
     var accounts by remember { mutableStateOf<List<Account>>(emptyList()) }
     var selectedIndex by remember { mutableIntStateOf(-1) }
     var expanded by remember { mutableStateOf(false) }
-    var loginProgress by remember { mutableFloatStateOf(0f) }
-    var isAuthenticating by remember { mutableStateOf(false) }
 
     val loginListener = remember {
         object : LoginListener {
-            private var maxSteps = 5
             override fun onLoginDone(account: Account?) {
-                loginProgress = 0f
-                isAuthenticating = false
                 if (account != null) {
                     Accounts.setCurrent(account)
                     ExtraCore.setValue(ExtraConstants.REFRESH_ACCOUNT_SPINNER, true)
@@ -90,17 +83,12 @@ fun AccountSpinnerCompose(
             }
 
             override fun onLoginError(errorMessage: Throwable?) {
-                loginProgress = 0f
-                isAuthenticating = false
             }
 
             override fun onLoginProgress(step: Int) {
-                loginProgress = step.toFloat() / maxSteps
-                isAuthenticating = true
             }
 
             override fun setMaxLoginProgress(max: Int) {
-                maxSteps = max
             }
         }
     }
@@ -111,7 +99,6 @@ fun AccountSpinnerCompose(
                 val refreshAccount = account.reload() ?: return@execute
                 val authType = refreshAccount.authType
                 if (authType.requiresLogin() && System.currentTimeMillis() > refreshAccount.expiresAt) {
-                    Tools.runOnUiThread { isAuthenticating = true }
                     authType.createAuth().refreshAccount(loginListener, refreshAccount)
                 }
             }
@@ -121,7 +108,6 @@ fun AccountSpinnerCompose(
                     val refreshAccount = account.reload() ?: return@execute
                     val authType = refreshAccount.authType
                     if (authType.requiresLogin() && System.currentTimeMillis() > refreshAccount.expiresAt) {
-                        Tools.runOnUiThread { isAuthenticating = true }
                         authType.createAuth().refreshAccount(loginListener, refreshAccount)
                     }
                 }
@@ -165,19 +151,15 @@ fun AccountSpinnerCompose(
         val microsoftLoginListener = object : ExtraListener<String> {
             override fun onValueSet(key: String, value: String): Boolean {
                 val backgroundLogin = AuthType.MICROSOFT.createAuth()
-                isAuthenticating = true
                 backgroundLogin.createAccount(loginListener, value)
                 return false
             }
         }
 
-        val elyByLoginListener = object : ExtraListener<String> {
-            override fun onValueSet(key: String, value: String): Boolean {
-                val backgroundLogin = AuthType.ELY_BY.createAuth()
-                isAuthenticating = true
-                backgroundLogin.createAccount(loginListener, value)
-                return false
-            }
+        val elyByLoginListener = ExtraListener<String> { key, value ->
+            val backgroundLogin = AuthType.ELY_BY.createAuth()
+            backgroundLogin.createAccount(loginListener, value)
+            false
         }
 
         val mojangLoginListener = object : ExtraListener<Array<String>> {
@@ -213,8 +195,6 @@ fun AccountSpinnerCompose(
         accounts = accounts,
         expanded = expanded,
         onExpandedChange = { expanded = it },
-        isAuthenticating = isAuthenticating,
-        loginProgress = loginProgress,
         onAddAccountClick = {
             expanded = false
             ExtraCore.setValue(ExtraConstants.SELECT_AUTH_METHOD, true)
@@ -246,8 +226,6 @@ fun AccountSpinnerUI(
     accounts: List<Account>,
     expanded: Boolean,
     onExpandedChange: (Boolean) -> Unit,
-    isAuthenticating: Boolean,
-    loginProgress: Float,
     onAddAccountClick: () -> Unit,
     onAccountSelected: (Account) -> Unit,
     onAccountDelete: (Account) -> Unit,
@@ -287,17 +265,7 @@ fun AccountSpinnerUI(
                     }
                 }
 
-                if (isAuthenticating) {
-                    LinearProgressIndicator(
-                        progress = { loginProgress },
-                        modifier = Modifier
-                            .align(Alignment.BottomStart)
-                            .fillMaxWidth()
-                            .height(2.dp),
-                        color = MaterialTheme.colorScheme.primary,
-                        trackColor = Color.Transparent,
-                    )
-                } else if (!hideDivider) {
+                if (!hideDivider) {
                     Box(
                         modifier = Modifier
                             .align(Alignment.BottomStart)
@@ -440,8 +408,6 @@ fun AccountSpinnerPreview() {
                     accounts = listOf(account1, account2),
                     expanded = expanded,
                     onExpandedChange = { expanded = it },
-                    isAuthenticating = false,
-                    loginProgress = 0f,
                     onAddAccountClick = {},
                     onAccountSelected = {},
                     onAccountDelete = {}
@@ -457,8 +423,6 @@ fun AccountSpinnerPreview() {
                     accounts = listOf(account1, account2),
                     expanded = false,
                     onExpandedChange = {},
-                    isAuthenticating = true,
-                    loginProgress = 0.5f,
                     onAddAccountClick = {},
                     onAccountSelected = {},
                     onAccountDelete = {}

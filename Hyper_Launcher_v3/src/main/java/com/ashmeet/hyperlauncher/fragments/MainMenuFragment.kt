@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
-import com.ashmeet.hyperlauncher.screens.activity.launcher.MainMenuFragmentCompose
+import com.ashmeet.hyperlauncher.screens.layouts.home.MainMenuFragmentCompose
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.CustomControlsActivity
 import net.kdt.pojavlaunch.Tools

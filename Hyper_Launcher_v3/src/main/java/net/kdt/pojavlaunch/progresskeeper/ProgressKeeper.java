@@ -58,11 +58,7 @@ public class ProgressKeeper {
     }
 
     private static void updateTaskCount(int count) {
-        for (TaskCountListener listener : sTaskCountListeners) {
-            if (listener.onUpdateTaskCount(count)) {
-                sTaskCountListeners.remove(listener);
-            }
-        }
+        sTaskCountListeners.removeIf(listener -> listener.onUpdateTaskCount(count));
     }
 
     public static boolean hasProgressKey(String key) {

@@ -1,4 +1,4 @@
-package com.ashmeet.hyperlauncher.screens.activity.launcher
+package com.ashmeet.hyperlauncher.screens.layouts.home
 
 import android.content.SharedPreferences
 import androidx.compose.animation.animateContentSize
