@@ -111,6 +111,7 @@ import java.util.Date
 import java.util.Locale
 import net.kdt.pojavlaunch.modloaders.modpacks.api.ModrinthService
 import com.ashmeet.hyperlauncher.screens.layouts.installer.models.ModrinthVersion
+import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences
 import java.net.URL
 import android.util.Log
 
@@ -340,7 +341,8 @@ fun InstanceDirectoryContent(
 
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
+        color = if (LauncherPreferences.PREF_LAUNCHER_BACKGROUND_PATH != null) Color.Transparent else MaterialTheme.colorScheme.background,
+        contentColor = MaterialTheme.colorScheme.onBackground
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
             Box {

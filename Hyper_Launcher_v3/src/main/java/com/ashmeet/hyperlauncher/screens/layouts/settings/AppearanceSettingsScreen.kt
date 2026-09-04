@@ -6,8 +6,19 @@ import com.ashmeet.hyperlauncher.utils.translatedText
 import android.view.ViewGroup
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ViewSidebar
 import androidx.compose.material.icons.filled.Animation
@@ -17,9 +28,14 @@ import androidx.compose.material.icons.rounded.AddPhotoAlternate
 import androidx.compose.material.icons.rounded.AspectRatio
 import androidx.compose.material.icons.rounded.ColorLens
 import androidx.compose.material.icons.rounded.DragIndicator
+import androidx.compose.material.icons.rounded.Layers
 import androidx.compose.material.icons.rounded.Opacity
 import androidx.compose.material.icons.rounded.RadioButtonUnchecked
 import androidx.compose.material.icons.rounded.Restore
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
+import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -27,6 +43,10 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
@@ -45,9 +65,11 @@ import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SingleChoi
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.Tools
 import net.kdt.pojavlaunch.colorselector.ColorSelector
+import android.graphics.BitmapFactory
 import java.io.File
 import java.io.FileOutputStream
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppearanceSettingsScreen(
     onBack: () -> Unit
@@ -83,6 +105,11 @@ fun AppearanceSettingsScreen(
     var pointerHotspotX by remember { mutableFloatStateOf(LauncherPreferences.PREF_POINTER_HOTSPOT_X.toFloat()) }
     var pointerHotspotY by remember { mutableFloatStateOf(LauncherPreferences.PREF_POINTER_HOTSPOT_Y.toFloat()) }
     var mouseScale by remember { mutableFloatStateOf(LauncherPreferences.PREF_MOUSESCALE * 100f) }
+
+    var launcherBgPath by remember { mutableStateOf(LauncherPreferences.PREF_LAUNCHER_BACKGROUND_PATH) }
+    var launcherBgOverlayEnabled by remember { mutableStateOf(LauncherPreferences.PREF_LAUNCHER_BACKGROUND_OVERLAY_ENABLED) }
+    var launcherBgOverlayOpacity by remember { mutableFloatStateOf(LauncherPreferences.PREF_LAUNCHER_BACKGROUND_OVERLAY_OPACITY.toFloat()) }
+    var recentBackgrounds by remember { mutableStateOf(LauncherPreferences.PREF_RECENT_LAUNCHER_BACKGROUNDS.toList()) }
 
     val context = LocalContext.current
     var showTransitionDialog by remember { mutableStateOf(false) }
@@ -327,6 +354,129 @@ fun AppearanceSettingsScreen(
                         LauncherPreferences.PREF_DRAWER_PULL_POS_X = -1f
                         LauncherPreferences.PREF_DRAWER_PULL_POS_Y = -1f
                     }
+                )
+            }
+
+            PreferenceCategory(title = translatedText("Launcher Background"))
+            if (recentBackgrounds.isNotEmpty()) {
+                val carouselState = rememberCarouselState { recentBackgrounds.size }
+                SettingsCard(position = CardPosition.TOP, useSurface = true) {
+                    HorizontalMultiBrowseCarousel(
+                        state = carouselState,
+                        preferredItemWidth = 180.dp,
+                        itemSpacing = 8.dp,
+                        contentPadding = PaddingValues(16.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(120.dp)
+                    ) { index ->
+                        val path = recentBackgrounds[index]
+                        val bitmap = remember(path) {
+                            try {
+                                BitmapFactory.decodeFile(path)
+                            } catch (_: Exception) {
+                                null
+                            }
+                        }
+                        if (bitmap != null) {
+                            Image(
+                                bitmap = bitmap.asImageBitmap(),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .clickable {
+                                        launcherBgPath = path
+                                        LauncherPreferences.prefs.edit { putString("launcher_background_path", path) }
+                                        LauncherPreferences.PREF_LAUNCHER_BACKGROUND_PATH = path
+
+                                        // Update recent order
+                                        val updatedRecent = LauncherPreferences.PREF_RECENT_LAUNCHER_BACKGROUNDS.toMutableList()
+                                        updatedRecent.remove(path)
+                                        updatedRecent.add(0, path)
+                                        LauncherPreferences.PREF_RECENT_LAUNCHER_BACKGROUNDS = updatedRecent
+                                        LauncherPreferences.prefs.edit { putString("recent_launcher_backgrounds", updatedRecent.joinToString(";")) }
+                                        recentBackgrounds = updatedRecent.toList()
+                                    },
+                                contentScale = ContentScale.Crop
+                            )
+                        }
+                    }
+                }
+            }
+
+            SettingsCard(position = if (recentBackgrounds.isNotEmpty()) CardPosition.MIDDLE else CardPosition.TOP, useSurface = true) {
+                val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+                    if (uri != null) {
+                        val destination = File(Tools.DIR_DATA, "launcher_background_${System.currentTimeMillis()}.png")
+                        try {
+                            context.contentResolver.openInputStream(uri)?.use { input ->
+                                FileOutputStream(destination).use { output ->
+                                    input.copyTo(output)
+                                }
+                            }
+                            val path = destination.absolutePath
+                            LauncherPreferences.prefs.edit { putString("launcher_background_path", path) }
+                            LauncherPreferences.PREF_LAUNCHER_BACKGROUND_PATH = path
+                            launcherBgPath = path
+
+                            // Update recent backgrounds
+                            val updatedRecent = LauncherPreferences.PREF_RECENT_LAUNCHER_BACKGROUNDS.toMutableList()
+                            updatedRecent.remove(path)
+                            updatedRecent.add(0, path)
+                            if (updatedRecent.size > 5) updatedRecent.removeAt(5)
+                            LauncherPreferences.PREF_RECENT_LAUNCHER_BACKGROUNDS = updatedRecent
+                            LauncherPreferences.prefs.edit { putString("recent_launcher_backgrounds", updatedRecent.joinToString(";")) }
+                            recentBackgrounds = updatedRecent.toList()
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }
+                }
+                SettingsActionItem(
+                    title = translatedText("Change Background"),
+                    summary = if (launcherBgPath != null) translatedText("Custom background active") else translatedText("Default background active"),
+                    icon = Icons.Rounded.AddPhotoAlternate,
+                    onClick = { launcher.launch("image/*") }
+                )
+            }
+            SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
+                SettingsActionItem(
+                    title = translatedText("Reset Background"),
+                    icon = Icons.Rounded.Restore,
+                    onClick = {
+                        LauncherPreferences.prefs.edit { remove("launcher_background_path") }
+                        LauncherPreferences.PREF_LAUNCHER_BACKGROUND_PATH = null
+                        launcherBgPath = null
+                    }
+                )
+            }
+            SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
+                SettingsSwitchItem(
+                    title = translatedText("Enable Overlay"),
+                    summary = translatedText("Show a color overlay on top of the background"),
+                    icon = Icons.Rounded.Layers,
+                    checked = launcherBgOverlayEnabled,
+                    onCheckedChange = {
+                        launcherBgOverlayEnabled = it
+                        LauncherPreferences.prefs.edit { putBoolean("launcher_background_overlay_enabled", it) }
+                        LauncherPreferences.PREF_LAUNCHER_BACKGROUND_OVERLAY_ENABLED = it
+                    }
+                )
+            }
+            SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {
+                SettingsSliderItem(
+                    title = translatedText("Overlay Opacity"),
+                    icon = Icons.Rounded.Opacity,
+                    value = launcherBgOverlayOpacity,
+                    valueRange = 0f..100f,
+                    onValueChange = {
+                        launcherBgOverlayOpacity = it
+                        LauncherPreferences.prefs.edit { putInt("launcher_background_overlay_opacity", it.toInt()) }
+                        LauncherPreferences.PREF_LAUNCHER_BACKGROUND_OVERLAY_OPACITY = it.toInt()
+                    },
+                    valueSuffix = "%",
+                    enabled = launcherBgOverlayEnabled
                 )
             }
 

@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.fragment.app.Fragment
 import com.ashmeet.hyperlauncher.components.MineButton
+import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 import com.kdt.pickafile.FileListView
 import com.kdt.pickafile.FileSelectedListener
@@ -104,7 +105,8 @@ fun FileSelectorContent(
 
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
+        color = if (LauncherPreferences.PREF_LAUNCHER_BACKGROUND_PATH != null) androidx.compose.ui.graphics.Color.Transparent else MaterialTheme.colorScheme.background,
+        contentColor = MaterialTheme.colorScheme.onBackground
     ) {
         Column(
             modifier = Modifier

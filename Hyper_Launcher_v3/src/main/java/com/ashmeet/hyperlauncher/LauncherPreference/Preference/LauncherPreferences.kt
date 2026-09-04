@@ -213,6 +213,18 @@ object LauncherPreferences {
     @JvmField
     var PREF_POINTER_HOTSPOT_Y = 0
 
+    @JvmField
+    var PREF_LAUNCHER_BACKGROUND_PATH: String? = null
+
+    @JvmField
+    var PREF_LAUNCHER_BACKGROUND_OVERLAY_OPACITY = 50
+
+    @JvmField
+    var PREF_LAUNCHER_BACKGROUND_OVERLAY_ENABLED = true
+
+    @JvmField
+    var PREF_RECENT_LAUNCHER_BACKGROUNDS: MutableList<String> = mutableListOf()
+
     @JvmStatic
     fun loadPreferences(ctx: Context?) {
         if (ctx == null) return
@@ -294,6 +306,14 @@ object LauncherPreferences {
         PREF_POINTER_ICON_PATH = pref.getString("pointer_icon_path", null)
         PREF_POINTER_HOTSPOT_X = pref.getInt("pointer_hotspot_x", 0)
         PREF_POINTER_HOTSPOT_Y = pref.getInt("pointer_hotspot_y", 0)
+
+        PREF_LAUNCHER_BACKGROUND_PATH = pref.getString("launcher_background_path", null)
+        PREF_LAUNCHER_BACKGROUND_OVERLAY_OPACITY = pref.getInt("launcher_background_overlay_opacity", 50)
+        PREF_LAUNCHER_BACKGROUND_OVERLAY_ENABLED = pref.getBoolean("launcher_background_overlay_enabled", true)
+
+        val recentBgs = pref.getString("recent_launcher_backgrounds", "") ?: ""
+        PREF_RECENT_LAUNCHER_BACKGROUNDS = if (recentBgs.isEmpty()) mutableListOf() else recentBgs.split(";").toMutableList()
+
         updateNightMode()
 
         val argLwjglLibname = "-Dorg.lwjgl.opengl.libname="

@@ -65,24 +65,22 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences
+import com.ashmeet.hyperlauncher.components.MineButton
+import com.ashmeet.hyperlauncher.screens.layouts.settings.layouts.CardPosition
+import com.ashmeet.hyperlauncher.screens.layouts.settings.layouts.SettingsCard
+import com.ashmeet.hyperlauncher.theme.PojavTheme
+import com.ashmeet.hyperlauncher.utils.SkinUtils
+import com.ashmeet.hyperlauncher.utils.drawable.rememberDrawablePainter
 import com.ashmeet.hyperlauncher.utils.translatedText
 import net.ashmeet.hyperlauncher.R
-import net.kdt.pojavlaunch.authenticator.accounts.Account
 import net.kdt.pojavlaunch.authenticator.accounts.Accounts
 import net.kdt.pojavlaunch.extra.ExtraConstants
 import net.kdt.pojavlaunch.extra.ExtraCore
 import net.kdt.pojavlaunch.extra.ExtraListener
 import net.kdt.pojavlaunch.instances.DisplayInstance
-import net.kdt.pojavlaunch.instances.Instance
 import net.kdt.pojavlaunch.instances.InstanceIconProvider
 import net.kdt.pojavlaunch.instances.Instances
-import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences
-import com.ashmeet.hyperlauncher.screens.layouts.settings.layouts.CardPosition
-import com.ashmeet.hyperlauncher.screens.layouts.settings.layouts.SettingsCard
-import com.ashmeet.hyperlauncher.utils.SkinUtils
-import com.ashmeet.hyperlauncher.theme.PojavTheme
-import com.ashmeet.hyperlauncher.utils.drawable.rememberDrawablePainter
-import com.ashmeet.hyperlauncher.components.MineButton
 
 @Composable
 fun MainMenuFragmentCompose(
@@ -99,14 +97,15 @@ fun MainMenuFragmentCompose(
 ) {
     val context = LocalContext.current
     val isPreview = LocalInspectionMode.current
-    val hasBackground = false
+    var launcherBgPath by remember { mutableStateOf(LauncherPreferences.PREF_LAUNCHER_BACKGROUND_PATH) }
+    val hasBackground = launcherBgPath != null
     val backgroundTransparency = 1f
     var hideActionButtons by remember { mutableStateOf(LauncherPreferences.PREF_HIDE_SIDEBAR) }
 
     var selectedInstance by remember {
-        mutableStateOf<Instance?>(
+        mutableStateOf(
             if (isPreview) null
-            else try { Instances.loadSelectedInstance() } catch (e: Exception) { null }
+            else try { Instances.loadSelectedInstance() } catch (_: Exception) { null }
         )
     }
 
@@ -116,8 +115,11 @@ fun MainMenuFragmentCompose(
                 if (key == "hide_sidebar") {
                     hideActionButtons = LauncherPreferences.prefs.getBoolean("hide_sidebar", false)
                 }
+                if (key == "launcher_background_path") {
+                    launcherBgPath = LauncherPreferences.prefs.getString("launcher_background_path", null)
+                }
                 if (key == LauncherPreferences.PREF_KEY_CURRENT_INSTANCE) {
-                    selectedInstance = try { Instances.loadSelectedInstance() } catch (e: Exception) { null }
+                    selectedInstance = try { Instances.loadSelectedInstance() } catch (_: Exception) { null }
                 }
             }
             LauncherPreferences.prefs.registerOnSharedPreferenceChangeListener(listener)
@@ -129,7 +131,7 @@ fun MainMenuFragmentCompose(
 
     SideEffect {
         if (!isPreview) {
-            val instance = try { Instances.loadSelectedInstance() } catch (e: Exception) { null }
+            val instance = try { Instances.loadSelectedInstance() } catch (_: Exception) { null }
             if (selectedInstance != instance) {
                 selectedInstance = instance
             }
@@ -137,13 +139,13 @@ fun MainMenuFragmentCompose(
     }
 
     var currentAccount by remember {
-        mutableStateOf<Account?>(if (isPreview) null else Accounts.getCurrent())
+        mutableStateOf(if (isPreview) null else Accounts.getCurrent())
     }
 
     DisposableEffect(Unit) {
         if (isPreview) return@DisposableEffect onDispose {}
 
-        val accountListener = ExtraListener<Any> { key, value ->
+        val accountListener = ExtraListener<Any> { _, _ ->
             currentAccount = Accounts.getCurrent()
             false
         }
@@ -177,6 +179,7 @@ fun MainMenuFragmentCompose(
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = if (hasBackground) Color.Transparent else MaterialTheme.colorScheme.background,
+        contentColor = MaterialTheme.colorScheme.onBackground,
         tonalElevation = 3.dp
     ) {
         Box(

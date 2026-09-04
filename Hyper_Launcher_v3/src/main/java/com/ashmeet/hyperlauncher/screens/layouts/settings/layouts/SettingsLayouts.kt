@@ -16,6 +16,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 
 enum class CardPosition {
@@ -34,6 +35,14 @@ fun SettingsCard(
     val topRadius = if (position == CardPosition.TOP || position == CardPosition.SINGLE) outerShape else innerShape
     val bottomRadius = if (position == CardPosition.BOTTOM || position == CardPosition.SINGLE) outerShape else innerShape
 
+    val hasBg = LauncherPreferences.PREF_LAUNCHER_BACKGROUND_PATH != null
+    val cardColor = if (useSurface) {
+        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+    } else {
+        if (hasBg) MaterialTheme.colorScheme.surface.copy(alpha = 0.3f)
+        else MaterialTheme.colorScheme.background
+    }
+
     Surface(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(
@@ -42,7 +51,7 @@ fun SettingsCard(
             bottomStart = bottomRadius,
             bottomEnd = bottomRadius
         ),
-        color = if (useSurface) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f) else MaterialTheme.colorScheme.background,
+        color = cardColor,
         content = {
             Column(content = content)
         }
@@ -57,7 +66,7 @@ fun TitleAndSummary(
     summaryStyle: TextStyle = MaterialTheme.typography.bodySmall
 ) {
     Column {
-        Text(text = title, style = titleStyle)
+        Text(text = title, style = titleStyle, color = MaterialTheme.colorScheme.onSurface)
         if (summary != null) {
             Text(
                 text = summary,

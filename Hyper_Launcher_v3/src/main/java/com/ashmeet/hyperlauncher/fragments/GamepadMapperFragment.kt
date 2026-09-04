@@ -25,6 +25,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 import com.ashmeet.hyperlauncher.utils.drawable.rememberDrawablePainter
 import fr.spse.gamepad_remapper.RemapperManager
@@ -97,7 +98,8 @@ class GamepadMapperFragment : Fragment(), View.OnKeyListener, View.OnGenericMoti
 
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
+            color = if (LauncherPreferences.PREF_LAUNCHER_BACKGROUND_PATH != null) androidx.compose.ui.graphics.Color.Transparent else MaterialTheme.colorScheme.background,
+            contentColor = MaterialTheme.colorScheme.onBackground
         ) {
             Column(modifier = Modifier.fillMaxSize()) {
                 Row(

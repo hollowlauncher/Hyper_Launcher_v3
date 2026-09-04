@@ -44,6 +44,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
+import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
@@ -203,30 +204,15 @@ fun ContentInstallerScreen(
 
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
+        color = if (LauncherPreferences.PREF_LAUNCHER_BACKGROUND_PATH != null) Color.Transparent else MaterialTheme.colorScheme.background,
+        contentColor = MaterialTheme.colorScheme.onBackground
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
             SideRail(
                 onCreateNew = onImportModpack,
                 onRefresh = onRefresh,
                 onImportModpack = { isSearchActive = !isSearchActive },
-                onBack = {
-                    if (isSearchActive) {
-                        isSearchActive = false
-                        searchQuery = ""
-                        onSearch(
-                            "",
-                            selectedType,
-                            selectedVersion,
-                            selectedLoader,
-                            selectedSource
-                        )
-                    } else if (viewingProject != null) {
-                        onBackToProjects()
-                    } else {
-                        onBack()
-                    }
-                }
+                onBack = handleBack
             )
 
             Surface(

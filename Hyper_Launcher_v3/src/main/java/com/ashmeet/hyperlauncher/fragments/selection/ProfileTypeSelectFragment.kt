@@ -30,6 +30,7 @@ import com.ashmeet.hyperlauncher.fragments.LegacyFabricInstallFragment
 import com.ashmeet.hyperlauncher.fragments.NeoforgeInstallFragment
 import com.ashmeet.hyperlauncher.fragments.OptiFineInstallFragment
 import com.ashmeet.hyperlauncher.fragments.QuiltInstallFragment
+import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.Tools
@@ -51,7 +52,8 @@ class ProfileTypeSelectFragment : Fragment() {
                 PojavTheme {
                     Surface(
                         modifier = Modifier.fillMaxSize(),
-                        color = MaterialTheme.colorScheme.background
+                        color = if (LauncherPreferences.PREF_LAUNCHER_BACKGROUND_PATH != null) androidx.compose.ui.graphics.Color.Transparent else MaterialTheme.colorScheme.background,
+                        contentColor = MaterialTheme.colorScheme.onBackground
                     ) {
                         ProfileTypeContent(
                             onVanillaClick = {

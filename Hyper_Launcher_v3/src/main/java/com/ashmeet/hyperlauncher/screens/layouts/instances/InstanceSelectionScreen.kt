@@ -50,6 +50,7 @@ import com.google.gson.Gson
 import net.kdt.pojavlaunch.PojavApplication
 import net.kdt.pojavlaunch.instances.DisplayInstance
 import net.kdt.pojavlaunch.instances.Instances
+import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences
 import com.ashmeet.hyperlauncher.components.SideRail
 import com.ashmeet.hyperlauncher.screens.layouts.compose.InstanceListItem
 import com.ashmeet.hyperlauncher.theme.PojavTheme
@@ -132,7 +133,8 @@ private fun InstanceSelectionContent(
 
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
+        color = if (LauncherPreferences.PREF_LAUNCHER_BACKGROUND_PATH != null) Color.Transparent else MaterialTheme.colorScheme.background,
+        contentColor = MaterialTheme.colorScheme.onBackground
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
             SideRail(

@@ -15,8 +15,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.modloaders.FabricVersion
 import com.ashmeet.hyperlauncher.components.DefaultSwitch
@@ -79,7 +81,8 @@ fun FabriclikeInstallScreen(
 
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
+        color = if (LauncherPreferences.PREF_LAUNCHER_BACKGROUND_PATH != null) Color.Transparent else MaterialTheme.colorScheme.background,
+        contentColor = MaterialTheme.colorScheme.onBackground
     ) {
         Column(
             modifier = Modifier

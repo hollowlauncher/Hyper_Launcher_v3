@@ -1,7 +1,10 @@
 package com.ashmeet.hyperlauncher.screens.activity.launcher
 
 import android.widget.FrameLayout
+import android.graphics.BitmapFactory
+import android.content.SharedPreferences
 import com.ashmeet.hyperlauncher.utils.translatedText
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,17 +24,24 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.compositeOver
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
+import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences
 import com.ashmeet.hyperlauncher.screens.layouts.compose.AccountSpinnerCompose
 import com.ashmeet.hyperlauncher.screens.layouts.compose.ProgressLayoutCompose
 import com.ashmeet.hyperlauncher.theme.PojavTheme
@@ -49,25 +59,73 @@ fun PojavLauncherScreen(
     onFragmentViewCreated: (FrameLayout) -> Unit
 ) {
     var taskCount by remember { mutableIntStateOf(ProgressKeeper.getTaskCount()) }
+    var launcherBgPath by remember { mutableStateOf(LauncherPreferences.PREF_LAUNCHER_BACKGROUND_PATH) }
+    var launcherBgOverlayEnabled by remember { mutableStateOf(LauncherPreferences.PREF_LAUNCHER_BACKGROUND_OVERLAY_ENABLED) }
+    var launcherBgOverlayOpacity by remember { mutableFloatStateOf(LauncherPreferences.PREF_LAUNCHER_BACKGROUND_OVERLAY_OPACITY.toFloat()) }
+
     DisposableEffect(Unit) {
         val listener = TaskCountListener { count ->
             taskCount = count
             false
         }
+        val prefListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+            when (key) {
+                "launcher_background_path" -> launcherBgPath = LauncherPreferences.prefs.getString("launcher_background_path", null)
+                "launcher_background_overlay_enabled" -> launcherBgOverlayEnabled = LauncherPreferences.prefs.getBoolean("launcher_background_overlay_enabled", true)
+                "launcher_background_overlay_opacity" -> launcherBgOverlayOpacity = LauncherPreferences.prefs.getInt("launcher_background_overlay_opacity", 50).toFloat()
+            }
+        }
         ProgressKeeper.addTaskCountListener(listener)
+        LauncherPreferences.prefs.registerOnSharedPreferenceChangeListener(prefListener)
         onDispose {
             ProgressKeeper.removeTaskCountListener(listener)
+            LauncherPreferences.prefs.unregisterOnSharedPreferenceChangeListener(prefListener)
         }
+    }
+
+    val backgroundBitmap = remember(launcherBgPath) {
+        if (launcherBgPath != null) {
+            try {
+                BitmapFactory.decodeFile(launcherBgPath)
+            } catch (_: Exception) {
+                null
+            }
+        } else null
     }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
+        color = if (launcherBgPath != null) Color.Transparent else MaterialTheme.colorScheme.background,
+        contentColor = MaterialTheme.colorScheme.onBackground
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            if (backgroundBitmap != null) {
+                Image(
+                    bitmap = backgroundBitmap.asImageBitmap(),
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+
+                if (launcherBgOverlayEnabled) {
+                    val isDark = MaterialTheme.colorScheme.surface.luminance() < 0.5f
+                    val overlayColor = if (isDark) {
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0.5f).compositeOver(Color.Black)
+                    } else {
+                        MaterialTheme.colorScheme.primary
+                    }
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(overlayColor.copy(alpha = launcherBgOverlayOpacity / 100f))
+                    )
+                }
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -147,6 +205,7 @@ fun PojavLauncherScreen(
             ProgressLayoutCompose()
         }
     }
+}
 }
 
 @Preview(showBackground = true, name = "File Manager Visible")
