@@ -132,11 +132,13 @@ public class GameRunner {
 
     // Autoswitch to a modern renderer if supported, otherwise - crash with resId dialog message. Returns renderer strings if succeeded
     private static String switchModernRenderer(RendererCompatUtil.RenderersList supported, Instance instance, AppCompatActivity activity, int resId) throws InterruptedException, IOException {
-        String targetRenderer = null;
+        String targetRenderer;
         if (supported.rendererIds.contains("mobileglues")) {
             targetRenderer = "mobileglues";
         } else if (supported.rendererIds.contains("opengles3_ltw")) {
             targetRenderer = "opengles3_ltw";
+        } else {
+            targetRenderer = null;
         }
 
         if(targetRenderer != null) {
@@ -151,7 +153,8 @@ public class GameRunner {
     }
 
     public static void launchGame(final AppCompatActivity activity, Account account,
-                                  Instance instance, String versionId, File[] classpath, String rendererName) throws Throwable {
+                                  Instance instance, String versionId, File[] classpath, String initialRendererName) throws Throwable {
+        String rendererName = initialRendererName;
         int freeDeviceMemory = Tools.getFreeDeviceMemory(activity);
         int localeString;
         int freeAddressSpace = Architecture.is32BitsDevice() ? Tools.getMaxContinuousAddressSpaceSize() : -1;
