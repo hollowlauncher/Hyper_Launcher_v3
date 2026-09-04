@@ -1,0 +1,149 @@
+package com.ashmeet.hyperlauncher.screens.layouts.home.about
+
+import android.app.Activity
+import android.os.Build
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Description
+import androidx.compose.material.icons.rounded.Public
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
+import com.ashmeet.hyperlauncher.screens.layouts.settings.layouts.CardPosition
+import com.ashmeet.hyperlauncher.screens.layouts.settings.layouts.SettingsCard
+import com.ashmeet.hyperlauncher.screens.layouts.settings.layouts.SettingsScreenWrapper
+import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.PreferenceCategory
+import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SettingsActionItem
+import com.ashmeet.hyperlauncher.utils.drawable.rememberDrawablePainter
+import com.ashmeet.hyperlauncher.utils.translatedText
+import net.ashmeet.hyperlauncher.BuildConfig
+import net.ashmeet.hyperlauncher.R
+import net.kdt.pojavlaunch.Architecture
+import net.kdt.pojavlaunch.Logger
+import net.kdt.pojavlaunch.Tools
+
+@Composable
+fun AboutScreen(
+    onBack: () -> Unit
+) {
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        Logger.appendToLog("Info: Launcher version: " + BuildConfig.VERSION_NAME)
+        Logger.appendToLog("Info: Build type: " + BuildConfig.BUILD_TYPE)
+        Logger.appendToLog("Info: Architecture: " + Architecture.archAsString(Architecture.getDeviceArchitecture()))
+        Logger.appendToLog("Info: Device model: " + Build.MANUFACTURER + " " + Build.MODEL)
+        Logger.appendToLog("Info: API version: " + Build.VERSION.SDK_INT)
+    }
+
+    SettingsScreenWrapper(
+        title = translatedText("About"),
+        onBack = onBack,
+        addTopGap = true
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Spacer(modifier = Modifier.height(8.dp))
+                val appIcon = remember(context) { ContextCompat.getDrawable(context, R.drawable.ic_hyper_full) }
+                Image(
+                    painter = rememberDrawablePainter(appIcon),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(80.dp)
+                        .clip(RoundedCornerShape(16.dp)),
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
+                )
+
+                Text(
+                    text = "Hyper Launcher",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.padding(bottom = 12.dp)
+                )
+            }
+
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                PreferenceCategory(title = translatedText("Application"))
+                SettingsCard(position = CardPosition.TOP, useSurface = true) {
+                    SettingsActionItem(title = translatedText("App Name"), summary = "Hyper Launcher 3", onClick = {})
+                }
+                SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
+                    SettingsActionItem(title = translatedText("Version"), summary = BuildConfig.VERSION_NAME, onClick = {})
+                }
+                SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
+                    SettingsActionItem(title = translatedText("Version Code"), summary = BuildConfig.VERSION_CODE.toString(), onClick = {})
+                }
+                SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {
+                    SettingsActionItem(title = translatedText("Package Name"), summary = BuildConfig.APPLICATION_ID, onClick = {})
+                }
+            }
+
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                PreferenceCategory(title = translatedText("Information"))
+                SettingsCard(position = CardPosition.TOP, useSurface = true) {
+                    SettingsActionItem(
+                        title = translatedText("About this launcher"),
+                        summary = translatedText("Learn more about Hyper Launcher"),
+                        icon = Icons.Rounded.Description,
+                        onClick = { (context as? Activity)?.let { Tools.openURL(it, "https://github.com/hollowlauncher/Hyper_Launcher_v3/blob/master/README.md") } }
+                    )
+                }
+                SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
+                    SettingsActionItem(
+                        title = translatedText("Website"),
+                        summary = translatedText("Visit our official website"),
+                        icon = Icons.Rounded.Public,
+                        onClick = { (context as? Activity)?.let { Tools.openURL(it, Tools.URL_HOME) } }
+                    )
+                }
+                SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {
+                    SettingsActionItem(
+                        title = translatedText("Discord"),
+                        summary = translatedText("Join our community on Discord"),
+                        iconPainter = painterResource(id = R.drawable.ic_discord),
+                        onClick = { (context as? Activity)?.let { Tools.openURL(it, context.getString(R.string.social_media_invite)) } }
+                    )
+                }
+            }
+
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                PreferenceCategory(title = translatedText("Device Info"))
+                SettingsCard(position = CardPosition.TOP, useSurface = true) {
+                    SettingsActionItem(title = translatedText("Architecture"), summary = Architecture.archAsString(Architecture.getDeviceArchitecture()), onClick = {})
+                }
+                SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
+                    SettingsActionItem(title = translatedText("Device Model"), summary = "${Build.MANUFACTURER} ${Build.MODEL}", onClick = {})
+                }
+                SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {
+                    SettingsActionItem(title = translatedText("Android Version"), summary = "API ${Build.VERSION.SDK_INT}", onClick = {})
+                }
+            }
+            
+            Spacer(modifier = Modifier.height(24.dp))
+        }
+    }
+}

@@ -127,14 +127,7 @@ fun ExitScreen(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_hyper_full),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(80.dp)
-                        .padding(bottom = 16.dp),
-                    tint = MaterialTheme.colorScheme.onSurface
-                )
+                /* Icon removed as requested */
 
                 Text(
                     text = if (crashReportPath != null) "Game crashed" else title,

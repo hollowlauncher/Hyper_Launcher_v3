@@ -83,7 +83,7 @@ import net.kdt.pojavlaunch.instances.Instances
 
 @Composable
 fun MainMenuFragmentCompose(
-    onWikiClick: () -> Unit,
+    onAboutClick: () -> Unit,
     onSocialMediaClick: () -> Unit,
     onCustomControlsClick: () -> Unit,
     onInstallJarClick: () -> Unit,
@@ -206,10 +206,10 @@ fun MainMenuFragmentCompose(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(60.dp),
-                            title = translatedText(stringResource(id = R.string.mcl_tab_web)),
+                            title = translatedText("About"),
                             icon = Icons.Rounded.Info,
                             position = CardPosition.TOP,
-                            onClick = onWikiClick
+                            onClick = onAboutClick
                         )
                         ActionCard(
                             modifier = Modifier
@@ -472,7 +472,7 @@ fun ActionCard(
 fun MainMenuRevampPreview() {
     PojavTheme {
         MainMenuFragmentCompose(
-            onWikiClick = {},
+            onAboutClick = {},
             onSocialMediaClick = {},
             onCustomControlsClick = {},
             onInstallJarClick = {},

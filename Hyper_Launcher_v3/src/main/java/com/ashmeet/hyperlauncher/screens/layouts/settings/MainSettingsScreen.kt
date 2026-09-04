@@ -6,6 +6,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Coffee
 import androidx.compose.material.icons.filled.Extension
 import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Science
@@ -41,6 +42,7 @@ fun MainSettingsScreen(
     onNavigateToExperimental: () -> Unit,
     onNavigateToPlugins: () -> Unit,
     onNavigateToAppearance: () -> Unit,
+    onNavigateToAbout: () -> Unit,
     showNotificationRequest: Boolean,
     onNotificationRequestClick: () -> Unit
 ) {
@@ -107,12 +109,21 @@ fun MainSettingsScreen(
                 )
             }
 
-            SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {
+            SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
                 SettingsActionItem(
                     title = translatedText(stringResource(R.string.preference_appearance_title)),
                     summary = translatedText(stringResource(R.string.preference_appearance_description)),
                     icon = Icons.Default.Palette,
                     onClick = onNavigateToAppearance
+                )
+            }
+
+            SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {
+                SettingsActionItem(
+                    title = translatedText("About"),
+                    summary = translatedText("Version, device and community information"),
+                    icon = Icons.Rounded.Info,
+                    onClick = onNavigateToAbout
                 )
             }
         }

@@ -32,7 +32,7 @@ class MainMenuFragment : Fragment() {
             setContent {
                 PojavTheme {
                     MainMenuFragmentCompose(
-                        onWikiClick = { Tools.openURL(requireActivity(), Tools.URL_HOME) },
+                        onAboutClick = { Tools.swapFragment(requireActivity(), AboutFragment::class.java, AboutFragment.TAG, null) },
                         onSocialMediaClick = { Tools.openURL(requireActivity(), getString(R.string.social_media_invite)) },
                         onCustomControlsClick = { startActivity(Intent(requireContext(), CustomControlsActivity::class.java)) },
                         onInstallJarClick = { runInstallerWithConfirmation() },

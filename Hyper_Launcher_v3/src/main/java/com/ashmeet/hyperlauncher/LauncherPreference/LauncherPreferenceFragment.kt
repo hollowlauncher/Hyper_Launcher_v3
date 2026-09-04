@@ -8,13 +8,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
+import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences
+import com.ashmeet.hyperlauncher.fragments.AboutFragment
 import com.ashmeet.hyperlauncher.screens.layouts.settings.MainSettingsScreen
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 import net.kdt.pojavlaunch.LauncherActivity
 import net.kdt.pojavlaunch.Tools
-import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences
 
 open class LauncherPreferenceFragment : Fragment(), SharedPreferences.OnSharedPreferenceChangeListener {
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,6 +34,7 @@ open class LauncherPreferenceFragment : Fragment(), SharedPreferences.OnSharedPr
                         onNavigateToExperimental = { navigateTo(LauncherPreferenceExperimentalFragment::class.java) },
                         onNavigateToPlugins = { navigateTo(LauncherPreferencePluginFragment::class.java) },
                         onNavigateToAppearance = { navigateTo(LauncherPreferenceAppearanceFragment::class.java) },
+                        onNavigateToAbout = { navigateTo(AboutFragment::class.java) },
                         showNotificationRequest = !getLauncherActivity().checkForPermission(33, Manifest.permission.POST_NOTIFICATIONS),
                         onNotificationRequestClick = { getLauncherActivity().askForPermission(33, Manifest.permission.POST_NOTIFICATIONS) }
                     )

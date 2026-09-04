@@ -47,7 +47,7 @@ public class Architecture {
 
 	/**
 	 * Tells the device supported architecture.
-	 * Since mips(/64) has been phased out long ago, is isn't checked here.
+	 * Since MIPS(/64) has been phased out long ago, isn't checked here.
 	 *
 	 * @return ARCH_ARM || ARCH_ARM64 || ARCH_X86 || ARCH_86_64
 	 */
@@ -61,11 +61,11 @@ public class Architecture {
 	/**
 	 * Tell is the device is based on an x86 processor.
 	 * It doesn't tell if the device is 64 or 32 bits.
-	 * @return Whether or not the device is x86 based.
+	 * @return Whether the device is x86 based.
 	 */
 	public static boolean isx86Device(){
 		//We check the whole range of supported ABIs,
-		//Since asus zenfones can place arm before their native instruction set.
+		//Since Asus Zenfone can place arm before their native instruction set.
 		String[] ABI = is64BitsDevice() ? Build.SUPPORTED_64_BIT_ABIS : Build.SUPPORTED_32_BIT_ABIS;
 		int comparedArch = is64BitsDevice() ? ARCH_X86_64 : ARCH_X86;
 		for (String str : ABI) {

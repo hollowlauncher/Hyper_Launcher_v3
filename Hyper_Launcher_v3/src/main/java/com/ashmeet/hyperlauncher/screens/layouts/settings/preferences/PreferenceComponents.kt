@@ -24,6 +24,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.ashmeet.hyperlauncher.components.DefaultSwitch
@@ -49,6 +50,7 @@ fun SettingsActionItem(
     title: String,
     summary: String? = null,
     icon: ImageVector? = null,
+    iconPainter: Painter? = null,
     enabled: Boolean = true,
     warningTooltip: String? = null,
     onClick: () -> Unit
@@ -61,13 +63,22 @@ fun SettingsActionItem(
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        if (icon != null) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                modifier = Modifier.size(28.dp),
-                tint = MaterialTheme.colorScheme.onSurface
-            )
+        if (icon != null || iconPainter != null) {
+            if (icon != null) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    modifier = Modifier.size(28.dp),
+                    tint = MaterialTheme.colorScheme.onSurface
+                )
+            } else {
+                Icon(
+                    painter = iconPainter!!,
+                    contentDescription = null,
+                    modifier = Modifier.size(28.dp),
+                    tint = MaterialTheme.colorScheme.onSurface
+                )
+            }
             Spacer(modifier = Modifier.width(20.dp))
         }
         Column(modifier = Modifier.weight(1f)) {
@@ -102,6 +113,7 @@ fun SettingsSwitchItem(
     title: String,
     summary: String? = null,
     icon: ImageVector? = null,
+    iconPainter: Painter? = null,
     enabled: Boolean = true,
     checked: Boolean,
     warningTooltip: String? = null,
@@ -115,13 +127,22 @@ fun SettingsSwitchItem(
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        if (icon != null) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                modifier = Modifier.size(28.dp),
-                tint = MaterialTheme.colorScheme.onSurface
-            )
+        if (icon != null || iconPainter != null) {
+            if (icon != null) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    modifier = Modifier.size(28.dp),
+                    tint = MaterialTheme.colorScheme.onSurface
+                )
+            } else {
+                Icon(
+                    painter = iconPainter!!,
+                    contentDescription = null,
+                    modifier = Modifier.size(28.dp),
+                    tint = MaterialTheme.colorScheme.onSurface
+                )
+            }
             Spacer(modifier = Modifier.width(20.dp))
         }
         Column(modifier = Modifier.weight(1f)) {
@@ -162,6 +183,7 @@ fun SettingsSliderItem(
     title: String,
     summary: String? = null,
     icon: ImageVector? = null,
+    iconPainter: Painter? = null,
     enabled: Boolean = true,
     warningTooltip: String? = null,
     value: Float,
@@ -176,13 +198,22 @@ fun SettingsSliderItem(
             .padding(horizontal = 16.dp, vertical = 12.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            if (icon != null) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    modifier = Modifier.size(28.dp),
-                    tint = MaterialTheme.colorScheme.onSurface
-                )
+            if (icon != null || iconPainter != null) {
+                if (icon != null) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        modifier = Modifier.size(28.dp),
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                } else {
+                    Icon(
+                        painter = iconPainter!!,
+                        contentDescription = null,
+                        modifier = Modifier.size(28.dp),
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
                 Spacer(modifier = Modifier.width(20.dp))
             }
             Column(modifier = Modifier.weight(1f)) {
