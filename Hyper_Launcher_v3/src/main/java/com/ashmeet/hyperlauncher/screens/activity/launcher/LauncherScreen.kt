@@ -4,6 +4,7 @@ import android.widget.FrameLayout
 import android.graphics.BitmapFactory
 import android.content.SharedPreferences
 import android.widget.VideoView
+import android.media.MediaPlayer
 import com.ashmeet.hyperlauncher.utils.translatedText
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -140,28 +141,22 @@ fun PojavLauncherScreen(
                                     mp.setVolume(vol, vol)
                                 }
                                 
-                                // Center Crop Logic
-                                val videoWidth = mp.videoWidth.toFloat()
-                                val videoHeight = mp.videoHeight.toFloat()
-                                val viewWidth = width.toFloat()
-                                val viewHeight = height.toFloat()
+                                mp.setVideoScalingMode(MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING)
                                 
-                                if (videoWidth > 0 && videoHeight > 0 && viewWidth > 0 && viewHeight > 0) {
-                                    val videoAspectRatio = videoWidth / videoHeight
-                                    val viewAspectRatio = viewWidth / viewHeight
+                                post {
+                                    val videoWidth = mp.videoWidth.toFloat()
+                                    val videoHeight = mp.videoHeight.toFloat()
+                                    val viewWidth = width.toFloat()
+                                    val viewHeight = height.toFloat()
                                     
-                                    val scaleX = if (videoAspectRatio > viewAspectRatio) {
-                                        viewHeight / videoHeight * videoWidth / viewWidth
-                                    } else {
-                                        1f
+                                    if (videoWidth > 0 && videoHeight > 0 && viewWidth > 0 && viewHeight > 0) {
+                                        val scaleX = viewWidth / videoWidth
+                                        val scaleY = viewHeight / videoHeight
+                                        val finalScale = maxOf(scaleX, scaleY) / minOf(scaleX, scaleY)
+                                        
+                                        this.scaleX = finalScale
+                                        this.scaleY = finalScale
                                     }
-                                    val scaleY = if (videoAspectRatio < viewAspectRatio) {
-                                        viewWidth / videoWidth * videoHeight / viewHeight
-                                    } else {
-                                        1f
-                                    }
-                                    scaleX.takeIf { it > 0 }?.let { this.scaleX = it }
-                                    scaleY.takeIf { it > 0 }?.let { this.scaleY = it }
                                 }
                                 
                                 start()
