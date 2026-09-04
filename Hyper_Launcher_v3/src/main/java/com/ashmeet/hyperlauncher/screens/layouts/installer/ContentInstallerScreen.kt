@@ -412,7 +412,7 @@ fun ContentInstallerScreen(
             ) {
                 if (viewingProject != null) {
                     ProjectDetailsSidebar(viewingProject)
-                } else {
+                } else {f
                     SearchFiltersSidebar(
                         instanceVersion = instanceVersion,
                         instanceLoader = instanceLoader,
