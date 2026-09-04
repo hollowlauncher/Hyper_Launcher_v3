@@ -1,5 +1,6 @@
 package com.ashmeet.hyperlauncher.screens.layouts.installer
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import com.ashmeet.hyperlauncher.utils.translatedText
 import androidx.compose.animation.core.Spring
@@ -75,6 +76,7 @@ import com.ashmeet.hyperlauncher.screens.layouts.installer.models.ModrinthProjec
 import com.ashmeet.hyperlauncher.screens.layouts.installer.models.ModrinthVersion
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 private fun isMcVersionCompatible(v1: String, v2: String): Boolean {
     if (v1 == v2) return true
@@ -134,6 +136,26 @@ fun ContentInstallerScreen(
     var searchQuery by remember { mutableStateOf("") }
     var isSearchActive by remember { mutableStateOf(false) }
     var bypassWarning by remember { mutableStateOf(initialBypassWarning) }
+
+    val handleBack = {
+        if (viewingProject != null) {
+            onBackToProjects()
+        } else if (isSearchActive) {
+            isSearchActive = false
+            searchQuery = ""
+            onSearch(
+                "",
+                selectedType,
+                selectedVersion,
+                selectedLoader,
+                selectedSource
+            )
+        } else {
+            onBack()
+        }
+    }
+
+    BackHandler(enabled = isSearchActive || viewingProject != null, onBack = handleBack)
 
     val isUnsupported = remember(instanceLoader, selectedType) {
         (selectedType == ContentInstallerType.MODS || selectedType == ContentInstallerType.MODPACKS) &&
@@ -441,7 +463,7 @@ private fun VersionList(
                         instanceVersion != null && isMcVersionCompatible(instanceVersion, v)
                     }
                     if (compatibleIndex > 5) {
-                        delay(200)
+                        delay(200.milliseconds)
                         lazyListState.animateScrollToItem(compatibleIndex)
                     }
                 }
@@ -475,7 +497,7 @@ private fun VersionList(
                                 (instanceLoader == null || version.loaders.any { it.equals(instanceLoader, ignoreCase = true) })
                     }
                     if (compatibleIndex > 5) {
-                        delay(200)
+                        delay(200.milliseconds)
                         lazyListState.animateScrollToItem(compatibleIndex)
                     }
                 }
