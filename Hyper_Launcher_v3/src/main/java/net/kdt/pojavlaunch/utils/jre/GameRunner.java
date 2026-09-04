@@ -42,7 +42,6 @@ import java.util.List;
 import java.util.Map;
 
 public class GameRunner {
-    private static SkinManager sSkinManager;
 
     /**
      * Optimization mods based on Sodium can mitigate the render distance issue. Check if Sodium
@@ -272,8 +271,8 @@ public class GameRunner {
         addAuthlibInjectorArgs(javaArgList, account);
         if (account.authType == AuthType.LOCAL) {
             Log.i("GameRunner", "Setting up local skin server for " + account.username);
-            sSkinManager = new SkinManager(SkinManagerKt.androidSkinAnalyzerFacade);
-            sSkinManager.startServer();
+            SkinManager skinManager = new SkinManager(SkinManagerKt.androidSkinAnalyzerFacade);
+            skinManager.startServer();
 
             PlayerSkin playerSkin = null;
             if (account.skinPath != null) {
@@ -298,7 +297,7 @@ public class GameRunner {
                 Log.i("GameRunner", "No local skin path defined for this account");
             }
 
-            sSkinManager.getServer().addCharacter(
+            skinManager.getServer().addCharacter(
                     account.username,
                     account.profileId,
                     playerSkin,
@@ -314,7 +313,7 @@ public class GameRunner {
             }
 
             if (injectorJar.exists() && injectorJar.length() > 0) {
-                String agentArg = "-javaagent:" + injectorPath + "=" + sSkinManager.getAuthlibUrl();
+                String agentArg = "-javaagent:" + injectorPath + "=" + skinManager.getAuthlibUrl();
                 javaArgList.add(agentArg);
                 Log.i("GameRunner", "Applied local authlib-injector: " + agentArg);
             } else {

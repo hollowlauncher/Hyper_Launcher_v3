@@ -36,7 +36,6 @@ import android.view.Window;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
 import android.view.WindowManager;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -277,7 +276,7 @@ public final class Tools {
         View insetView = activity.findViewById(android.R.id.content);
 
         // Don't ignore system bars in window mode (will put game behind window button bar)
-        boolean finalNoSystemBars = noSystemBars && !(SDK_INT >= Build.VERSION_CODES.N && activity.isInMultiWindowMode());
+        boolean finalNoSystemBars = noSystemBars && !activity.isInMultiWindowMode();
 
         int bgColor;
         // The status bars are completely transparent and will take their color from the inset view
@@ -951,14 +950,6 @@ public final class Tools {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         Intent chooserIntent = Intent.createChooser(intent, file.getName());
         context.startActivity(chooserIntent);
-    }
-
-    /** Mesure the textview height, given its current parameters */
-    public static int mesureTextviewHeight(TextView t) {
-        int widthMeasureSpec = View.MeasureSpec.makeMeasureSpec(t.getWidth(), View.MeasureSpec.AT_MOST);
-        int heightMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-        t.measure(widthMeasureSpec, heightMeasureSpec);
-        return t.getMeasuredHeight();
     }
 
     public static <T> T getWeakReference(WeakReference<T> weakReference) {
