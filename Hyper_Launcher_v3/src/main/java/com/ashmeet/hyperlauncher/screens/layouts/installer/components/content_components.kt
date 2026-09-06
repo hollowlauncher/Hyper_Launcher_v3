@@ -69,7 +69,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
+import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.ashmeet.hyperlauncher.screens.layouts.installer.models.ContentInstallerType
 import com.ashmeet.hyperlauncher.screens.layouts.installer.models.ContentSource
@@ -258,27 +258,30 @@ fun ProjectIcon(project: ModrinthProject, size: Dp = 56.dp) {
             .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)),
         contentAlignment = Alignment.Center
     ) {
-        if (project.iconBitmap != null) {
-            Image(
-                bitmap = project.iconBitmap!!.asImageBitmap(),
-                contentDescription = null,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
-        } else if (!project.iconUrl.isNullOrEmpty()) {
-            CircularProgressIndicator(
-                modifier = Modifier.size(size * 0.5f),
-                strokeWidth = 2.dp,
-                color = MaterialTheme.colorScheme.primary
-            )
-        } else {
-            Icon(
-                imageVector = Icons.Rounded.Extension,
-                contentDescription = null,
-                modifier = Modifier.size(size * 0.6f),
-                tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
-            )
-        }
+        SubcomposeAsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(project.iconUrl)
+                .crossfade(true)
+                .build(),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop,
+            loading = {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(size * 0.5f),
+                    strokeWidth = 2.dp,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            },
+            error = {
+                Icon(
+                    imageVector = Icons.Rounded.Extension,
+                    contentDescription = null,
+                    modifier = Modifier.size(size * 0.6f),
+                    tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+                )
+            }
+        )
     }
 }
 
@@ -333,7 +336,7 @@ fun ProjectDetailsSidebar(project: ModrinthProject) {
                         itemSpacing = 8.dp,
                         modifier = Modifier.fillMaxSize()
                     ) { index ->
-                        AsyncImage(
+                        SubcomposeAsyncImage(
                             model = ImageRequest.Builder(LocalContext.current)
                                 .data(project.gallery[index])
                                 .crossfade(true)

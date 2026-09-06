@@ -19,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import net.ashmeet.hyperlauncher.BuildConfig
 import androidx.core.content.edit
 import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences
 import com.ashmeet.hyperlauncher.screens.layouts.settings.layouts.CardPosition
@@ -71,6 +72,29 @@ fun DeveloperSettingsScreen(
                     icon = Icons.Default.Extension,
                     onClick = onNavigateToPlugins
                 )
+            }
+
+            val packageName = BuildConfig.APPLICATION_ID
+            val isDebugPackage = packageName.contains("debug", ignoreCase = true)
+            if (isDebugPackage) {
+                SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
+                    Row(
+                        modifier = Modifier.padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Warning,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                        Text(
+                            text = translatedText("Warning: This is a debug package. Package name: $packageName"),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
             }
 
             SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {

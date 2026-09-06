@@ -136,7 +136,13 @@ class DrawerPullButton @JvmOverloads constructor(
             val customBitmap = remember(iconPath) {
                 iconPath?.let { path ->
                     if (File(path).exists()) {
-                        BitmapFactory.decodeFile(path)
+                        val options = BitmapFactory.Options().apply {
+                            inJustDecodeBounds = true
+                            BitmapFactory.decodeFile(path, this)
+                            inSampleSize = calculateInSampleSize(this, 256, 256)
+                            inJustDecodeBounds = false
+                        }
+                        BitmapFactory.decodeFile(path, options)
                     } else null
                 }
             }
@@ -230,5 +236,19 @@ class DrawerPullButton @JvmOverloads constructor(
             translationX = 0f
             translationY = 0f
         }
+    }
+
+    private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
+        val (height: Int, width: Int) = options.outHeight to options.outWidth
+        var inSampleSize = 1
+
+        if (height > reqHeight || width > reqWidth) {
+            val halfHeight: Int = height / 2
+            val halfWidth: Int = width / 2
+            while (halfHeight / inSampleSize >= reqHeight && halfWidth / inSampleSize >= reqWidth) {
+                inSampleSize *= 2
+            }
+        }
+        return inSampleSize
     }
 }

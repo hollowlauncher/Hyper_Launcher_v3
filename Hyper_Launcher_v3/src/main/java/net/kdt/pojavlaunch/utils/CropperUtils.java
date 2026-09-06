@@ -129,12 +129,37 @@ public class CropperUtils {
         // to the file that we have picked.
         try (InputStream inputStream = contentResolver.openInputStream(selectedUri)) {
             if(inputStream == null) return null;
-            Bitmap originalBitmap = BitmapFactory.decodeStream(inputStream);
-            if(originalBitmap == null) throw new IOException("Image format not supported");
-            BitmapCropBehaviour cropBehaviour = new BitmapCropBehaviour(cropImageView);
-            cropBehaviour.setBitmap(originalBitmap);
-            return cropBehaviour;
+
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(inputStream, null, options);
+            options.inSampleSize = calculateInSampleSize(options, 2048, 2048);
+            options.inJustDecodeBounds = false;
+
+            // Re-open again for actual decode
+            try (InputStream innerInput = contentResolver.openInputStream(selectedUri)) {
+                Bitmap originalBitmap = BitmapFactory.decodeStream(innerInput, null, options);
+                if(originalBitmap == null) throw new IOException("Image format not supported");
+                BitmapCropBehaviour cropBehaviour = new BitmapCropBehaviour(cropImageView);
+                cropBehaviour.setBitmap(originalBitmap);
+                return cropBehaviour;
+            }
         }
+    }
+
+    private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+            while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+        return inSampleSize;
     }
 
     private static void bindViews(AlertDialog alertDialog, CropperView imageCropperView) {

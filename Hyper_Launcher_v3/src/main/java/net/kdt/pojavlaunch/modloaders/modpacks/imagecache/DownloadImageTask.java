@@ -33,7 +33,14 @@ class DownloadImageTask implements Runnable {
         try {
             IconCacheJanitor.waitForJanitorToFinish();
             DownloadUtils.downloadFile(mParentTask.imageUrl, mParentTask.cacheFile);
-            Bitmap bitmap = BitmapFactory.decodeFile(mParentTask.cacheFile.getAbsolutePath());
+            
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(mParentTask.cacheFile.getAbsolutePath(), options);
+            options.inSampleSize = calculateInSampleSize(options, (int)BITMAP_FINAL_DIMENSION, (int)BITMAP_FINAL_DIMENSION);
+            options.inJustDecodeBounds = false;
+
+            Bitmap bitmap = BitmapFactory.decodeFile(mParentTask.cacheFile.getAbsolutePath(), options);
             if(bitmap == null) return false;
             int bitmapWidth = bitmap.getWidth(), bitmapHeight = bitmap.getHeight();
             if(bitmapWidth <= BITMAP_FINAL_DIMENSION && bitmapHeight <= BITMAP_FINAL_DIMENSION) {
@@ -57,5 +64,20 @@ class DownloadImageTask implements Runnable {
             e.printStackTrace();
             return false;
         }
+    }
+
+    private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+            while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+        return inSampleSize;
     }
 }

@@ -171,26 +171,6 @@ class ContentInstallerFragment : Fragment() {
                         }
                         projects = results
                         isSearching = false
-
-                        results.forEach { project ->
-                            if (!project.iconUrl.isNullOrEmpty()) {
-                                scope.launch(Dispatchers.IO) {
-                                    val bitmap = if (selectedSource == ContentSource.MODRINTH) {
-                                        ModrinthService.loadIcon(project.iconUrl)
-                                    } else {
-                                        CurseForgeService.loadIcon(project.iconUrl)
-                                    }
-                                    withContext(Dispatchers.Main) {
-                                        projects = projects.map {
-                                            if (it.id == project.id) it.copy(iconBitmap = bitmap) else it
-                                        }
-                                        if (viewingProject?.id == project.id) {
-                                            viewingProject = viewingProject?.copy(iconBitmap = bitmap)
-                                        }
-                                    }
-                                }
-                            }
-                        }
                     }
 
                     LaunchedEffect(viewingProject?.id) {

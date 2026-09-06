@@ -31,7 +31,14 @@ public class ReadFromDiskTask implements Runnable {
         }
         if(cacheFile.canRead()) {
             IconCacheJanitor.waitForJanitorToFinish();
-            Bitmap bitmap = BitmapFactory.decodeFile(cacheFile.getAbsolutePath());
+
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(cacheFile.getAbsolutePath(), options);
+            options.inSampleSize = calculateInSampleSize(options, 256, 256);
+            options.inJustDecodeBounds = false;
+
+            Bitmap bitmap = BitmapFactory.decodeFile(cacheFile.getAbsolutePath(), options);
             if(bitmap != null) {
                 Tools.runOnUiThread(()->{
                     if(taskCancelled()) {
@@ -51,5 +58,20 @@ public class ReadFromDiskTask implements Runnable {
     @SuppressWarnings("BooleanMethodAlwaysInverted")
     public boolean taskCancelled() {
         return iconCache.checkCancelled(imageReceiver);
+    }
+
+    private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+            while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+        return inSampleSize;
     }
 }
