@@ -102,7 +102,13 @@ object SkinUtils {
         if (skinUrl.startsWith("file://")) {
             val path = skinUrl.substring(7)
             return@withContext try {
-                BitmapFactory.decodeFile(path)
+                val options = BitmapFactory.Options().apply {
+                    inJustDecodeBounds = true
+                    BitmapFactory.decodeFile(path, this)
+                    inSampleSize = calculateInSampleSize(this, 128, 128)
+                    inJustDecodeBounds = false
+                }
+                BitmapFactory.decodeFile(path, options)
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to decode file $path", e)
                 null
@@ -126,7 +132,16 @@ object SkinUtils {
     private fun loadSteveHead3D(context: Context): Bitmap? {
         val steveBitmap = try {
             context.assets.open("steve.png").use { inputStream ->
-                BitmapFactory.decodeStream(inputStream)
+                val options = BitmapFactory.Options().apply {
+                    inJustDecodeBounds = true
+                    BitmapFactory.decodeStream(inputStream, null, this)
+                    inSampleSize = calculateInSampleSize(this, 128, 128)
+                    inJustDecodeBounds = false
+                }
+                // Need to re-open stream because it's consumed by decodeStream
+                context.assets.open("steve.png").use { innerInput ->
+                    BitmapFactory.decodeStream(innerInput, null, options)
+                }
             }
         } catch (_: Exception) {
             Log.w(TAG, "steve.png not found in assets")
@@ -147,7 +162,15 @@ object SkinUtils {
     private fun loadSteveHead2D(context: Context): Bitmap? {
         val steveBitmap = try {
             context.assets.open("steve.png").use { inputStream ->
-                BitmapFactory.decodeStream(inputStream)
+                val options = BitmapFactory.Options().apply {
+                    inJustDecodeBounds = true
+                    BitmapFactory.decodeStream(inputStream, null, this)
+                    inSampleSize = calculateInSampleSize(this, 128, 128)
+                    inJustDecodeBounds = false
+                }
+                context.assets.open("steve.png").use { innerInput ->
+                    BitmapFactory.decodeStream(innerInput, null, options)
+                }
             }
         } catch (_: Exception) {
             Log.w(TAG, "steve.png not found in assets")
@@ -187,5 +210,19 @@ object SkinUtils {
         return produceState(initialValue = null, stableKey) {
             value = renderHead2D(context, account)
         }
+    }
+
+    private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
+        val (height: Int, width: Int) = options.outHeight to options.outWidth
+        var inSampleSize = 1
+
+        if (height > reqHeight || width > reqWidth) {
+            val halfHeight: Int = height / 2
+            val halfWidth: Int = width / 2
+            while (halfHeight / inSampleSize >= reqHeight && halfWidth / inSampleSize >= reqWidth) {
+                inSampleSize *= 2
+            }
+        }
+        return inSampleSize
     }
 }

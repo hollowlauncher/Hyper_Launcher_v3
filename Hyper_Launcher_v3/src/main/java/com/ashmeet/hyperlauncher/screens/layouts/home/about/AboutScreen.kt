@@ -18,8 +18,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import android.widget.Toast
+import androidx.core.content.edit
+import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
@@ -91,14 +97,39 @@ fun AboutScreen(
                 SettingsCard(position = CardPosition.TOP, useSurface = true) {
                     SettingsActionItem(title = translatedText("App Name"), summary = "Hyper Launcher 3", onClick = {})
                 }
+
+                var developerClickCount by remember { mutableIntStateOf(0) }
                 SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
-                    SettingsActionItem(title = translatedText("Version"), summary = BuildConfig.VERSION_NAME, onClick = {})
+                    SettingsActionItem(
+                        title = translatedText("Version"),
+                        summary = BuildConfig.VERSION_NAME,
+                        onClick = {
+                            if (!LauncherPreferences.PREF_DEVELOPER_OPTIONS) {
+                                developerClickCount++
+                                if (developerClickCount >= 10) {
+                                    LauncherPreferences.PREF_DEVELOPER_OPTIONS = true
+                                    LauncherPreferences.prefs.edit { putBoolean("developer_options", true) }
+                                    Toast.makeText(context, "Developer options enabled!", Toast.LENGTH_SHORT).show()
+                                } else if (developerClickCount > 5) {
+                                    Toast.makeText(context, "You are now ${10 - developerClickCount} steps away from being a developer.", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        }
+                    )
                 }
                 SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
                     SettingsActionItem(title = translatedText("Version Code"), summary = BuildConfig.VERSION_CODE.toString(), onClick = {})
                 }
+
+                val packageName = BuildConfig.APPLICATION_ID
+                val isDebugPackage = packageName.contains("debug", ignoreCase = true)
                 SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {
-                    SettingsActionItem(title = translatedText("Package Name"), summary = BuildConfig.APPLICATION_ID, onClick = {})
+                    SettingsActionItem(
+                        title = translatedText("Package Name"),
+                        summary = packageName,
+                        warningTooltip = if (isDebugPackage) "Warning: This is a debug package. Performance and stability may be affected." else null,
+                        onClick = {}
+                    )
                 }
             }
 

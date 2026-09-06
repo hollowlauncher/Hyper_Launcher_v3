@@ -32,7 +32,7 @@ open class LauncherPreferenceFragment : Fragment(), SharedPreferences.OnSharedPr
                         onNavigateToJava = { navigateTo(LauncherPreferenceJavaFragment::class.java) },
                         onNavigateToMisc = { navigateTo(LauncherPreferenceMiscellaneousFragment::class.java) },
                         onNavigateToExperimental = { navigateTo(LauncherPreferenceExperimentalFragment::class.java) },
-                        onNavigateToPlugins = { navigateTo(LauncherPreferencePluginFragment::class.java) },
+                        onNavigateToDeveloper = { navigateTo(LauncherPreferenceDeveloperFragment::class.java) },
                         onNavigateToAppearance = { navigateTo(LauncherPreferenceAppearanceFragment::class.java) },
                         onNavigateToAbout = { navigateTo(AboutFragment::class.java) },
                         showNotificationRequest = !getLauncherActivity().checkForPermission(33, Manifest.permission.POST_NOTIFICATIONS),

@@ -506,12 +506,17 @@ class ContentInstallerFragment : Fragment() {
                         var bytesCopied = 0L
                         val buffer = ByteArray(8192)
                         var bytes = input.read(buffer)
+                        var lastProgressUpdate = 0L
                         while (bytes >= 0) {
                             output.write(buffer, 0, bytes)
                             bytesCopied += bytes
                             if (totalSize > 0) {
-                                val progress = ((bytesCopied * 100) / totalSize).toInt()
-                                ProgressKeeper.submitProgress(progressKey, progress, -1, "Downloading $fileName...")
+                                val currentTime = System.currentTimeMillis()
+                                if (currentTime - lastProgressUpdate > 100) { // Update every 100ms
+                                    val progress = ((bytesCopied * 100) / totalSize).toInt()
+                                    ProgressKeeper.submitProgress(progressKey, progress, -1, "Downloading $fileName...")
+                                    lastProgressUpdate = currentTime
+                                }
                             }
                             bytes = input.read(buffer)
                         }
@@ -604,12 +609,17 @@ class ContentInstallerFragment : Fragment() {
                         var bytesCopied = 0L
                         val buffer = ByteArray(8192)
                         var bytes = input.read(buffer)
+                        var lastProgressUpdate = 0L
                         while (bytes >= 0) {
                             output.write(buffer, 0, bytes)
                             bytesCopied += bytes
                             if (totalSize > 0) {
-                                val progress = ((bytesCopied * 100) / totalSize).toInt()
-                                ProgressKeeper.submitProgress(progressKey, progress, -1, "Downloading $fileName...")
+                                val currentTime = System.currentTimeMillis()
+                                if (currentTime - lastProgressUpdate > 100) { // Update every 100ms
+                                    val progress = ((bytesCopied * 100) / totalSize).toInt()
+                                    ProgressKeeper.submitProgress(progressKey, progress, -1, "Downloading $fileName...")
+                                    lastProgressUpdate = currentTime
+                                }
                             }
                             bytes = input.read(buffer)
                         }

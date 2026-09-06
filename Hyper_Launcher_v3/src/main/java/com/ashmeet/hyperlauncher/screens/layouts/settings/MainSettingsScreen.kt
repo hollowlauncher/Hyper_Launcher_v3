@@ -3,8 +3,8 @@ package com.ashmeet.hyperlauncher.screens.layouts.settings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Coffee
-import androidx.compose.material.icons.filled.Extension
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.filled.Notifications
@@ -40,7 +40,7 @@ fun MainSettingsScreen(
     onNavigateToJava: () -> Unit,
     onNavigateToMisc: () -> Unit,
     onNavigateToExperimental: () -> Unit,
-    onNavigateToPlugins: () -> Unit,
+    onNavigateToDeveloper: () -> Unit,
     onNavigateToAppearance: () -> Unit,
     onNavigateToAbout: () -> Unit,
     showNotificationRequest: Boolean,
@@ -102,15 +102,6 @@ fun MainSettingsScreen(
 
             SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
                 SettingsActionItem(
-                    title = translatedText("Plugins"),
-                    summary = translatedText("Manage installed native plugins"),
-                    icon = Icons.Default.Extension,
-                    onClick = onNavigateToPlugins
-                )
-            }
-
-            SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
-                SettingsActionItem(
                     title = translatedText(stringResource(R.string.preference_appearance_title)),
                     summary = translatedText(stringResource(R.string.preference_appearance_description)),
                     icon = Icons.Default.Palette,
@@ -118,13 +109,24 @@ fun MainSettingsScreen(
                 )
             }
 
-            SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {
+            SettingsCard(position = if (LauncherPreferences.PREF_DEVELOPER_OPTIONS) CardPosition.MIDDLE else CardPosition.BOTTOM, useSurface = true) {
                 SettingsActionItem(
                     title = translatedText("About"),
                     summary = translatedText("Version, device and community information"),
                     icon = Icons.Rounded.Info,
                     onClick = onNavigateToAbout
                 )
+            }
+
+            if (LauncherPreferences.PREF_DEVELOPER_OPTIONS) {
+                SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {
+                    SettingsActionItem(
+                        title = translatedText("Developer options"),
+                        summary = translatedText("Advanced settings for developers"),
+                        icon = Icons.Default.Build,
+                        onClick = onNavigateToDeveloper
+                    )
+                }
             }
         }
 

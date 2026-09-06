@@ -1,8 +1,10 @@
 package net.kdt.pojavlaunch;
 
+import static com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences.PREF_DYNAMIC_ORIENTATION;
 import static com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences.PREF_FULLSCREEN_LAUNCHER;
 
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -36,7 +38,19 @@ public abstract class BaseActivity extends AppCompatActivity {
         LocaleUtils.setLocale(this);
 
         applySystemBarConfiguration();
+        updateOrientation();
         Tools.getDisplayMetrics(this);
+    }
+
+    /**
+     * Applies the orientation based on preference.
+     */
+    protected void updateOrientation() {
+        if (PREF_DYNAMIC_ORIENTATION) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+        } else {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE);
+        }
     }
 
     /**
@@ -74,6 +88,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        updateOrientation();
         Tools.checkStorageInteractive(this);
     }
 
@@ -82,8 +97,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onPostResume();
         // Re-apply configuration to ensure bars stay hidden after returning to the activity
         applySystemBarConfiguration();
+        updateOrientation();
         Tools.getDisplayMetrics(this);
     }
+
 
     /** @return Whether the notch should be ignored */
     protected boolean shouldIgnoreNotch(){

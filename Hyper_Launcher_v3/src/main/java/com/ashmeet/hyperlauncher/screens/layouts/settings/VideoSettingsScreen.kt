@@ -155,7 +155,7 @@ fun VideoSettingsScreen(
         }
 
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            SettingsCard(position = CardPosition.TOP, useSurface = true) {
+            SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
                 SettingsSwitchItem(
                     title = translatedText(stringResource(R.string.mcl_setting_title_use_surface_view)),
                     summary = translatedText(stringResource(R.string.mcl_setting_subtitle_use_surface_view)),

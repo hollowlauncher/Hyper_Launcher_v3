@@ -147,6 +147,12 @@ object LauncherPreferences {
     var PREF_DYNAMIC_ORIENTATION = false
 
     @JvmField
+    var PREF_DEVELOPER_OPTIONS = false
+
+    @JvmField
+    var PREF_DITCH_HYPER_PLUGIN = false
+
+    @JvmField
     var PREF_RAPID_START = true
 
     @JvmField
@@ -298,6 +304,8 @@ object LauncherPreferences {
         PREF_VSYNC_IN_ZINK = pref.getBoolean("vsync_in_zink", true)
         PREF_FULLSCREEN_LAUNCHER = pref.getBoolean("fullscreen_launcher", true)
         PREF_DYNAMIC_ORIENTATION = pref.getBoolean("dynamic_orientation", false)
+        PREF_DEVELOPER_OPTIONS = pref.getBoolean("developer_options", false)
+        PREF_DITCH_HYPER_PLUGIN = pref.getBoolean("ditch_hyper_plugin", false)
         PREF_VERIFY_FILES = pref.getBoolean("checkGameFiles", true)
         PREF_RAPID_START = pref.getBoolean("fastStartupCheck", true)
         PREF_FREEDRENO_SYSMEM = pref.getBoolean("freedrenoSysmem", false)
