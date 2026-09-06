@@ -5,7 +5,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog.Builder;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences;
@@ -23,7 +22,6 @@ import net.kdt.pojavlaunch.instances.Instance;
 import net.kdt.pojavlaunch.lifecycle.LifecycleAwareAlertDialog;
 import net.kdt.pojavlaunch.multirt.MultiRTUtils;
 import net.kdt.pojavlaunch.multirt.Runtime;
-import net.kdt.pojavlaunch.plugins.NativePluginManager;
 import com.ashmeet.hyperlauncher.utils.DateUtils;
 import net.kdt.pojavlaunch.utils.FileUtils;
 import net.kdt.pojavlaunch.utils.GLInfoUtils;
@@ -255,20 +253,6 @@ public class GameRunner {
             javaArgList.add("-Dlog4j.configurationFile=" + configFile);
         }
 
-        File versionSpecificNativesDir = new File(Tools.DIR_CACHE, "natives/"+versionId);
-        if(versionSpecificNativesDir.exists()) {
-            String dirPath = versionSpecificNativesDir.getAbsolutePath();
-            String pluginPaths = NativePluginManager.getRuntimeLibraryPath();
-            String combinedPath = dirPath + ":" + Tools.NATIVE_LIB_DIR;
-            if (!pluginPaths.isEmpty()) {
-                combinedPath = pluginPaths + ":" + combinedPath;
-            }
-
-            javaArgList.add("-Djava.library.path="+combinedPath);
-            javaArgList.add("-Djna.boot.library.path="+dirPath);
-            javaArgList.add("-Djna.library.path="+combinedPath);
-        }
-
         File lwjglExtractDir = new File(Tools.DIR_CACHE, "lwjgl_native/"+versionId);
         FileUtils.ensureDirectory(lwjglExtractDir);
         javaArgList.add("-Dorg.lwjgl.system.SharedLibraryExtractPath="+lwjglExtractDir.getAbsolutePath());
@@ -330,127 +314,11 @@ public class GameRunner {
 
         javaArgList.addAll(JREUtils.parseJavaArguments(instance.getLaunchArgs()));
 
-        // Apply MioLibPatcher agent
-        try {
-            String patcherPath = Tools.DIR_DATA + "/MioLibPatcher/MioLibPatcher.jar";
-            File patcherJar = new File(patcherPath);
-            Log.i("GameRunner", "Checking for MioLibPatcher at: " + patcherPath);
-            
-            if (!patcherJar.exists() || patcherJar.length() == 0) {
-                patcherPath = Tools.DIR_DATA + "/launcher/MioLibPatcher.jar";
-                patcherJar = new File(patcherPath);
-                Log.i("GameRunner", "Checking for MioLibPatcher at alternative path: " + patcherPath);
-            }
-
-            if (patcherJar.exists() && patcherJar.length() > 0) {
-                String agentArg = "-javaagent:" + patcherJar.getAbsolutePath();
-                javaArgList.add(agentArg);
-                Log.i("GameRunner", "SUCCESS: Applied MioLibPatcher agent: " + agentArg);
-            } else {
-                Log.e("GameRunner", "CRITICAL ERROR: MioLibPatcher.jar NOT FOUND or EMPTY! Axiom will crash.");
-                // List files in DIR_DATA to help debug
-                File launcherDir = new File(Tools.DIR_DATA, "launcher");
-                if (launcherDir.exists()) {
-                    Log.i("GameRunner", "Files in " + launcherDir.getAbsolutePath() + ": " + java.util.Arrays.toString(launcherDir.list()));
-                } else {
-                    Log.i("GameRunner", "Launcher directory does not exist in DIR_DATA: " + Tools.DIR_DATA);
-                }
-            }
-        } catch (Throwable t) {
-            Log.e("GameRunner", "Failed to apply MioLibPatcher agent", t);
-        }
-
-        try {
-            String nativeLibDir = activity.getApplicationInfo().nativeLibraryDir;
-            String pluginPath = NativePluginManager.getRuntimeJVMEnv().get("HYPERPLUGIN_PATH");
-            File imguiLib = findImguiNative(activity);
-
-            if (imguiLib != null) {
-                Log.i("GameRunner", "Found ImGui native at: " + imguiLib.getAbsolutePath());
-                File imguiDir = new File(Tools.DIR_CACHE, "imgui_natives");
-                if (!imguiDir.exists() && !imguiDir.mkdirs()) {
-                    Log.e("GameRunner", "Failed to create ImGui natives directory");
-                }
-                
-                String[] forkNames = {"libimgui-moulberry92-java64.so", "libimgui-moulberry-java64.so", "libimgui-java64.so"};
-                for (String forkName : forkNames) {
-                    File forkLib = new File(imguiDir, forkName);
-                    if (!forkLib.exists() || forkLib.length() != imguiLib.length()) {
-                        org.apache.commons.io.FileUtils.copyFile(imguiLib, forkLib);
-                    }
-                }
-                
-                String libName = imguiLib.getName();
-                javaArgList.add("-Dimgui.library.path=" + imguiLib.getParent());
-                javaArgList.add("-Dimgui.library.name=" + libName);
-
-                javaArgList.add("-Dimgui.moulberry.library.path=" + imguiLib.getParent());
-                javaArgList.add("-Dimgui.moulberry.library.name=" + libName);
-                javaArgList.add("-Dimgui.moulberry92.library.path=" + imguiLib.getParent());
-                javaArgList.add("-Dimgui.moulberry92.library.name=" + libName);
-                
-                // Set native.path as well, some loaders use this
-                javaArgList.add("-Dimgui.moulberry.native.path=" + imguiDir.getAbsolutePath());
-                javaArgList.add("-Dimgui.moulberry92.native.path=" + imguiDir.getAbsolutePath());
-            } else {
-                Log.w("GameRunner", "ImGui native library not found");
-                javaArgList.add("-Dimgui.library.path=" + nativeLibDir);
-                javaArgList.add("-Dimgui.library.name=libimgui-java.so");
-                javaArgList.add("-Dimgui.moulberry92.library.path=" + nativeLibDir);
-                javaArgList.add("-Dimgui.moulberry92.library.name=libimgui-java.so");
-            }
-
-            File zstdLib = new File(nativeLibDir, "libzstd-jni_dh-1.5.7-6.so");
-            if (!zstdLib.exists() && pluginPath != null) {
-                zstdLib = new File(pluginPath, "libzstd-jni_dh-1.5.7-6.so");
-            }
-
-            if (zstdLib.exists()) {
-                String zstdLibName = "zstd-jni_dh-1.5.7-6";
-                javaArgList.add("-Dzstd.libname=" + zstdLibName);
-                javaArgList.add("-Dzstd.libpath=" + zstdLib.getParent());
-                javaArgList.add("-Ddhzstd.libname=" + zstdLibName);
-                javaArgList.add("-Ddhzstd.libpath=" + zstdLib.getParent());
-            }
-
-            File rapierLib = new File(nativeLibDir, "libsable_rapier.so");
-            if (!rapierLib.exists()) rapierLib = new File(nativeLibDir, "libPhysXJniBindings_64.so");
-
-            // Check plugin path if not found in app native dir
-            String hyperPluginPath = NativePluginManager.getRuntimeJVMEnv().get("HYPERPLUGIN_PATH");
-            if (!rapierLib.exists() && hyperPluginPath != null) {
-                rapierLib = new File(hyperPluginPath, "libsable_rapier.so");
-                if (!rapierLib.exists()) rapierLib = new File(hyperPluginPath, "libPhysXJniBindings_64.so");
-            }
-            
-            if (rapierLib.exists()) {
-                javaArgList.add("-Dsable_rapier_path=" + rapierLib.getAbsolutePath());
-                
-                // Also pre-populate the PhysX cache to be safe
-                try {
-                    String physxVersion = "2.3.2"; // From crash log
-                    File physxCacheDir = new File(Tools.DIR_CACHE, "de.fabmax.physx-jni/" + physxVersion);
-                    if (!physxCacheDir.exists() && !physxCacheDir.mkdirs()) {
-                        Log.e("GameRunner", "Failed to create PhysX cache directory");
-                    }
-                    File physxCacheFile = new File(physxCacheDir, "libPhysXJniBindings_64.so");
-                    if (!physxCacheFile.exists() || physxCacheFile.length() != rapierLib.length()) {
-                        org.apache.commons.io.FileUtils.copyFile(rapierLib, physxCacheFile);
-                        Log.i("GameRunner", "Pre-populated PhysX cache at: " + physxCacheFile.getAbsolutePath());
-                    }
-                } catch (Exception e) {
-                    Log.e("GameRunner", "Failed to pre-populate PhysX cache", e);
-                }
-            }
-        } catch (Throwable t) {
-            Log.e("GameRunner", "Failed to prepare natives", t);
-        }
+        // Apply Hyper Plugin hooks
+        Tools.applyHyperPluginHooks(activity, javaArgList, versionId);
 
         JREUtils.setEnviroimentForGame(activity, rendererName);
         JREUtils.chdir(instance.getGameDirectory().getAbsolutePath());
-
-        // Load optional plugin libraries early so they can be discovered by the renderer loader
-        NativePluginManager.loadOptionalLibraries(activity);
 
         String rendererLibrary = JREUtils.loadGraphicsLibrary(rendererName);
         if(rendererLibrary == null) {
@@ -622,28 +490,4 @@ public class GameRunner {
         return runtime;
     }
 
-    private static File findImguiNative(AppCompatActivity activity) {
-        String nativeLibDir = activity.getApplicationInfo().nativeLibraryDir;
-        String pluginPath = NativePluginManager.getRuntimeJVMEnv().get("HYPERPLUGIN_PATH");
-        String[] possibleNames = {"libimgui-java.so", "libimgui.so", "libimgui-moulberry-java.so", "libimgui-moulberry92-java.so"};
-
-        // Check app native dir first
-        for (String name : possibleNames) {
-            File f = new File(nativeLibDir, name);
-            if (f.exists()) {
-                return f;
-            }
-        }
-
-        // Check plugin path second
-        if (pluginPath != null) {
-            for (String name : possibleNames) {
-                File f = new File(pluginPath, name);
-                if (f.exists()) {
-                    return f;
-                }
-            }
-        }
-        return null;
-    }
 }

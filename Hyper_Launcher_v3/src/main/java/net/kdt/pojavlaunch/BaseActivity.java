@@ -45,7 +45,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     /**
      * Applies the orientation based on preference.
      */
-    protected void updateOrientation() {
+    public void updateOrientation() {
         if (PREF_DYNAMIC_ORIENTATION) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
         } else {

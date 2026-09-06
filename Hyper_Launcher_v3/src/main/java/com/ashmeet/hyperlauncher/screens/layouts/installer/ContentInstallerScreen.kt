@@ -101,6 +101,11 @@ private fun isMcVersionCompatible(v1: String, v2: String): Boolean {
         val parts1 = v1.split(".")
         val parts2 = v2.split(".")
         if (parts1.size >= 2 && parts2.size >= 2 && parts1[1] == parts2[1]) {
+            // If both specify a patch version, they must match
+            if (parts1.size >= 3 && parts2.size >= 3) {
+                return parts1[2] == parts2[2]
+            }
+            // Otherwise, allow family match (e.g. 1.21 matches 1.21.1)
             return true
         }
     }

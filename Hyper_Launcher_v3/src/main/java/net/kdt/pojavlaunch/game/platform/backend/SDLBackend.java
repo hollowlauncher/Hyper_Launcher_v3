@@ -6,6 +6,7 @@ import android.view.Surface;
 
 import net.kdt.pojavlaunch.game.GameView;
 import net.kdt.pojavlaunch.game.platform.Platform;
+import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences;
 
 import git.mojo.sdl.SDL;
 import git.mojo.sdl.SDLActivity;
@@ -44,6 +45,7 @@ public class SDLBackend implements PlatformBackend {
         SDL.setContext(activity);
         SDL.setupJNI();
         SDLControllerManager.initializeDeviceListener();
+        SDLActivity.setDynamicOrientationEnabled(LauncherPreferences.PREF_DYNAMIC_ORIENTATION);
     }
 
     @Override

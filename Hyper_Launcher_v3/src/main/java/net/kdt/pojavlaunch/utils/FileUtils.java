@@ -25,17 +25,6 @@ public class FileUtils {
     }
 
     /**
-     * Remove the extension (all text after the last dot) from a path/URL string.
-     * @param pathOrUrl the path or the URL of the file
-     * @return the input with the extension removed
-     */
-    public static String removeExtension(String pathOrUrl) {
-        int lastDotIndex = pathOrUrl.lastIndexOf('.');
-        if(lastDotIndex == -1) return pathOrUrl;
-        return pathOrUrl.substring(0, lastDotIndex);
-    }
-
-    /**
      * Ensure that a directory exists, is a directory and is writable.
      * @param targetFile the directory to check
      * @return if the check has succeeded

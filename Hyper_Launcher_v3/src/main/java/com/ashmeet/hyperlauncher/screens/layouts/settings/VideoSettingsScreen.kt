@@ -149,12 +149,12 @@ fun VideoSettingsScreen(
                         dynamicOrientation = it
                         LauncherPreferences.prefs.edit { putBoolean("dynamic_orientation", it) }
                         LauncherPreferences.loadPreferences(context)
+                        (context as? net.kdt.pojavlaunch.BaseActivity)?.updateOrientation()
+                        git.mojo.sdl.SDLActivity.setDynamicOrientationEnabled(it)
                     }
                 )
             }
-        }
 
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
                 SettingsSwitchItem(
                     title = translatedText(stringResource(R.string.mcl_setting_title_use_surface_view)),
