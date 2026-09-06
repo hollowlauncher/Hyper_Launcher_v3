@@ -3,10 +3,10 @@ package net.kdt.pojavlaunch.customcontrols.mouse;
 import static net.kdt.pojavlaunch.CallbackBridge.sendMouseButton;
 
 import android.os.Handler;
+import android.view.MotionEvent;
 
-import net.kdt.pojavlaunch.LwjglGlfwKeycode;
-import net.kdt.pojavlaunch.Tools;
 import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences;
+import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.utils.MathUtils;
 
 public class LeftClickGesture extends DistanceGesture {
@@ -38,7 +38,7 @@ public class LeftClickGesture extends DistanceGesture {
         boolean fingerStill = travelBelowThreshold(LeftClickGesture.FINGER_STILL_THRESHOLD);
         // If the finger is still, fire the gesture.
         if(fingerStill) {
-            sendMouseButton(LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_LEFT, true);
+            sendMouseButton(MotionEvent.BUTTON_PRIMARY, true);
             mMouseActivated = true;
         }
         // Otherwise, don't click but still keep it active
@@ -48,7 +48,7 @@ public class LeftClickGesture extends DistanceGesture {
     @Override
     public void onGestureCancelled(boolean isSwitching) {
         if(mMouseActivated) {
-            sendMouseButton(LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_LEFT, false);
+            sendMouseButton(MotionEvent.BUTTON_PRIMARY, false);
             mMouseActivated = false;
         }
     }

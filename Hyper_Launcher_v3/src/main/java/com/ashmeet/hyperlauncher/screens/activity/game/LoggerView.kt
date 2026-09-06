@@ -51,7 +51,7 @@ class LoggerView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : AbstractComposeView(context, attrs, defStyleAttr) {
 
-    private var _isOutputOn = mutableStateOf(false)
+    private var _isOutputOn = mutableStateOf(true)
 
     override fun setVisibility(visibility: Int) {
         super.setVisibility(visibility)

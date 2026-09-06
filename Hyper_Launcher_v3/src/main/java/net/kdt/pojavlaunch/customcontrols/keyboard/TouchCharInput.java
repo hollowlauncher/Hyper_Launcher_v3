@@ -3,11 +3,12 @@ package net.kdt.pojavlaunch.customcontrols.keyboard;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
 
+import static net.kdt.pojavlaunch.game.platform.Platform.PLATFORM;
+
 import android.content.Context;
 import android.text.Editable;
 import android.text.Selection;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.inputmethod.InputMethodManager;
 
@@ -15,6 +16,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import net.ashmeet.hyperlauncher.R;
+import net.kdt.pojavlaunch.CallbackBridge;
+
+
 
 /**
  * This class is intended for sending characters used in chat via the virtual keyboard
@@ -34,7 +38,15 @@ public class TouchCharInput extends androidx.appcompat.widget.AppCompatEditText 
 
 
     private boolean mIsDoingInternalChanges = false;
-    private CharacterSenderStrategy mCharacterSender;
+    private CharacterSenderStrategy mCharacterSender = null;
+
+    /**
+     * Set the strategy to send characters.
+     * @param strategy The strategy to use.
+     */
+    public void setCharacterSender(CharacterSenderStrategy strategy) {
+        mCharacterSender = strategy;
+    }
 
     /**
      * When we change from app to app, the keyboard gets disabled.
@@ -66,6 +78,20 @@ public class TouchCharInput extends androidx.appcompat.widget.AppCompatEditText 
         InputMethodManager imm = (InputMethodManager) getContext().getSystemService(INPUT_METHOD_SERVICE);
         // Allow, regardless of whether or not a hardware keyboard is declared
         if(hasFocus()){
+            clear();
+            disable();
+        }else{
+            enable();
+            imm.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT);
+        }
+    }
+
+    /**
+     * Force keyboard state
+     */
+    public void setKeyboardState(boolean state){
+        InputMethodManager imm = (InputMethodManager) getContext().getSystemService(INPUT_METHOD_SERVICE);
+        if(!state){
             clear();
             disable();
         }else{
@@ -110,13 +136,12 @@ public class TouchCharInput extends androidx.appcompat.widget.AppCompatEditText 
 
     /** Send the enter key. */
     private void sendEnter(){
-        mCharacterSender.sendEnter();
+        if(mCharacterSender != null){
+            mCharacterSender.sendEnter();
+        }else{
+            CallbackBridge.sendKeyPress(KeyEvent.KEYCODE_ENTER);
+        }
         clear();
-    }
-
-    /** Just sets the char sender that should be used. */
-    public void setCharacterSender(CharacterSenderStrategy characterSender){
-        mCharacterSender = characterSender;
     }
 
     /** This function deals with anything that has to be executed when the constructor is called */
@@ -126,8 +151,9 @@ public class TouchCharInput extends androidx.appcompat.widget.AppCompatEditText 
         addTextChangedListener(new InputTextWatcher());
         setOnEditorActionListener((textView, i, keyEvent) -> {
             sendEnter();
+            clear();
             disable();
-            return true;
+            return false;
         });
         clear();
         disable();
@@ -146,23 +172,18 @@ public class TouchCharInput extends androidx.appcompat.widget.AppCompatEditText 
         @Override
         public void onTextChanged(CharSequence text, int start, int lengthBefore, int lengthAfter) {
             if(mIsDoingInternalChanges) return;
-            if(mCharacterSender != null){
-                // Detect if a newline was added
-                if (lengthAfter > 0) {
-                    for (int j = 0; j < lengthAfter; j++) {
-                        if (text.charAt(start + j) == '\n') {
-                            sendEnter();
-                            disable();
-                            return;
-                        }
-                    }
-                }
 
-                for(int j=0; j < lengthBefore; ++j){
+            if(mCharacterSender != null){
+                for(int i=0; i < lengthBefore; ++i){
                     mCharacterSender.sendBackspace();
                 }
-
                 mCharacterSender.sendChars(text.subSequence(start, start + lengthAfter));
+            }else{
+                for(int i=0; i < lengthBefore; ++i){
+                    CallbackBridge.sendKeyPress(KeyEvent.KEYCODE_DEL);
+                }
+
+                PLATFORM.sendBulkUnicodeEvent(text.subSequence(start, start + lengthAfter).toString(), CallbackBridge.getCurrentMods());
             }
         }
 

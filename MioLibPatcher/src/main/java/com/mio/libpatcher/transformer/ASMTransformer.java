@@ -20,18 +20,10 @@ import javassist.bytecode.Opcode;
 public class ASMTransformer implements BaseTransformer {
 
     private static Boolean isASM504Result;
-    /**
-     * @return Exhaustive list of all 5 visitor classes in ASM 5.0.4
-     */
+
     @Override
     public List<String> getTargetClassNames() {
         List<String> list = new ArrayList<>();
-        /*
-        We use ASM 5.0.4 as the override for older ASM versions, forge never shipped with it. So
-        let's assume that if its 5.0.4, we overrid the requested ASM version and apply the bug
-        backport.
-         */
-        if (!isASM504()) return list;
         list.add("org.objectweb.asm.ClassVisitor");
         list.add("org.objectweb.asm.MethodVisitor");
         list.add("org.objectweb.asm.FieldVisitor");
@@ -40,33 +32,18 @@ public class ASMTransformer implements BaseTransformer {
         return list;
     }
 
-    /**
-     * WARNING: Should only be used on ASM 5.0.4
-     * Launchers can force the decision via -Dmiolibpatcher.asmBackport=true/false.
-     * @throws CannotCompileException If used on the wrong class.
-     */
     @Override
-    public void transform(CtClass clazz) throws CannotCompileException {
+    public void transform(CtClass clazz) throws Throwable {
+        // This should not be called anymore if we use the loader version, but keeping it for safety
+    }
+
+    @Override
+    public void transform(CtClass clazz, ClassLoader loader) throws CannotCompileException {
+        if (!isASM504(loader)) return;
+
         for (CtConstructor ctor : clazz.getDeclaredConstructors()) {
             if (!ctor.isClassInitializer()) {
                 CodeIterator it = ctor.getMethodInfo().getCodeAttribute().iterator();
-                // This is a bit janky, but it works for all five classes without manually
-                // setting their Java source bodies.
-                /*
-                   What this does:
-                     public ClassVisitor(final int api, final ClassVisitor cv) {
-                        if (api != Opcodes.ASM4) {
-                            throw new IllegalArgumentException(); // NOPs this part
-                        }
-                        this.api = api;
-                        this.cv = cv; // This is unique to ClassVisitor
-                     }
-                   "throw new IllegalArgumentException()" compiles to this bytecode:
-                     new
-                     dup
-                     invokespecial
-                     athrow
-                 */
                 while (it.hasNext()) {
                     try {
                         int pos = it.next();
@@ -82,9 +59,6 @@ public class ASMTransformer implements BaseTransformer {
                         int athrow = it.next();
                         if (it.byteAt(athrow) != Opcode.ATHROW) continue;
 
-
-                        // NOP the entire four instructions.
-                        // I checked, we can assume at least this much of all five classes.
                         for (int i = pos; i < athrow + 1; ++i) {
                             it.writeByte(Opcode.NOP, i);
                         }
@@ -100,29 +74,35 @@ public class ASMTransformer implements BaseTransformer {
         }
     }
 
-    private boolean isASM504() {
-        // 启动器可通过系统属性强制指定是否启用该补丁
+    private boolean isASM504(ClassLoader loader) {
         String override = System.getProperty("miolibpatcher.asmBackport");
         if (override != null) {
             return Boolean.parseBoolean(override);
         }
-        if (isASM504Result == null) {
-            isASM504Result = detectASM504();
+        if (isASM504Result != null) {
+            return isASM504Result;
         }
-        return isASM504Result;
+        
+        Boolean result = detectASM504(loader);
+        if (result != null) {
+            isASM504Result = result;
+        }
+        return isASM504Result != null && isASM504Result;
     }
 
-    private static boolean detectASM504() {
+    private static Boolean detectASM504(ClassLoader loader) {
         try {
-            // Ensure we do NOT initialize the class, otherwise some mod loaders (fabric) can
-            // cause duplicate class to load in their classloader, causing a crash.
-            Class<?> asmClass = Class.forName("org.objectweb.asm.ClassReader", false, ClassLoader.getSystemClassLoader());
+            Class<?> asmClass = Class.forName("org.objectweb.asm.ClassReader", false, loader);
             Package asmPackage = asmClass.getPackage();
+            if (asmPackage == null) return null;
             String implVersion = asmPackage.getImplementationVersion();
+            if (implVersion == null) return null;
             return "5.0.4".equals(implVersion);
+        } catch (ClassNotFoundException e) {
+            return null; // Not found yet
         } catch (Exception e) {
             LogUtil.info("Unable to get ASM version info, ASMTransformer patch will be skipped: " + e);
+            return false;
         }
-        return false;
     }
 }

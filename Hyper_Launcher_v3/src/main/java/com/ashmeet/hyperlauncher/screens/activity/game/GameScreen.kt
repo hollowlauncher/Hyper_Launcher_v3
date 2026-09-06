@@ -1,59 +1,113 @@
 package com.ashmeet.hyperlauncher.screens.activity.game
 
-import androidx.compose.animation.*
+import android.view.ViewGroup
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.*
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.ashmeet.hyperlauncher.utils.LoggerProxy
-import net.kdt.pojavlaunch.Logger
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.zIndex
+import com.ashmeet.hyperlauncher.helper.LauncherComposeHelper
+import kotlinx.coroutines.launch
+import net.kdt.pojavlaunch.customcontrols.handleview.DrawerPullButton
 
 @Composable
 fun GameBasemainScreen(
+    drawerState: DrawerState? = null,
+    showLoading: Boolean = true,
     content: @Composable BoxScope.() -> Unit
 ) {
-    var isSplashVisible by remember { mutableStateOf(true) }
+    val scope = rememberCoroutineScope()
 
-    DisposableEffect(Unit) {
-        val listener = Logger.eventLogListener { text ->
-            if (text != null && (
-                text.contains("[main/INFO]: OpenAL initialized") || 
-                text.contains("[main/INFO]: Sound engine started") ||
-                text.contains("Backend library:") ||
-                text.contains("Setting user:") ||
-                text.contains("Created: ")
-            )) {
-                isSplashVisible = false
-            }
-        }
-        LoggerProxy.addListener(listener)
-        onDispose {
-            LoggerProxy.removeListener(listener)
-        }
-    }
+    Box(modifier = Modifier.fillMaxSize()) {
+        content()
 
-    Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
-        AnimatedVisibility(
-            visible = isSplashVisible,
-            exit = fadeOut(animationSpec = tween(800))
-        ) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
+        if (drawerState != null) {
+            AndroidView(
+                factory = { ctx ->
+                    android.widget.FrameLayout(ctx).apply {
+                        val button = DrawerPullButton(ctx).apply {
+                            val density = ctx.resources.displayMetrics.density
+                            val p = (4 * density).toInt()
+                            setPadding(p, p, p, p)
+                            elevation = 10 * density
+                            isClickable = true
+                            isFocusable = true
+                            setOnClickListener {
+                                scope.launch { drawerState.open() }
+                            }
+                        }
+                        addView(button)
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxSize()
+                    .zIndex(101f)
+            )
+        }
+
+        if (showLoading) {
+            AnimatedVisibility(
+                visible = LauncherComposeHelper.isLoading,
+                exit = fadeOut(animationSpec = tween(300))
             ) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(32.dp),
-                    strokeWidth = 3.dp,
-                    color = Color.White
+                LoadingScreen(
+                    text = LauncherComposeHelper.loadingText,
+                    warning = LauncherComposeHelper.loadingWarning
                 )
             }
         }
-        content()
+    }
+}
+
+@Composable
+fun LoadingScreen(
+    text: String,
+    warning: String
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xBB000000)),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(bottom = 16.dp)
+        ) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(24.dp),
+                strokeWidth = 2.dp,
+                color = Color.White
+            )
+            Text(
+                text = text,
+                color = Color.White,
+                fontSize = 16.sp,
+                modifier = Modifier.padding(top = 8.dp)
+            )
+            Text(
+                text = warning,
+                color = Color.LightGray,
+                fontSize = 12.sp,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
     }
 }

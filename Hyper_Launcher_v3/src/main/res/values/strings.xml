@@ -29,13 +29,16 @@
 
     <!-- AlertDialog title -->
     <string name="alerttitle_installmod">Select a mod installer</string>
+    <string name="loading_screen_title">Waiting for a game window to appear…</string>
+    <string name="loading_screen_booted">Ready - running on %1$s!</string>
+    <string name="loading_screen_warning">If you are stuck here, the game might have crashed</string>
 
     <!-- Error messages -->
     <string name="error_fatal">HyperLauncher has unexpectedly crashed</string>
     <string name="error_no_version">No version!</string>
     <string name="error_show_more">Show more</string>
     <string name="error_show_less">Show less</string>
-
+    <string name="option_do_not_show_again">Do not show again</string>
     <!-- Toast messages -->
     <string name="toast_permission_denied">The read/write to storage permission is required!</string>
     <string name="toast_optifine_success">Install successful</string>
@@ -84,6 +87,8 @@
     <string name="mcl_setting_subtitle_longpresstrigger">Change long press trigger delay for destroying blocks and dropping items.</string>
     <string name="mcl_setting_title_buttonscale">Control buttons scaling</string>
     <string name="mcl_setting_subtitle_buttonscale">Upscale them if the buttons are too small.</string>
+    <string name="mcl_setting_title_buttonopacity">Control buttons Opacity</string>
+    <string name="mcl_setting_subtitle_buttonopacity">change the Opacity of the controls.</string>
     <string name="mcl_setting_title_mousescale">Mouse scaling</string>
     <string name="mcl_setting_subtitle_mousescale">Change the size of the virtual mouse.</string>
     <string name="mcl_setting_title_javaargs">JVM Launch arguments</string>

@@ -20,9 +20,10 @@ import android.widget.TextView;
 
 import com.kdt.SideDialogView;
 
-import net.kdt.pojavlaunch.CustomControlsActivity;
-import net.kdt.pojavlaunch.EfficientAndroidLWJGLKeycode;
 import net.ashmeet.hyperlauncher.R;
+import net.kdt.pojavlaunch.CustomControlsActivity;
+import net.kdt.pojavlaunch.utils.KeycodeUtils;
+
 import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.colorselector.ColorSelector;
 import net.kdt.pojavlaunch.customcontrols.ControlData;
@@ -189,7 +190,7 @@ public class EditControlSideDialog extends SideDialogView {
             if (data.keycodes[i] < 0) {
                 mKeycodeSpinners[i].setSelection(data.keycodes[i] + mSpecialArray.size());
             } else {
-                mKeycodeSpinners[i].setSelection(EfficientAndroidLWJGLKeycode.getIndexByValue(data.keycodes[i]) + mSpecialArray.size());
+                mKeycodeSpinners[i].setSelection(KeycodeUtils.getIndexByValue(data.keycodes[i]) + mSpecialArray.size());
             }
         }
 
@@ -284,7 +285,7 @@ public class EditControlSideDialog extends SideDialogView {
         mSpecialArray = ControlData.buildSpecialButtonArray();
 
         mAdapter.addAll(mSpecialArray);
-        mAdapter.addAll(EfficientAndroidLWJGLKeycode.generateKeyName());
+        mAdapter.addAll(KeycodeUtils.generateKeyName());
         mAdapter.setDropDownViewResource(android.R.layout.simple_list_item_single_choice);
 
         for (Spinner spinner : mKeycodeSpinners) {
@@ -481,7 +482,7 @@ public class EditControlSideDialog extends SideDialogView {
                 if (position < mSpecialArray.size()) {
                     mCurrentlyEditedButton.getProperties().keycodes[finalI] = mKeycodeSpinners[finalI].getSelectedItemPosition() - mSpecialArray.size();
                 } else {
-                    mCurrentlyEditedButton.getProperties().keycodes[finalI] = EfficientAndroidLWJGLKeycode.getValueByIndex(mKeycodeSpinners[finalI].getSelectedItemPosition() - mSpecialArray.size());
+                    mCurrentlyEditedButton.getProperties().keycodes[finalI] = KeycodeUtils.getValueByIndex(mKeycodeSpinners[finalI].getSelectedItemPosition() - mSpecialArray.size());
                 }
                 mKeycodeTextviews[finalI].setText((String) mKeycodeSpinners[finalI].getSelectedItem());
             });

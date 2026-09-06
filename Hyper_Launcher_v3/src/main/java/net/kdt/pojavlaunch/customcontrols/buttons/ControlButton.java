@@ -1,6 +1,5 @@
 package net.kdt.pojavlaunch.customcontrols.buttons;
 
-import static net.kdt.pojavlaunch.LwjglGlfwKeycode.GLFW_KEY_UNKNOWN;
 import static net.kdt.pojavlaunch.CallbackBridge.sendMouseButton;
 
 import android.annotation.SuppressLint;
@@ -12,26 +11,28 @@ import android.graphics.PorterDuff;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 
-import net.kdt.pojavlaunch.LwjglGlfwKeycode;
+import net.ashmeet.hyperlauncher.R;
 import net.kdt.pojavlaunch.game.GameActivity;
 
-import git.artdeell.dnbootstrap.glfw.GLFW;
-import net.ashmeet.hyperlauncher.R;
 
 import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.customcontrols.ControlData;
 import net.kdt.pojavlaunch.customcontrols.ControlLayout;
 import net.kdt.pojavlaunch.customcontrols.handleview.EditControlSideDialog;
-import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences;
+
 
 import net.kdt.pojavlaunch.CallbackBridge;
 
 import static net.kdt.pojavlaunch.customcontrols.buttons.BackgroundTint.DEFAULT_TINT_LIST;
 import static net.kdt.pojavlaunch.customcontrols.buttons.BackgroundTint.TOGGLE_TINT_LIST;
+import static net.kdt.pojavlaunch.game.platform.Platform.PLATFORM;
+
+import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences;
 
 @SuppressLint({"ViewConstructor", "AppCompatCustomView"})
 public class ControlButton extends TextView implements ControlInterface {
@@ -209,10 +210,10 @@ public class ControlButton extends TextView implements ControlInterface {
     public void sendKeyPresses(boolean isDown){
         setActivated(isDown);
         for(int keycode : mProperties.keycodes){
-            if(keycode >= GLFW_KEY_UNKNOWN){
+            if(keycode >= KeyEvent.KEYCODE_UNKNOWN){
                 CallbackBridge.setModifiers(keycode, isDown);
                 int modifiers = CallbackBridge.getCurrentMods();
-                GLFW.sendKeyEvent(keycode, isDown, modifiers);
+                PLATFORM.sendKeyEvent(keycode, isDown ? 1 : 0, modifiers);
             }else{
                 Log.i("punjabilauncher", "sendSpecialKey("+keycode+","+isDown+")");
                 sendSpecialKey(keycode, isDown);
@@ -239,15 +240,15 @@ public class ControlButton extends TextView implements ControlInterface {
                 break;
 
             case ControlData.SPECIALBTN_MOUSEPRI:
-                sendMouseButton(LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_LEFT, isDown);
+                sendMouseButton(MotionEvent.BUTTON_PRIMARY, isDown);
                 break;
 
             case ControlData.SPECIALBTN_MOUSEMID:
-                sendMouseButton(LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_MIDDLE, isDown);
+                sendMouseButton(MotionEvent.BUTTON_TERTIARY, isDown);
                 break;
 
             case ControlData.SPECIALBTN_MOUSESEC:
-                sendMouseButton(LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_RIGHT, isDown);
+                sendMouseButton(MotionEvent.BUTTON_SECONDARY, isDown);
                 break;
 
             case ControlData.SPECIALBTN_SCROLLDOWN:

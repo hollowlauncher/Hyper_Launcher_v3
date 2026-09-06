@@ -51,6 +51,7 @@ fun ControlSettingsScreen(
     var disableGestures by remember { mutableStateOf(LauncherPreferences.PREF_DISABLE_GESTURES) }
     var disableDoubleTap by remember { mutableStateOf(LauncherPreferences.PREF_DISABLE_SWAP_HAND) }
     var longPressTrigger by remember { mutableFloatStateOf(LauncherPreferences.PREF_LONGPRESS_TRIGGER.toFloat()) }
+    var buttonOpacity by remember { mutableFloatStateOf(LauncherPreferences.PREF_BUTTON_TRANSPARENCY) }
     var buttonScale by remember { mutableFloatStateOf(LauncherPreferences.PREF_BUTTONSIZE) }
     var buttonAllCaps by remember { mutableStateOf(LauncherPreferences.PREF_BUTTON_ALL_CAPS) }
     var mouseScale by remember { mutableFloatStateOf(LauncherPreferences.PREF_MOUSESCALE * 100f) }
@@ -140,6 +141,22 @@ fun ControlSettingsScreen(
                     onValueChange = {
                         buttonScale = it
                         LauncherPreferences.prefs.edit { putInt("buttonscale", it.toInt()) }
+                        LauncherPreferences.loadPreferences(context)
+                    },
+                    valueSuffix = "%"
+                )
+            }
+
+            SettingsCard(position = CardPosition.TOP, useSurface = true) {
+                SettingsSliderItem(
+                    title = translatedText(stringResource(R.string.mcl_setting_title_buttonopacity)),
+                    summary = translatedText(stringResource(R.string.mcl_setting_subtitle_buttonopacity)),
+                    icon = Icons.Default.SettingsOverscan,
+                    value = buttonOpacity,
+                    valueRange = integerResource(R.integer.button_opacity_seekbar_min).toFloat()..integerResource(R.integer.button_opacity_seekbar_max).toFloat(),
+                    onValueChange = {
+                        buttonOpacity = it
+                        LauncherPreferences.prefs.edit { putInt("buttonopacity", it.toInt()) }
                         LauncherPreferences.loadPreferences(context)
                     },
                     valueSuffix = "%"

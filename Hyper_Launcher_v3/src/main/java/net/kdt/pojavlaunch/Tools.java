@@ -3,7 +3,6 @@ package net.kdt.pojavlaunch;
 import static android.os.Build.VERSION.SDK_INT;
 import static net.kdt.pojavlaunch.PojavApplication.sExecutorService;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.NotificationChannel;
@@ -14,7 +13,6 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Insets;
@@ -48,22 +46,20 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import net.ashmeet.hyperlauncher.BuildConfig;
-import net.ashmeet.hyperlauncher.R;
+import net.kdt.pojavlaunch.awt.AWTActivity;
 import net.kdt.pojavlaunch.game.GameActivity;
 import net.kdt.pojavlaunch.instances.Instance;
 import net.kdt.pojavlaunch.lifecycle.ContextExecutor;
 import net.kdt.pojavlaunch.lifecycle.ContextExecutorTask;
-import net.kdt.pojavlaunch.multirt.MultiRTUtils;
-import net.kdt.pojavlaunch.utils.FileUtils;
-import net.kdt.pojavlaunch.utils.GLInfoUtils;
 import net.kdt.pojavlaunch.utils.HashUtils;
 import net.kdt.pojavlaunch.utils.memory.MemoryHoleFinder;
 import net.kdt.pojavlaunch.utils.memory.SelfMapsParser;
+import net.kdt.pojavlaunch.multirt.MultiRTUtils;
+import net.kdt.pojavlaunch.utils.FileUtils;
+import net.kdt.pojavlaunch.utils.GLInfoUtils;
 import net.kdt.pojavlaunch.value.DependentLibrary;
 import net.kdt.pojavlaunch.value.LibraryArtifact;
 
@@ -88,11 +84,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import net.ashmeet.hyperlauncher.BuildConfig;
+import net.ashmeet.hyperlauncher.R;
+
 @SuppressWarnings("IOStreamConstructor")
 public final class Tools {
     public static final String MAVEN_CENTRAL = "https://maven-central-eu.storage-download.googleapis.com/maven2/";
     public  static final float BYTE_TO_MB = 1024 * 1024;
-    public static Handler MAIN_HANDLER;
+    public static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
     public static String APP_NAME = "HyperLauncher";
 
     public static final Gson GLOBAL_GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -106,8 +105,7 @@ public final class Tools {
 
     // New since 3.3.1
     public static String DIR_ACCOUNT_NEW;
-    @SuppressLint("SdCardPath")
-    public static String DIR_GAME_HOME = (Environment.getExternalStorageDirectory() != null ? Environment.getExternalStorageDirectory().getAbsolutePath() : "/sdcard") + "/games/Hyper";
+    public static String DIR_GAME_HOME = Environment.getExternalStorageDirectory().getAbsolutePath() + "/games/Hyper";
     public static String DIR_GAME_NEW;
 
     // New since 2.4.2
@@ -130,7 +128,7 @@ public final class Tools {
         }
         File externalStorageDirectory = Environment.getExternalStorageDirectory();
         if(externalStorageDirectory == null) return null;
-        File launcherRoot = new File(externalStorageDirectory,"games/HyperLauncher");
+        File launcherRoot = new File(externalStorageDirectory,"games/Hyper");
         if(!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState(launcherRoot))) return null;
         return launcherRoot;
     }
@@ -144,19 +142,17 @@ public final class Tools {
         return getPojavStorageRoot(context) != null;
     }
 
-    /**
-     * Checks if the Pojav's storage root is accessible and read-writable. If it's not, starts
-     * the MissingStorageActivity and finishes the supplied activity.
-     * @param context the Activity that checks for storage availability
-     * @return whether the storage is available or not.
-     */
-    public static boolean checkStorageInteractive(Activity context) {
-        if(!Tools.checkStorageRoot(context)) {
-            context.startActivity(new Intent(context, MissingStorageActivity.class));
-            context.finish();
-            return false;
+    public static void copyAssetFile(Context ctx, String fileName, String output, String outputName, boolean overwrite) throws IOException {
+        File parentFolder = new File(output);
+        FileUtils.ensureDirectory(parentFolder);
+        File destinationFile = new File(output, outputName);
+        if(!destinationFile.exists() || overwrite){
+            try(InputStream inputStream = ctx.getAssets().open(fileName)) {
+                try (OutputStream outputStream = new FileOutputStream(destinationFile)){
+                    IOUtils.copy(inputStream, outputStream);
+                }
+            }
         }
-        return true;
     }
 
     public static boolean compareSHA1(File f, String sourceSHA) {
@@ -177,6 +173,21 @@ public final class Tools {
     }
 
     /**
+     * Checks if the Pojav's storage root is accessible and read-writable. If it's not, starts
+     * the MissingStorageActivity and finishes the supplied activity.
+     * @param context the Activity that checks for storage availability
+     * @return whether the storage is available or not.
+     */
+    public static boolean checkStorageInteractive(Activity context) {
+        if(!Tools.checkStorageRoot(context)) {
+            context.startActivity(new Intent(context, MissingStorageActivity.class));
+            context.finish();
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * Initialize context constants most necessary for launcher's early startup phase
      * that are not dependent on user storage.
      * All values that depend on DIR_DATA and are not dependent on DIR_GAME_HOME must
@@ -184,14 +195,15 @@ public final class Tools {
      * @param ctx the context for initialization.
      */
     public static void initEarlyConstants(Context ctx) {
-        if (MAIN_HANDLER == null) {
-            MAIN_HANDLER = new Handler(Looper.getMainLooper());
-        }
         DIR_CACHE = ctx.getCacheDir();
         DIR_DATA = ctx.getFilesDir().getParent();
         MULTIRT_HOME = DIR_DATA + "/runtimes";
         DIR_ACCOUNT_NEW = DIR_DATA + "/accounts";
         NATIVE_LIB_DIR = ctx.getApplicationInfo().nativeLibraryDir;
+        if (NATIVE_LIB_DIR == null) {
+            NATIVE_LIB_DIR = DIR_DATA + "/lib";
+            Log.w("Tools", "nativeLibraryDir is null, using fallback: " + NATIVE_LIB_DIR);
+        }
     }
 
     /**
@@ -225,13 +237,12 @@ public final class Tools {
 
 
     public static DisplayMetrics getDisplayMetrics(Activity activity) {
-        DisplayMetrics displayMetrics;
+        DisplayMetrics displayMetrics = new DisplayMetrics();
 
-        if(activity.isInMultiWindowMode() || activity.isInPictureInPictureMode()){
+        if(SDK_INT >= Build.VERSION_CODES.N && (activity.isInMultiWindowMode() || activity.isInPictureInPictureMode())){
             //For devices with free form/split screen, we need window size, not screen size.
             displayMetrics = activity.getResources().getDisplayMetrics();
         }else{
-            displayMetrics = new DisplayMetrics();
             if (SDK_INT >= Build.VERSION_CODES.R) {
                 Objects.requireNonNull(activity.getDisplay()).getRealMetrics(displayMetrics);
             } else { // Removed the clause for devices with unofficial notch support, since it also ruins all devices with virtual nav bars before P
@@ -274,14 +285,13 @@ public final class Tools {
     public static void setInsetsMode(Activity activity, boolean noSystemBars, boolean ignoreNotch) {
         Window window = activity.getWindow();
         View insetView = activity.findViewById(android.R.id.content);
-
         // Don't ignore system bars in window mode (will put game behind window button bar)
-        boolean finalNoSystemBars = noSystemBars && !activity.isInMultiWindowMode();
+        if(SDK_INT >= Build.VERSION_CODES.N && activity.isInMultiWindowMode()) noSystemBars = false;
 
         int bgColor;
         // The status bars are completely transparent and will take their color from the inset view
         // background drawable.
-        if(!finalNoSystemBars) bgColor = ContextCompat.getColor(activity, R.color.background_status_bar);
+        if(!noSystemBars) bgColor = ContextCompat.getColor(activity, R.color.background_status_bar);
         else bgColor = Color.BLACK;
 
         // On API 35 onwards, apps are edge-to-edge by default and are controlled entirely though the
@@ -291,7 +301,7 @@ public final class Tools {
         // The AppCompat APIs don't work well, and break when opening alert dialogs on older Android
         // versions. Use the legacy fullscreen flags for lower APIs. (notch is already handled above)
         if(SDK_INT < Build.VERSION_CODES.R) {
-            setLegacyFullscreen(insetView, finalNoSystemBars);
+            setLegacyFullscreen(insetView, noSystemBars);
             return;
         }
         // Code below expects this to be set to false, since that's the SDK 35 default.
@@ -302,17 +312,15 @@ public final class Tools {
         WindowInsetsController insetsController = window.getInsetsController();
         if(insetsController != null) {
             insetsController.setSystemBarsBehavior(WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
-            if (finalNoSystemBars) insetsController.hide(WindowInsets.Type.systemBars());
-            else {
-                insetsController.show(WindowInsets.Type.systemBars());
-                int appearance = (bgColor == Color.WHITE) ? (WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS | WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS) : 0;
-                insetsController.setSystemBarsAppearance(appearance, WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS | WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS);
-            }
+            if(noSystemBars) insetsController.hide(WindowInsets.Type.systemBars());
+            else insetsController.show(WindowInsets.Type.systemBars());
         }
 
+        boolean fFullscreen = noSystemBars;
         insetView.setOnApplyWindowInsetsListener((v, windowInsets) -> {
-            int insetMask = (!finalNoSystemBars ? WindowInsets.Type.systemBars() : 0) |
-                            (!ignoreNotch ? WindowInsets.Type.displayCutout() : 0);
+            int insetMask = 0;
+            if(!fFullscreen) insetMask |= WindowInsets.Type.systemBars();
+            if(!ignoreNotch) insetMask |= WindowInsets.Type.displayCutout();
             if(insetMask != 0) {
                 Insets insets = windowInsets.getInsets(insetMask);
                 v.setBackground(new InsetBackground(insets,bgColor));
@@ -327,32 +335,23 @@ public final class Tools {
     }
 
     // Note: this should *NOT* be used for positioning and sizing things on the screen
-    public static DisplayMetrics currentDisplayMetrics = Resources.getSystem().getDisplayMetrics();
+    public static DisplayMetrics currentDisplayMetrics;
 
     public static float dpToPx(float dp) {
+        //Better hope for the currentDisplayMetrics to be good
         return dp * currentDisplayMetrics.density;
     }
 
     public static float pxToDp(float px){
+        //Better hope for the currentDisplayMetrics to be good
         return px / currentDisplayMetrics.density;
     }
 
     public static void copyAssetFile(Context ctx, String assetPath, String output, boolean overwrite) throws IOException {
         String fileName = FileUtils.getFileName(assetPath);
-        copyAssetFile(ctx, assetPath, output, fileName, overwrite);
-    }
-
-    public static void copyAssetFile(Context ctx, String fileName, String output, String outputName, boolean overwrite) throws IOException {
-        File parentFolder = new File(output);
-        FileUtils.ensureDirectory(parentFolder);
-        File destinationFile = new File(output, outputName);
-        if(!destinationFile.exists() || overwrite){
-            try(InputStream inputStream = ctx.getAssets().open(fileName)) {
-                try (OutputStream outputStream = new FileOutputStream(destinationFile)){
-                    IOUtils.copy(inputStream, outputStream);
-                }
-            }
-        }
+        if(fileName == null) fileName = assetPath;
+        File outputFile = new File(output, fileName);
+        copyAssetFile(ctx.getAssets(), assetPath, outputFile, overwrite);
     }
 
     public static void copyAssetFile(AssetManager assetManager, String fileName, File output, boolean overwrite) throws IOException {
@@ -367,14 +366,9 @@ public final class Tools {
     }
 
     public static String printToString(Throwable throwable) {
-        if (throwable == null) return "<null>";
         StringWriter stringWriter = new StringWriter();
         PrintWriter printWriter = new PrintWriter(stringWriter);
-        try {
-            throwable.printStackTrace(printWriter);
-        } catch (Throwable t) {
-            printWriter.println("Error printing stack trace: " + t.getMessage());
-        }
+        throwable.printStackTrace(printWriter);
         printWriter.close();
         return stringWriter.toString();
     }
@@ -407,7 +401,7 @@ public final class Tools {
 
         Runnable runnable = () -> {
             final String errMsg = showMore ? printToString(e) : rolledMessage != null ? rolledMessage : e.getMessage();
-            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(ctx)
+            com.google.android.material.dialog.MaterialAlertDialogBuilder builder = new com.google.android.material.dialog.MaterialAlertDialogBuilder(ctx)
                     .setTitle(titleId)
                     .setMessage(errMsg)
                     .setPositiveButton(android.R.string.ok, (p1, p2) -> {
@@ -471,9 +465,8 @@ public final class Tools {
         activity.runOnUiThread(()->dialog(activity, title, message));
     }
 
-
     public static void dialog(final Context context, final CharSequence title, final CharSequence message) {
-        new MaterialAlertDialogBuilder(context)
+        new com.google.android.material.dialog.MaterialAlertDialogBuilder(context)
                 .setTitle(title)
                 .setMessage(message)
                 .setPositiveButton(android.R.string.ok, null)
@@ -481,7 +474,7 @@ public final class Tools {
     }
 
     public static void dialog(final Context context, final int title, final int message) {
-        new MaterialAlertDialogBuilder(context)
+        new com.google.android.material.dialog.MaterialAlertDialogBuilder(context)
                 .setTitle(title)
                 .setMessage(message)
                 .setPositiveButton(android.R.string.ok, null)
@@ -496,6 +489,11 @@ public final class Tools {
         }catch (ActivityNotFoundException e) {
             Tools.showError(act, e);
         }
+    }
+
+    public static boolean shouldSkipLibrary(DependentLibrary library) {
+        // Don't use lwjgl from libraries, we have our own bundled in.
+        return library.name.startsWith("org.lwjgl");
     }
 
     public static void preProcessLibraries(DependentLibrary[] libraries) {
@@ -529,7 +527,7 @@ public final class Tools {
                 libItem.downloads.artifact.size = 957945;
                 libItem.replaced = true;
             } else if (libItem.name.startsWith("org.ow2.asm:asm-all:")) {
-                // Early versions of the ASM library get replaced with 5.0.4 because Pojav's LWJGL is compiled for
+                // Early versions of the ASM library get repalced with 5.0.4 because Pojav's LWJGL is compiled for
                 // Java 8, which is not supported by old ASM versions. Mod loaders like Forge, which depend on this
                 // library, often include lwjgl in their class transformations, which causes errors with old ASM versions.
                 if (Integer.parseInt(version[0]) >= 5) continue;
@@ -622,7 +620,10 @@ public final class Tools {
                     throw new RuntimeException("Can't find the source version for "+ versionName +" (req version="+customVer.inheritsFrom+")");
                 }
                 //inheritsVer.inheritsFrom = inheritsVer.id;
-                insertSafety(inheritsVer, customVer
+                insertSafety(inheritsVer, customVer,
+                        "assetIndex", "assets", "id",
+                        "mainClass", "minecraftArguments",
+                        "releaseTime", "time", "type"
                 );
 
                 // Go through the libraries, remove the ones overridden by the custom version
@@ -714,34 +715,15 @@ public final class Tools {
     }
 
     // Prevent NullPointerException
-    private static void insertSafety(JVersionList.Version targetVer, JVersionList.Version fromVer) {
-        for (String key : new String[]{"assetIndex", "assets", "id", "mainClass", "minecraftArguments", "releaseTime", "time", "type"}) {
+    private static void insertSafety(JVersionList.Version targetVer, JVersionList.Version fromVer, String... keyArr) {
+        for (String key : keyArr) {
             Object value = null;
             try {
-                Field fieldA = null;
-                Class<?> currentClass = fromVer.getClass();
-                while (currentClass != null && fieldA == null) {
-                    try {
-                        fieldA = currentClass.getDeclaredField(key);
-                    } catch (NoSuchFieldException e) {
-                        currentClass = currentClass.getSuperclass();
-                    }
-                }
-                
-                if (fieldA == null) throw new NoSuchFieldException(key);
-
+                Field fieldA = fromVer.getClass().getField(key);
                 value = fieldA.get(fromVer);
-                if (((value instanceof String) && !((String) value).isEmpty()) || (value != null && !(value instanceof String))) {
-                    Field fieldB = null;
-                    currentClass = targetVer.getClass();
-                    while (currentClass != null && fieldB == null) {
-                        try {
-                            fieldB = currentClass.getDeclaredField(key);
-                        } catch (NoSuchFieldException e) {
-                            currentClass = currentClass.getSuperclass();
-                        }
-                    }
-                    if (fieldB != null) fieldB.set(targetVer, value);
+                if (value != null && (!(value instanceof String) || !((String) value).isEmpty())) {
+                    Field fieldB = targetVer.getClass().getField(key);
+                    fieldB.set(targetVer, value);
                 }
             } catch (Throwable th) {
                 Log.w(APP_NAME, "Unable to insert " + key + "=" + value, th);
@@ -802,9 +784,9 @@ public final class Tools {
     }
 
     public static int getDisplayFriendlyRes(int displaySideRes, float scaling){
-        int res = (int)(displaySideRes * scaling);
-        if(res % 2 != 0) res --;
-        return res;
+        displaySideRes = (int)(displaySideRes * scaling);
+        if(displaySideRes % 2 != 0) displaySideRes --;
+        return displaySideRes;
     }
 
     public static String getFileName(Context ctx, Uri uri) {
@@ -826,7 +808,7 @@ public final class Tools {
                                     @Nullable String fragmentTag, @Nullable Bundle bundle) {
         // When people tab out, it might happen
         FragmentTransaction transaction = fragmentActivity.getSupportFragmentManager().beginTransaction();
-        
+
         switch (LauncherPreferences.PREF_SCREEN_TRANSITION) {
             case "fade":
                 transaction.setCustomAnimations(R.anim.fade_enter, R.anim.fade_exit, R.anim.fade_pop_enter, R.anim.fade_pop_exit);
@@ -855,7 +837,7 @@ public final class Tools {
      * from ACTION_OPEN_DOCUMENT
      */
     public static void launchModInstaller(Context context, @NonNull Uri uri){
-        Intent intent = new Intent(context, JavaGUILauncherActivity.class);
+        Intent intent = new Intent(context, AWTActivity.class);
         intent.putExtra("modUri", uri);
         context.startActivity(intent);
     }
@@ -963,7 +945,7 @@ public final class Tools {
     }
 
     public static void dialogForceClose(Context ctx) {
-        new MaterialAlertDialogBuilder(ctx)
+        new com.google.android.material.dialog.MaterialAlertDialogBuilder(ctx)
                 .setMessage(R.string.mcn_exit_confirm)
                 .setNegativeButton(android.R.string.cancel, null)
                 .setPositiveButton(android.R.string.ok, (p1, p2) -> {
@@ -986,13 +968,11 @@ public final class Tools {
         } catch (IllegalAccessException | NoSuchFieldException e) {
             throw new RuntimeException();
         }
-        if (hash == null) throw new RuntimeException();
         byte[] ret = new byte[hash.length];
         for (int i = 0; i < hash.length; i++){
             ret[i] = (byte)(hash[i] ^ w);
         }
-        String callingPackage = provider.getCallingPackage();
-        if(callingPackage == null || !callingPackage.equals(new String(ret))) {
+        if(!provider.getCallingPackage().equals(new String(ret))) {
             return false;
         }
         waitOnObj();
@@ -1007,7 +987,7 @@ public final class Tools {
     }
 
     public static void restartLauncherActivity(Context context){
-        Intent intent = new Intent(context, LauncherActivity.class);
+        Intent intent = new Intent(context, net.kdt.pojavlaunch.LauncherActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         context.getApplicationContext().startActivity(intent);
     }

@@ -5,6 +5,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog.Builder;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences;
@@ -41,8 +42,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public class GameRunner {
 
+
+public class GameRunner {
     /**
      * Optimization mods based on Sodium can mitigate the render distance issue. Check if Sodium
      * or its derivative is currently installed to skip the render distance check.

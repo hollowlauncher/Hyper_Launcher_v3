@@ -1,7 +1,7 @@
 package net.kdt.pojavlaunch;
 
 import android.Manifest;
-import android.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -48,7 +48,7 @@ public class TestStorageActivity extends BaseActivity {
 
     private void showRerequestDialog() {
         if(mPermissionRequestDialog != null) mPermissionRequestDialog.dismiss();
-        mPermissionRequestDialog = new AlertDialog.Builder(this)
+        mPermissionRequestDialog = new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.global_error)
                 .setMessage(R.string.toast_permission_denied)
                 .setPositiveButton(android.R.string.ok,(d,i)->requestStoragePermission())

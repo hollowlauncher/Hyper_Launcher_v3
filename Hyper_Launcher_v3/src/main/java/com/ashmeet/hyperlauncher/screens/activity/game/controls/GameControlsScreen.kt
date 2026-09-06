@@ -8,6 +8,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.rememberDrawerState
@@ -23,47 +27,40 @@ import com.ashmeet.hyperlauncher.screens.activity.game.LoggerView
 import kotlinx.coroutines.launch
 import net.kdt.pojavlaunch.customcontrols.ControlLayout
 import net.kdt.pojavlaunch.customcontrols.handleview.DrawerPullButton
+import net.kdt.pojavlaunch.game.GameView
 
 @Composable
 fun GameControlsScreen(
     controlLayout: ControlLayout,
     loggerView: LoggerView,
+    gameView: GameView? = null,
+    hostViews: Boolean = true,
     drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 ) {
     val scope = rememberCoroutineScope()
 
     Box(modifier = Modifier.fillMaxSize()) {
-
-        AndroidView(
-            factory = { controlLayout },
-            modifier = Modifier.fillMaxSize()
-        )
-
-        AndroidView(
-            factory = { loggerView },
-            modifier = Modifier.fillMaxSize()
-        )
-
-        AndroidView(
-            factory = { ctx ->
-                val container = FrameLayout(ctx)
-                val button = DrawerPullButton(ctx).apply {
-                    setOnClickListener {
-                        scope.launch { drawerState.open() }
+        if (hostViews) {
+            AndroidView(
+                factory = { 
+                    controlLayout.apply {
+                        val parent = parent as? android.view.ViewGroup
+                        parent?.removeView(this)
                     }
-                }
-                val lp = FrameLayout.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-                )
-                lp.gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
-                lp.topMargin = (8 * ctx.resources.displayMetrics.density).toInt()
-                button.layoutParams = lp
-                container.addView(button)
-                container
-            },
-            modifier = Modifier.fillMaxSize()
-        )
+                },
+                modifier = Modifier.fillMaxSize()
+            )
+
+            AndroidView(
+                factory = { 
+                    loggerView.apply {
+                        val parent = parent as? android.view.ViewGroup
+                        parent?.removeView(this)
+                    }
+                },
+                modifier = Modifier.fillMaxSize()
+            )
+        }
 
         if (drawerState.targetValue != DrawerValue.Closed) {
             Box(

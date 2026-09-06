@@ -50,6 +50,7 @@ abstract class QuickSettingSideDialog(context: Context, parent: ViewGroup) :
     private var mOriginalMouseSpeed = 0f
     private var mOriginalResolution = 0f
     private var mOriginalGestureDelay = 0
+    private var mOriginalButtonTransparency = 0f
 
     init {
         setTitle(R.string.quick_setting_title)
@@ -68,6 +69,7 @@ abstract class QuickSettingSideDialog(context: Context, parent: ViewGroup) :
         mOriginalMouseSpeed = LauncherPreferences.PREF_MOUSESPEED
         mOriginalGestureDelay = LauncherPreferences.PREF_LONGPRESS_TRIGGER
         mOriginalResolution = LauncherPreferences.PREF_SCALE_FACTOR
+        mOriginalButtonTransparency = LauncherPreferences.PREF_BUTTON_TRANSPARENCY
 
         val composeView = mDialogContent.findViewById<ComposeView>(R.id.compose_view)
         composeView.setContent {
@@ -78,7 +80,8 @@ abstract class QuickSettingSideDialog(context: Context, parent: ViewGroup) :
                 ) {
                     QuickSettingContent(
                         onResolutionChanged = { onResolutionChanged() },
-                        onGyroStateChanged = { onGyroStateChanged() }
+                        onGyroStateChanged = { onGyroStateChanged() },
+                        onButtonTransparencyChanged = { onButtonTransparencyChanged() }
                     ) { key, value ->
                         when (value) {
                             is Boolean -> mEditor?.putBoolean(key, value)
@@ -110,8 +113,10 @@ abstract class QuickSettingSideDialog(context: Context, parent: ViewGroup) :
             LauncherPreferences.PREF_MOUSESPEED = mOriginalMouseSpeed
             LauncherPreferences.PREF_LONGPRESS_TRIGGER = mOriginalGestureDelay
             LauncherPreferences.PREF_SCALE_FACTOR = mOriginalResolution
+            LauncherPreferences.PREF_BUTTON_TRANSPARENCY = mOriginalButtonTransparency
             onGyroStateChanged()
             onResolutionChanged()
+            onButtonTransparencyChanged()
         }
         disappear(true)
     }
@@ -125,12 +130,16 @@ abstract class QuickSettingSideDialog(context: Context, parent: ViewGroup) :
      * Use [LauncherPreferences.PREF_GYRO_INVERT_Y]
      */
     abstract fun onGyroStateChanged()
+
+    /** Called when the button transparency is changed. */
+    open fun onButtonTransparencyChanged() {}
 }
 
 @Composable
 private fun QuickSettingContent(
     onResolutionChanged: () -> Unit,
     onGyroStateChanged: () -> Unit,
+    onButtonTransparencyChanged: () -> Unit,
     onPreferenceChanged: (String, Any) -> Unit
 ) {
     val context = LocalContext.current
@@ -145,6 +154,7 @@ private fun QuickSettingContent(
     var gestureDelay by remember { mutableFloatStateOf(LauncherPreferences.PREF_LONGPRESS_TRIGGER.toFloat()) }
 
     var resolutionScaler by remember { mutableFloatStateOf(LauncherPreferences.PREF_SCALE_FACTOR * 100f) }
+    var buttonTransparency by remember { mutableFloatStateOf(LauncherPreferences.PREF_BUTTON_TRANSPARENCY) }
 
     val isGyroAvailable = remember { Tools.deviceSupportsGyro(context) }
 
@@ -219,6 +229,19 @@ private fun QuickSettingContent(
                 )
             }
         }
+
+        SettingsSliderItem(
+            title = translatedText(stringResource(R.string.mcl_setting_title_buttonopacity)),
+            value = buttonTransparency,
+            valueRange = 0f..100f,
+            valueSuffix = "%",
+            onValueChange = {
+                buttonTransparency = it
+                LauncherPreferences.PREF_BUTTON_TRANSPARENCY = it
+                onPreferenceChanged("buttonTransparency", it.toInt())
+                onButtonTransparencyChanged()
+            }
+        )
 
         SettingsSliderItem(
             title = translatedText(stringResource(R.string.mcl_setting_title_mousespeed)),

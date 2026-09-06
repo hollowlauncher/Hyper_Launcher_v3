@@ -1,7 +1,5 @@
 package net.kdt.pojavlaunch.utils.jre;
 
-import static net.kdt.pojavlaunch.Tools.NATIVE_LIB_DIR;
-
 import android.content.Context;
 import android.os.Build;
 import android.system.ErrnoException;
@@ -10,13 +8,14 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import net.kdt.pojavlaunch.AWTCanvasView;
+import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences;
+
 import net.kdt.pojavlaunch.Architecture;
 import net.kdt.pojavlaunch.Tools;
+import net.kdt.pojavlaunch.awt.AWTView;
 import net.kdt.pojavlaunch.multirt.MultiRTUtils;
 import net.kdt.pojavlaunch.multirt.Runtime;
-import net.kdt.pojavlaunch.plugins.NativePluginManager;
-import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences;
+
 import net.kdt.pojavlaunch.utils.JREUtils;
 
 import java.io.File;
@@ -32,7 +31,13 @@ public class JavaRunner {
     private static boolean getCacioJavaArgs(List<String> javaArgList, boolean isJava8) {
         // Caciocavallo config AWT-enabled version
         javaArgList.add("-Djava.awt.headless=false");
-        javaArgList.add("-Dcacio.managed.screensize=" + AWTCanvasView.AWT_CANVAS_WIDTH + "x" + AWTCanvasView.AWT_CANVAS_HEIGHT);
+        javaArgList.add("-Dpojav.path.native=" + Tools.NATIVE_LIB_DIR);
+        javaArgList.add("-Dpojav.nativedir=" + Tools.NATIVE_LIB_DIR);
+        javaArgList.add("-DPOJAV_NATIVEDIR=" + Tools.NATIVE_LIB_DIR);
+        javaArgList.add("-DPOJAV_PATH_NATIVE=" + Tools.NATIVE_LIB_DIR);
+        javaArgList.add("-Dpojav.native.path=" + Tools.NATIVE_LIB_DIR);
+        javaArgList.add("-Dcacio.native.path=" + Tools.NATIVE_LIB_DIR);
+        javaArgList.add("-Dcacio.managed.screensize=" + AWTView.AWT_CANVAS_WIDTH + "x" + AWTView.AWT_CANVAS_HEIGHT);
         javaArgList.add("-Dcacio.font.fontmanager=sun.awt.X11FontManager");
         javaArgList.add("-Dcacio.font.fontscaler=sun.font.FreetypeFontScaler");
         javaArgList.add("-Dswing.defaultlaf=javax.swing.plaf.metal.MetalLookAndFeel");
@@ -51,7 +56,6 @@ public class JavaRunner {
             javaArgList.add("-javaagent:"+cacioJars[0].getAbsolutePath());
             javaArgList.add("-Dawt.toolkit=com.github.caciocavallosilano.cacio.ctc.CTCToolkit");
             javaArgList.add("-Djava.awt.graphicsenv=com.github.caciocavallosilano.cacio.ctc.CTCGraphicsEnvironment");
-
             javaArgList.add("--add-exports=java.desktop/java.awt=ALL-UNNAMED");
             javaArgList.add("--add-exports=java.desktop/java.awt.peer=ALL-UNNAMED");
             javaArgList.add("--add-exports=java.desktop/sun.awt.image=ALL-UNNAMED");
@@ -99,20 +103,14 @@ public class JavaRunner {
         userArguments.add(0, "-Xms"+LauncherPreferences.PREF_RAM_ALLOCATION+"M");
         userArguments.add(0, "-Xmx"+LauncherPreferences.PREF_RAM_ALLOCATION+"M");
 
-        String pluginPaths = NativePluginManager.getRuntimeLibraryPath();
-        String jnaPath = NATIVE_LIB_DIR;
-        if (!pluginPaths.isEmpty()) {
-            jnaPath = pluginPaths + ":" + jnaPath;
-        }
-
         ArrayList<String> overridableArguments = new ArrayList<>(Arrays.asList(
                 "-Djava.home=" + runtimeHome,
                 "-Djava.io.tmpdir=" + Tools.DIR_CACHE.getAbsolutePath(),
-                "-Djna.boot.library.path=" + jnaPath,
-                "-Djna.library.path=" + jnaPath,
-                "-Djava.library.path=" + jnaPath,
+                "-Djava.library.path=" + Tools.NATIVE_LIB_DIR,
+                "-Djna.boot.library.path=" + Tools.NATIVE_LIB_DIR,
                 "-Duser.home=" + Tools.DIR_GAME_HOME,
-                "-Duser.language=" + System.getProperty("user.language"),
+                "-Duser.language=en",
+                "-Duser.country=US",
                 "-Dos.name=Linux",
                 "-Dos.version=Android-" + Build.VERSION.RELEASE,
                 "-Dpojav.path.minecraft=" + Tools.DIR_GAME_NEW,
@@ -121,6 +119,7 @@ public class JavaRunner {
 
                 "-Dorg.lwjgl.vulkan.libname=libvulkan.so",
                 "-Dorg.lwjgl.spvc.libname=spirv-cross-c-shared",
+                "-Dorg.lwjgl.sdl.libname=" + new File(Tools.NATIVE_LIB_DIR, "libSDL3.so").getAbsolutePath(),
                 "-Dorg.lwjgl.system.allocator=system",
                 //LWJGL 3 DEBUG FLAGS
                 //"-Dorg.lwjgl.util.Debug=true",
@@ -189,14 +188,9 @@ public class JavaRunner {
         File libsDir = Objects.requireNonNull(vmDir.getParentFile());
         StringBuilder libPathBuilder =  new StringBuilder()
                 .append(libsDir.getAbsolutePath()).append(":")
-                .append(NATIVE_LIB_DIR).append(':')
+                .append(Tools.NATIVE_LIB_DIR).append(':')
                 .append(vmDir.getAbsolutePath()).append(':')
                 .append(new File(libsDir, "jli").getAbsolutePath());
-
-        String pluginPaths = NativePluginManager.getRuntimeLibraryPath();
-        if (!pluginPaths.isEmpty()) {
-            libPathBuilder.append(':').append(pluginPaths);
-        }
 
         if(extraDirs != null) for(String path : extraDirs) {
             libPathBuilder.append(':').append(path);
@@ -213,10 +207,10 @@ public class JavaRunner {
 
     private static void setImmutableEnvVars(File jreHome) {
         try {
-            Os.setenv("POJAV_NATIVEDIR", Tools.NATIVE_LIB_DIR, true);
             Os.setenv("JAVA_HOME", jreHome.getAbsolutePath(), true);
             Os.setenv("HOME", Tools.DIR_GAME_HOME, true);
             Os.setenv("TMPDIR", Tools.DIR_CACHE.getAbsolutePath(), true);
+            Os.setenv("POJAV_NATIVEDIR", Tools.NATIVE_LIB_DIR, true);
         }catch (ErrnoException e) {
             throw new RuntimeException(e);
         }
@@ -289,6 +283,8 @@ public class JavaRunner {
         if(getCacioJavaArgs(runtimeArgs,runtime.javaVersion == 8)) hasJavaAgent = true;
         runtimeArgs.addAll(getJavaArgs(runtimeHomeDir.getAbsolutePath(), vmArgs));
 
+        Log.i("JavaRunner", "Native lib dir: " + Tools.NATIVE_LIB_DIR);
+        Log.i("JavaRunner", "Final JVM args: " + runtimeArgs);
 
         runtimeArgs.add("-XX:ActiveProcessorCount=" + java.lang.Runtime.getRuntime().availableProcessors());
         addx86SignalWorkaround(runtimeArgs);
@@ -301,8 +297,7 @@ public class JavaRunner {
         }
         runtimeArgs.add(classpathBuilder.toString());
 
-
-        JREUtils.initializeHooks();
+        //JREUtils.initializeHooks();
 
         setImmutableEnvVars(runtimeHomeDir);
         relocateLdLibPath(vmPath, null);

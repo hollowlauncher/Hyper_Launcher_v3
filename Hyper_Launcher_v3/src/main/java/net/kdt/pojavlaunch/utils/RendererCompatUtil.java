@@ -5,9 +5,7 @@ import static android.os.Build.VERSION.SDK_INT;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import android.os.Build;
-
-import net.kdt.pojavlaunch.Architecture;
+import net.ashmeet.hyperlauncher.R;
 import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.plugins.NativePluginManager;
 
@@ -15,15 +13,22 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.ashmeet.hyperlauncher.R;
 
 public class RendererCompatUtil {
     private static RenderersList sCompatibleRenderers;
 
     public static boolean checkVulkanSupport(PackageManager packageManager) {
-        if(SDK_INT >= Build.VERSION_CODES.N) {
-            return packageManager.hasSystemFeature(PackageManager.FEATURE_VULKAN_HARDWARE_LEVEL) &&
-                    packageManager.hasSystemFeature(PackageManager.FEATURE_VULKAN_HARDWARE_VERSION);
+        return packageManager.hasSystemFeature(PackageManager.FEATURE_VULKAN_HARDWARE_LEVEL) &&
+                packageManager.hasSystemFeature(PackageManager.FEATURE_VULKAN_HARDWARE_VERSION);
+    }
+
+    private static boolean hasNativeLibrary(String name) {
+        if (new File(Tools.NATIVE_LIB_DIR, name).exists()) return true;
+        String pluginPaths = NativePluginManager.getRuntimeLibraryPath();
+        if (!pluginPaths.isEmpty()) {
+            for (String path : pluginPaths.split(":")) {
+                if (new File(path, name).exists()) return true;
+            }
         }
         return false;
     }
@@ -36,10 +41,11 @@ public class RendererCompatUtil {
         String[] defaultRendererNames = resources.getStringArray(R.array.renderer);
         boolean deviceHasVulkan = checkVulkanSupport(context.getPackageManager());
         // Current Mesa requires API29+
-        boolean deviceCompatibleMesa = SDK_INT >= 29;
+        boolean deviceCompatibleMesa = SDK_INT >= 29 && hasNativeLibrary("libEGL_mesa.so");
         boolean deviceHasOpenGLES3 = JREUtils.getDetectedVersion() >= 3;
-        // LTW is an optional dependency
-        boolean appHasLtw = new File(Tools.NATIVE_LIB_DIR, "libltw.so").exists();
+        // LTW and MobileGlues are optional dependencies
+        boolean appHasLtw = hasNativeLibrary("libltw.so");
+        boolean appHasMobileGlues = hasNativeLibrary("libmobileglues.so");
         List<String> rendererIds = new ArrayList<>(defaultRenderers.length);
         List<String> rendererNames = new ArrayList<>(defaultRendererNames.length);
         for(int i = 0; i < defaultRenderers.length; i++) {
@@ -49,7 +55,7 @@ public class RendererCompatUtil {
             // freedreno is available only on Adreno GPUs
             if(rendererId.contains("freedreno") && (!(GLInfoUtils.getGlInfo().isAdreno()) || !deviceCompatibleMesa)) continue;
             if(rendererId.contains("ltw") && (!deviceHasOpenGLES3 || !appHasLtw)) continue;
-            if(rendererId.contains("mobileglues") && !NativePluginManager.isLibraryEnabled("mobileglues")) continue;
+            if(rendererId.contains("mobileglues") && (!deviceHasOpenGLES3 || !appHasMobileGlues)) continue;
             rendererIds.add(rendererId);
             rendererNames.add(defaultRendererNames[i]);
         }

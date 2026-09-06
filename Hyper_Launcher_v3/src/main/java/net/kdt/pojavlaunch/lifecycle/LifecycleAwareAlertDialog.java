@@ -38,7 +38,7 @@ public abstract class LifecycleAwareAlertDialog implements LifecycleEventObserve
             dialogHidden(mLifecycleEnded);
             return;
         }
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        com.google.android.material.dialog.MaterialAlertDialogBuilder builder = new com.google.android.material.dialog.MaterialAlertDialogBuilder(context);
         // Install the default cancel/dismiss handling
         builder.setOnDismissListener(wrapDismissListener(null));
         dialogCreator.createDialog(this, builder);
@@ -85,7 +85,7 @@ public abstract class LifecycleAwareAlertDialog implements LifecycleEventObserve
          * @param alertDialog an instance of LifecycleAwareAlertDialog for wrapping listeners
          * @param dialogBuilder the AlertDialog builder
          */
-        void createDialog(LifecycleAwareAlertDialog alertDialog, AlertDialog.Builder dialogBuilder);
+        void createDialog(LifecycleAwareAlertDialog alertDialog, com.google.android.material.dialog.MaterialAlertDialogBuilder dialogBuilder);
     }
 
     /**

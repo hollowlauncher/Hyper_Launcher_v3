@@ -8,46 +8,12 @@
 #include <bytehook.h>
 #include <dlfcn.h>
 #include <stdlib.h>
-#include "stdio_is.h"
+#include <android/api-level.h>
 
 #define TAG __FILE_NAME__
 #include <log.h>
-#include <string.h>
-
-#include <android/dlext.h>
-#include "../driver_helper/nsbypass.h"
-
-static void* custom_dlopen(const char* filename, int flags) {
-    if (filename != NULL && strcmp(filename, "libpthread.so.0") == 0) {
-        return BYTEHOOK_CALL_PREV(custom_dlopen, void* (*)(const char*, int), "libc.so", flags);
-    }
-    return BYTEHOOK_CALL_PREV(custom_dlopen, void* (*)(const char*, int), filename, flags);
-}
-
-static void* custom_android_dlopen_ext(const char* filename, int flags, const android_dlextinfo* info) {
-    if (filename != NULL && strcmp(filename, "libpthread.so.0") == 0) {
-        return BYTEHOOK_CALL_PREV(custom_android_dlopen_ext, void* (*)(const char*, int, const android_dlextinfo*), "libc.so", flags, info);
-    }
-    return BYTEHOOK_CALL_PREV(custom_android_dlopen_ext, void* (*)(const char*, int, const android_dlextinfo*), filename, flags, info);
-}
 
 static void create_hooks(bytehook_hook_all_t bytehook_hook_all_p) {
-    if (bytehook_hook_all_p != NULL) {
-        bytehook_hook_all_p(NULL, "dlopen", &custom_dlopen, NULL, NULL);
-        bytehook_hook_all_p(NULL, "android_dlopen_ext", &custom_android_dlopen_ext, NULL, NULL);
-    }
-
-    // Alias libc.so to libpthread.so.0 to satisfy mod dependencies
-    const char* tmpdir = getenv("TMPDIR");
-    if (tmpdir != NULL) {
-        void* pthread_handle = linker_dlopen_unique_global(tmpdir, "libc.so", "libpthread.so.0", RTLD_GLOBAL | RTLD_NOW);
-        if (pthread_handle != NULL) {
-            LOGI("Successfully aliased libc.so to libpthread.so.0 in global namespace.");
-        } else {
-            LOGW("Failed to alias libc.so to libpthread.so.0: %s", dlerror());
-        }
-    }
-
     // Only apply chmod hooks on devices where the game directory is in games/PojavLauncher
     // which is below API 29
     if(android_get_device_api_level() < 29) {
@@ -88,11 +54,8 @@ static bool init_hooks() {
 
 JNIEXPORT void JNICALL
 Java_net_kdt_pojavlaunch_utils_JREUtils_initializeHooks(JNIEnv *env, jclass clazz) {
-    LOGI("Initializing native hooks...");
     bool hooks_ready = init_hooks();
     if(!hooks_ready) {
         LOGE("Failed to initialize native hooks!");
-    } else {
-        LOGI("Native hooks initialized successfully.");
     }
 }

@@ -22,21 +22,25 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 
 import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.kdt.pickafile.FileListView;
 import com.kdt.pickafile.FileSelectedListener;
 
 import net.ashmeet.hyperlauncher.R;
-import net.kdt.pojavlaunch.LauncherGLSurface;
+import net.kdt.pojavlaunch.game.GameView;
+
+
 import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.customcontrols.buttons.ControlButton;
 import net.kdt.pojavlaunch.customcontrols.buttons.ControlDrawer;
 import net.kdt.pojavlaunch.customcontrols.buttons.ControlInterface;
 import net.kdt.pojavlaunch.customcontrols.buttons.ControlJoystick;
 import net.kdt.pojavlaunch.customcontrols.buttons.ControlSubButton;
+import net.kdt.pojavlaunch.customcontrols.handleview.ActionRow;
 import net.kdt.pojavlaunch.customcontrols.handleview.ControlHandleView;
 import net.kdt.pojavlaunch.customcontrols.handleview.EditControlSideDialog;
+import net.kdt.pojavlaunch.game.platform.Platform;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -44,12 +48,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import git.artdeell.dnbootstrap.glfw.GLFW;
-
 public class ControlLayout extends FrameLayout {
 	protected CustomControls mLayout;
 	/* Accessible when inside the game by ControlInterface implementations, cached for perf. */
-	private LauncherGLSurface mGameSurface = null;
+	private GameView mGameSurface = null;
 
 	/* Cache to buttons for performance purposes */
 	private List<ControlInterface> mButtons;
@@ -57,18 +59,24 @@ public class ControlLayout extends FrameLayout {
 	private boolean mIsModified;
 	private boolean mControlVisible = false;
 
+	private float mButtonsOpacity = 1.0f;
+
 	private EditControlSideDialog mControlDialog = null;
 	private ControlHandleView mHandleView;
 	private ControlButtonMenuListener mMenuListener;
+	public ActionRow mActionRow = null;
 	public String mLayoutFileName;
 
 	public interface OnControlEditListener {
 		void onEditControl(ControlInterface button);
-		default boolean onDisappearLayer() { return false; }
+		boolean onDisappearLayer();
 	}
-	private OnControlEditListener mOnControlEditListener;
+
+	private OnControlEditListener mEditListener;
+
 	public void setOnControlEditListener(OnControlEditListener listener) {
-		mOnControlEditListener = listener;
+		mEditListener = listener;
+		if (mActionRow != null) mActionRow.setVisibility(GONE);
 	}
 
 	public ControlLayout(Context ctx) {
@@ -96,9 +104,14 @@ public class ControlLayout extends FrameLayout {
 	}
 
 	public void loadLayout(CustomControls controlLayout) {
+		this.mButtonsOpacity = (float) LauncherPreferences.PREF_BUTTON_TRANSPARENCY / 100;
 		boolean sanitizedModified = false;
 		if(controlLayout != null) {
 			sanitizedModified = LayoutSanitizer.sanitizeLayout(controlLayout);
+		}
+		if(mActionRow == null){
+			mActionRow = new ActionRow(getContext());
+			addView(mActionRow);
 		}
 
 		removeAllButtons();
@@ -149,7 +162,7 @@ public class ControlLayout extends FrameLayout {
 		final ControlButton view = new ControlButton(this, controlButton);
 
 		if (!mModifiable) {
-			view.setAlpha(view.getProperties().opacity);
+			view.setAlpha(view.getProperties().opacity * mButtonsOpacity);
 			view.setFocusable(false);
 			view.setFocusableInTouchMode(false);
 		}
@@ -173,7 +186,7 @@ public class ControlLayout extends FrameLayout {
 		final ControlDrawer view = new ControlDrawer(this,drawerData == null ? mLayout.mDrawerDataList.get(mLayout.mDrawerDataList.size()-1) : drawerData);
 
 		if (!mModifiable) {
-			view.setAlpha(view.getProperties().opacity);
+			view.setAlpha(view.getProperties().opacity * mButtonsOpacity);
 			view.setFocusable(false);
 			view.setFocusableInTouchMode(false);
 		}
@@ -198,7 +211,7 @@ public class ControlLayout extends FrameLayout {
 		final ControlSubButton view = new ControlSubButton(this, controlButton, drawer);
 
 		if (!mModifiable) {
-			view.setAlpha(view.getProperties().opacity);
+			view.setAlpha(view.getProperties().opacity * mButtonsOpacity);
 			view.setFocusable(false);
 			view.setFocusableInTouchMode(false);
 		}else{
@@ -222,7 +235,7 @@ public class ControlLayout extends FrameLayout {
 		ControlJoystick view = new ControlJoystick(this, data);
 
 		if (!mModifiable) {
-			view.setAlpha(view.getProperties().opacity);
+			view.setAlpha(view.getProperties().opacity * mButtonsOpacity);
 			view.setFocusable(false);
 			view.setFocusableInTouchMode(false);
 		}
@@ -265,8 +278,7 @@ public class ControlLayout extends FrameLayout {
 		mControlVisible = isVisible;
 		for(ControlInterface button : getButtonChildren()){
             // Avoid going through the JNI each time.
-            // Avoid going through the JNI each time.
-            button.setVisible(((button.getProperties().displayInGame && GLFW.isGrabbing()) || (button.getProperties().displayInMenu && !GLFW.isGrabbing())) && isVisible);
+            button.setVisible(((button.getProperties().displayInGame && Platform.isGrabbing()) || (button.getProperties().displayInMenu && !Platform.isGrabbing())) && isVisible);
 		}
 	}
 
@@ -275,12 +287,7 @@ public class ControlLayout extends FrameLayout {
 			removeEditWindow();
 		}
 		mModifiable = isModifiable;
-		if(isModifiable){
-			// In edit mode, all controls have to be shown
-			for(ControlInterface button : getButtonChildren()){
-				button.setVisible(true);
-			}
-		}
+		updateButtonOpacity();
 	}
 
 	public boolean getModifiable(){
@@ -311,12 +318,9 @@ public class ControlLayout extends FrameLayout {
     @Override
     public void onViewRemoved(View child) {
         super.onViewRemoved(child);
-        if(child instanceof ControlInterface){
-			if (mOnControlEditListener != null) mOnControlEditListener.onDisappearLayer();
-			if (mControlDialog != null) {
-				mControlDialog.disappearColor();
-				mControlDialog.disappear(false);
-			}
+        if(child instanceof ControlInterface && mControlDialog != null){
+			mControlDialog.disappearColor();
+            mControlDialog.disappear(false);
         }
     }
 
@@ -325,8 +329,9 @@ public class ControlLayout extends FrameLayout {
 	 * to the button at hand.
 	 */
 	public void editControlButton(ControlInterface button){
-		if (mOnControlEditListener != null) {
-			mOnControlEditListener.onEditControl(button);
+		if (mEditListener != null) {
+			mEditListener.onEditControl(button);
+			if (mActionRow != null) mActionRow.setVisibility(GONE);
 			if(mHandleView == null){
 				mHandleView = new ControlHandleView(getContext());
 				addView(mHandleView);
@@ -448,14 +453,8 @@ public class ControlLayout extends FrameLayout {
             isKeyboardHidden = !imm.hideSoftInputFromWindow(getWindowToken(), 0);
         }
         if(isKeyboardHidden){
-			boolean layerDisappeared = false;
-			if (mOnControlEditListener != null) {
-				layerDisappeared = mOnControlEditListener.onDisappearLayer();
-			} else if (mControlDialog != null) {
-				layerDisappeared = mControlDialog.disappearLayer();
-			}
-
-			if(layerDisappeared){
+			if(mControlDialog.disappearLayer()){
+				mActionRow.setFollowedButton(null);
 				mHandleView.hide();
 			}
 		}
@@ -463,16 +462,21 @@ public class ControlLayout extends FrameLayout {
 	}
 
 	public void removeEditWindow() {
+		if (mEditListener != null && mEditListener.onDisappearLayer()) {
+			if(mHandleView != null) mHandleView.hide();
+			return;
+		}
+
 		InputMethodManager imm = (InputMethodManager) getContext().getSystemService(INPUT_METHOD_SERVICE);
 
 		// When the input window cannot be hidden, it returns false
 		imm.hideSoftInputFromWindow(getWindowToken(), 0);
-		if (mOnControlEditListener != null) mOnControlEditListener.onDisappearLayer();
 		if(mControlDialog != null) {
 			mControlDialog.disappearColor();
 			mControlDialog.disappear(true);
 		}
 
+		if(mActionRow != null) mActionRow.setFollowedButton(null);
 		if(mHandleView != null) mHandleView.hide();
 	}
 
@@ -501,7 +505,7 @@ public class ControlLayout extends FrameLayout {
 	}
 
 	/** Cached getter for perf purposes */
-	public LauncherGLSurface getGameSurface(){
+	public GameView getGameSurface(){
 		if(mGameSurface == null){
 			mGameSurface = findViewById(R.id.main_game_render_view);
 		}
@@ -563,7 +567,7 @@ public class ControlLayout extends FrameLayout {
 		edit.setSingleLine();
 		edit.setText(mLayoutFileName);
 
-		MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
+		com.google.android.material.dialog.MaterialAlertDialogBuilder builder = new com.google.android.material.dialog.MaterialAlertDialogBuilder(context);
 		builder.setTitle(R.string.global_save);
 		builder.setView(edit);
 		builder.setPositiveButton(android.R.string.ok, null);
@@ -580,7 +584,7 @@ public class ControlLayout extends FrameLayout {
 	}
 
 	public void openLoadDialog() {
-		MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getContext());
+		com.google.android.material.dialog.MaterialAlertDialogBuilder builder = new com.google.android.material.dialog.MaterialAlertDialogBuilder(getContext());
 		builder.setTitle(R.string.global_load);
 		builder.setPositiveButton(android.R.string.cancel, null);
 
@@ -605,7 +609,7 @@ public class ControlLayout extends FrameLayout {
 	}
 
 	public void openSetDefaultDialog() {
-		MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getContext());
+		com.google.android.material.dialog.MaterialAlertDialogBuilder builder = new com.google.android.material.dialog.MaterialAlertDialogBuilder(getContext());
 		builder.setTitle(R.string.customctrl_selectdefault);
 		builder.setPositiveButton(android.R.string.cancel, null);
 
@@ -630,7 +634,7 @@ public class ControlLayout extends FrameLayout {
 	}
 
 	public void openExitDialog(EditorExitable exitListener) {
-		MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getContext());
+		com.google.android.material.dialog.MaterialAlertDialogBuilder builder = new com.google.android.material.dialog.MaterialAlertDialogBuilder(getContext());
 		builder.setTitle(R.string.customctrl_editor_exit_title);
 		builder.setMessage(R.string.customctrl_editor_exit_msg);
 		builder.setPositiveButton(R.string.global_yes, (d,w)->exitListener.exitEditor());
@@ -729,5 +733,14 @@ public class ControlLayout extends FrameLayout {
 
 	public LayoutBitmaps getBitmaps() {
 		return mLayout.mLayoutBitmaps;
+	}
+
+	public void updateButtonOpacity() {
+		mButtonsOpacity = Math.clamp((float) LauncherPreferences.PREF_BUTTON_TRANSPARENCY / 100, 0, 1);
+		for(ControlInterface button : getButtonChildren()) {
+			// In edit mode, all controls have to be shown
+			if(mModifiable) button.setVisible(true);
+			button.getControlView().setAlpha(mModifiable ? button.getProperties().opacity : mButtonsOpacity * button.getProperties().opacity);
+		}
 	}
 }

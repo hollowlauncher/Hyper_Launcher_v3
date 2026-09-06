@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import androidx.annotation.Nullable;
 import androidx.core.math.MathUtils;
 
+
 import net.ashmeet.hyperlauncher.R;
 import net.kdt.pojavlaunch.customcontrols.buttons.ControlInterface;
 
@@ -49,6 +50,7 @@ public class ActionRow extends LinearLayout {
 
     /** Add action buttons and configure them */
     private void init(){
+        hide();
         setTranslationZ(11);
         setVisibility(GONE);
         setOrientation(HORIZONTAL);
@@ -76,10 +78,10 @@ public class ActionRow extends LinearLayout {
 
         for(ActionButtonInterface buttonInterface: actionButtons){
             buttonInterface.setFollowedView(controlInterface);
-            ((View)(buttonInterface)).setVisibility(buttonInterface.shouldBeVisible() ? VISIBLE : GONE);
+            ((View)(buttonInterface)).setVisibility(GONE);
         }
 
-        setVisibility(VISIBLE);
+        setVisibility(GONE);
         mFollowedView = (View) controlInterface;
         if(mFollowedView != null)
             mFollowedView.getViewTreeObserver().addOnPreDrawListener(mFollowedViewListener);

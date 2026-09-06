@@ -8,13 +8,12 @@ import android.view.ViewTreeObserver;
 
 import androidx.annotation.RequiresApi;
 
-import net.kdt.pojavlaunch.LauncherGLSurface;
+import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences;
+
 import net.kdt.pojavlaunch.Tools;
 
 import net.kdt.pojavlaunch.CallbackBridge;
-import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences;
-
-import git.artdeell.dnbootstrap.glfw.GLFW;
+import net.kdt.pojavlaunch.game.platform.Platform;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class AndroidPointerCapture implements ViewTreeObserver.OnWindowFocusChangeListener, View.OnCapturedPointerListener {
@@ -85,7 +84,7 @@ public class AndroidPointerCapture implements ViewTreeObserver.OnWindowFocusChan
         }
 
         // Avoid going through the JNI each time.
-        if(!GLFW.isGrabbing()) {
+        if(!Platform.isGrabbing()) {
             enableTouchpadIfNecessary();
             // Yes, if the user's touchpad is multi-touch we will also receive events for that.
             // So, handle the scrolling gesture ourselves.
@@ -105,10 +104,8 @@ public class AndroidPointerCapture implements ViewTreeObserver.OnWindowFocusChan
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_MOVE:
                 return true;
-            case MotionEvent.ACTION_BUTTON_PRESS:
-                return LauncherGLSurface.sendMouseButtonUnconverted(event.getActionButton(), true);
-            case MotionEvent.ACTION_BUTTON_RELEASE:
-                return LauncherGLSurface.sendMouseButtonUnconverted(event.getActionButton(), false);
+            case MotionEvent.ACTION_BUTTON_PRESS: CallbackBridge.sendMouseButton(event.getActionButton(), true); return true;
+            case MotionEvent.ACTION_BUTTON_RELEASE: CallbackBridge.sendMouseButton(event.getActionButton(), false); return true;
             case MotionEvent.ACTION_SCROLL:
                 CallbackBridge.sendScroll(
                         event.getAxisValue(MotionEvent.AXIS_HSCROLL),
@@ -124,9 +121,9 @@ public class AndroidPointerCapture implements ViewTreeObserver.OnWindowFocusChan
     }
 
     private void applyMotionVector(View view, float speed) {
-        GLFW.cursorX += mVector[0] * speed / view.getWidth();
-        GLFW.cursorY += mVector[1] * speed / view.getHeight();
-        GLFW.sendMousePos();
+        Platform.cursorX += mVector[0] * speed;
+        Platform.cursorY += mVector[1] * speed;
+        Platform.sendCursorPosition();
     }
 
     private void checkSameDevice(InputDevice inputDevice) {

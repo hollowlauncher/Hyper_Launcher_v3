@@ -307,7 +307,7 @@ public class LauncherActivity extends BaseActivity implements PreferenceFragment
 
     // Call async
     private void checkPreviousInstalls(){
-        final String[] packages = {"git.artdeell.mjlaunch", "git.artdeell.mojo", "net.ashmeet.hyperlauncher", "net.ashmeet.hyperlauncher.debug"};
+        final String[] packages = {"git.artdeell.mjlaunch", "git.artdeell.mojo"};
         for(String s : packages){
             // Don't check for self
             if (s.equals(BuildConfig.APPLICATION_ID)) continue;

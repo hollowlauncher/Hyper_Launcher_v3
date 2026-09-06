@@ -12,3 +12,8 @@ Hyper_Launcher_v3/.cxx/
 /Hyper_Launcher_v3/curseforge_key.txt
 /Hyper_Launcher_v3/libs/ltw-release.aar
 .artifacts/
+*.log
+Hyper_Launcher_v3/full/
+Hyper_Launcher_v3/src/main/jni/glfw
+Hyper_Launcher_v3/src/main/jni/mojoexec
+Hyper_Launcher_v3/src/main/jni/sdl

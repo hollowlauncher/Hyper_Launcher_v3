@@ -69,8 +69,8 @@ public class AsyncAssetManager {
             try {
                 Tools.copyAssetFile(ctx, "options.txt", Tools.DIR_GAME_NEW, false);
 
-                // This is disgusting, but am lazy. We probably wont be getting any updates to
-                // controlmap till rewrite anyway so this is fiiine.
+                // This is disgusting, but am lazy. We probably won't be getting any updates to
+                // controlmap till rewrite anyway so this is fine.
                 try (InputStream is = ctx.getAssets().open("default.json")) {
                     String assetSha1 = new String(org.apache.commons.codec.binary.Hex.encodeHex(org.apache.commons.codec.digest.DigestUtils.sha1(is)));
                     if (!Tools.compareSHA1(new File(Tools.CTRLDEF_FILE), assetSha1)) {
@@ -148,29 +148,33 @@ public class AsyncAssetManager {
 
         String[] lwjglVersions = {"3.3.3", "3.4.1"};
         for (String lwjglVer : lwjglVersions) {
-            File versionFile = new File(Tools.DIR_GAME_HOME + String.format("/lwjgl3/%s/version", lwjglVer));
-            InputStream is = am.open("components/lwjgl3/" + lwjglVer + "/version");
-            String pathToLwjglNatives = String.format("lwjgl-%s-natives/", lwjglVer) + sArch;
+            String componentVersionLocation = "components/lwjgl3/" + lwjglVer + "/version";
+            try (InputStream is = am.open(componentVersionLocation)) {
+                File versionFile = new File(Tools.DIR_GAME_HOME + String.format("/lwjgl3/%s/version", lwjglVer));
+                String pathToLwjglNatives = String.format("lwjgl-%s-natives/", lwjglVer) + sArch;
 
-            boolean shouldUpdate = true;
-            if (versionFile.exists()) {
-                FileInputStream fis = new FileInputStream(versionFile);
-                String release1 = Tools.read(is);
-                String release2 = Tools.read(fis);
-                if (release1.equals(release2))
-                    shouldUpdate = false;
-            }
-
-            if (shouldUpdate) {
-                Log.i("UnpackLwjgl", lwjglVer + " was installed manually, or does not exist, unpacking new...");
-                String[] fileList = am.list("components/" + pathToLwjglNatives);
-                if (fileList != null) {
-                    for (String fileName : fileList) {
-                        Tools.copyAssetFile(ctx, "components/" + pathToLwjglNatives + "/" + fileName, rootDir + "/" + pathToLwjglNatives, true);
-                    }
+                boolean shouldUpdate = true;
+                if (versionFile.exists()) {
+                    FileInputStream fis = new FileInputStream(versionFile);
+                    String release1 = Tools.read(is);
+                    String release2 = Tools.read(fis);
+                    if (release1.equals(release2))
+                        shouldUpdate = false;
                 }
-            } else {
-                Log.i("UnpackLwjgl", lwjglVer + " is up-to-date with the launcher, continuing...");
+
+                if (shouldUpdate) {
+                    Log.i("UnpackLwjgl", lwjglVer + " was installed manually, or does not exist, unpacking new...");
+                    String[] fileList = am.list("components/" + pathToLwjglNatives);
+                    if (fileList != null) {
+                        for (String fileName : fileList) {
+                            Tools.copyAssetFile(ctx, "components/" + pathToLwjglNatives + "/" + fileName, rootDir + "/" + pathToLwjglNatives, true);
+                        }
+                    }
+                } else {
+                    Log.i("UnpackLwjgl", lwjglVer + " is up-to-date with the launcher, continuing...");
+                }
+            } catch (IOException e) {
+                Log.w("UnpackLwjgl", "LWJGL version " + lwjglVer + " not found in assets, skipping.");
             }
         }
     }

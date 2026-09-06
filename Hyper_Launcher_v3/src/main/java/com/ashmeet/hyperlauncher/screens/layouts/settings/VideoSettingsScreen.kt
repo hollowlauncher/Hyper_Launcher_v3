@@ -53,6 +53,7 @@ fun VideoSettingsScreen(
     var useAngle by remember { mutableStateOf(LauncherPreferences.PREF_USE_ANGLE) }
     var vsyncInZink by remember { mutableStateOf(LauncherPreferences.PREF_VSYNC_IN_ZINK) }
     var zinkForceLegacy by remember { mutableStateOf(LauncherPreferences.PREF_ZINK_FORCE_LEGACY) }
+    var dynamicOrientation by remember { mutableStateOf(LauncherPreferences.PREF_DYNAMIC_ORIENTATION) }
     var showRendererDialog by remember { mutableStateOf(false) }
     var showBackendDialog by remember { mutableStateOf(false) }
 
@@ -133,6 +134,22 @@ fun VideoSettingsScreen(
                         LauncherPreferences.loadPreferences(context)
                     },
                     valueSuffix = "%"
+                )
+            }
+        }
+
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            SettingsCard(position = CardPosition.TOP, useSurface = true) {
+                SettingsSwitchItem(
+                    title = translatedText("Dynamic Orientation"),
+                    summary = translatedText("Allow the game to change screen orientation dynamically. If disabled, horizontal mode is forced."),
+                    icon = Icons.Default.AspectRatio,
+                    checked = dynamicOrientation,
+                    onCheckedChange = {
+                        dynamicOrientation = it
+                        LauncherPreferences.prefs.edit { putBoolean("dynamic_orientation", it) }
+                        LauncherPreferences.loadPreferences(context)
+                    }
                 )
             }
         }

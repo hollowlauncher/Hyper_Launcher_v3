@@ -24,6 +24,7 @@ import net.kdt.pojavlaunch.tasks.MoJsonDownloader;
 import net.kdt.pojavlaunch.utils.FileUtils;
 import net.kdt.pojavlaunch.utils.LocaleUtils;
 import com.ashmeet.hyperlauncher.utils.Translator;
+import com.ashmeet.hyperlauncher.utils.LoggerProxy;
 
 import java.io.File;
 import java.io.PrintStream;
@@ -84,6 +85,10 @@ public class PojavApplication extends Application {
 				// and not explode.
 				Tools.initEarlyConstants(this);
 			}
+
+			System.loadLibrary("pojavexec");
+			LoggerProxy.INSTANCE.init();
+
 			Tools.DEVICE_ARCHITECTURE = Architecture.getDeviceArchitecture();
 			NativePluginManager.discoverAarPlugins(this);
 			NativePluginManager.discoverHyperPluginBundle(this);

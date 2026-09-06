@@ -2,9 +2,12 @@ package net.kdt.pojavlaunch.customcontrols.mouse;
 
 
 import android.os.Handler;
+import android.view.KeyEvent;
+
+import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences;
 
 import net.kdt.pojavlaunch.LwjglGlfwKeycode;
-import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences;
+
 
 import net.kdt.pojavlaunch.CallbackBridge;
 
@@ -31,7 +34,7 @@ public class DropGesture implements Runnable{
     @Override
     public void run() {
         if(!mActive) return;
-        CallbackBridge.sendKeyPress(LwjglGlfwKeycode.GLFW_KEY_Q);
+        CallbackBridge.sendKeyPress(KeyEvent.KEYCODE_Q);
         mHandler.postDelayed(this, 250);
     }
 }

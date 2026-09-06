@@ -34,6 +34,10 @@ public interface BaseTransformer extends ClassFileTransformer {
 
     void transform(CtClass clazz) throws Throwable;
 
+    default void transform(CtClass clazz, ClassLoader loader) throws Throwable {
+        transform(clazz);
+    }
+
     @Override
     default byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
         if (!isTargetClass(className)) {
@@ -43,7 +47,7 @@ public interface BaseTransformer extends ClassFileTransformer {
         CtClass clazz = null;
         try {
             clazz = pool.makeClass(new ByteArrayInputStream(classfileBuffer));
-            transform(clazz);
+            transform(clazz, loader);
             return clazz.toBytecode();
         } catch (Throwable e) {
             LogUtil.error("Failed to transform class: " + className, e);

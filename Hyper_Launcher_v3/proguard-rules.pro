@@ -30,6 +30,12 @@
 
 # JNI keep rules
 -keep class git.artdeell.dnbootstrap.glfw.GLFW { *; }
+-keep class git.mojo.sdl.SDLActivity {
+    public static boolean sendMessage(int, int);
+    public static void setOrientation(int, int, boolean, java.lang.String);
+    public static void manualBackButton();
+    public static boolean showTextInput(int, int, int, int, int);
+}
 
 # ASM and Bytecode Injectors
 -keep class org.objectweb.asm.** { *; }

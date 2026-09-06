@@ -35,6 +35,8 @@ object LauncherPreferences {
     var PREF_IGNORE_NOTCH = false
 
     @JvmField
+    var PREF_BUTTON_TRANSPARENCY = 100f
+    @JvmField
     var PREF_BUTTONSIZE = 100f
 
     @JvmField
@@ -142,6 +144,9 @@ object LauncherPreferences {
     var PREF_FULLSCREEN_LAUNCHER = true
 
     @JvmField
+    var PREF_DYNAMIC_ORIENTATION = false
+
+    @JvmField
     var PREF_RAPID_START = true
 
     @JvmField
@@ -158,6 +163,9 @@ object LauncherPreferences {
 
     @JvmField
     var PREF_ALSOFT_FORCE_OPENSL = false
+
+    @JvmField
+    var PREF_SHOW_MEMORY_WARNING_DIALOG = true
 
     @JvmField
     var PREF_SCREEN_TRANSITION = "bounce"
@@ -289,6 +297,7 @@ object LauncherPreferences {
         PREF_SKIP_NOTIFICATION_PERMISSION_CHECK = pref.getBoolean(PREF_KEY_SKIP_NOTIFICATION_CHECK, false)
         PREF_VSYNC_IN_ZINK = pref.getBoolean("vsync_in_zink", true)
         PREF_FULLSCREEN_LAUNCHER = pref.getBoolean("fullscreen_launcher", true)
+        PREF_DYNAMIC_ORIENTATION = pref.getBoolean("dynamic_orientation", false)
         PREF_VERIFY_FILES = pref.getBoolean("checkGameFiles", true)
         PREF_RAPID_START = pref.getBoolean("fastStartupCheck", true)
         PREF_FREEDRENO_SYSMEM = pref.getBoolean("freedrenoSysmem", false)
@@ -296,6 +305,7 @@ object LauncherPreferences {
         PREF_ZINK_FORCE_LEGACY = pref.getBoolean("zinkForceLegacy", false)
         PREF_MIGRATION_NOTICE = pref.getBoolean("migrationNotice", true)
         PREF_ALSOFT_FORCE_OPENSL = pref.getBoolean("alsoftForceOpenSL", false)
+        PREF_SHOW_MEMORY_WARNING_DIALOG = pref.getBoolean("showMemoryWarning", true)
         PREF_SCREEN_TRANSITION = pref.getString("screen_transition", "bounce") ?: "none"
         PREF_THEME = pref.getString("app_theme", "system") ?: "system"
         PREF_LANGUAGE = pref.getString("app_language", "en") ?: "en"

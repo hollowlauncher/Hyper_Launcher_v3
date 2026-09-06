@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <android/api-level.h>
 
 #include "log.h"
 
@@ -72,45 +71,27 @@ jstring convertStringJVM(JNIEnv* srcEnv, JNIEnv* dstEnv, jstring srcStr) {
 
 
 JNIEXPORT void JNICALL Java_net_kdt_pojavlaunch_utils_JREUtils_setLdLibraryPath(JNIEnv *env, jclass clazz, jstring ldLibraryPath) {
-	if (ldLibraryPath == NULL) return;
-
-	// Skip this legacy hack on Android 10+ (API 29+).
-	// It's known to crash on newer Android versions (like API 36) due to CFI/security restrictions
-	// and is generally unnecessary on modern Android which uses Linker Namespaces.
-	if (android_get_device_api_level() >= 29) {
-		LOGI("setLdLibraryPath: Skipping legacy hack on API %d", android_get_device_api_level());
-		return;
-	}
-
+	// jclass exception_cls = (*env)->FindClass(env, "java/lang/UnsatisfiedLinkError");
+	
 	android_update_LD_LIBRARY_PATH_t android_update_LD_LIBRARY_PATH;
 	
 	void *libdl_handle = dlopen("libdl.so", RTLD_LAZY);
-	if (libdl_handle == NULL) {
-		LOGE("Error opening libdl.so: %s", dlerror());
-		return;
-	}
-
 	void *updateLdLibPath = dlsym(libdl_handle, "android_update_LD_LIBRARY_PATH");
 	if (updateLdLibPath == NULL) {
 		updateLdLibPath = dlsym(libdl_handle, "__loader_android_update_LD_LIBRARY_PATH");
 		if (updateLdLibPath == NULL) {
 			char *dl_error_c = dlerror();
-			LOGE("Error getting symbol android_update_LD_LIBRARY_PATH: %s", dl_error_c ? dl_error_c : "unknown error");
+			LOGE("Error getting symbol android_update_LD_LIBRARY_PATH: %s", dl_error_c);
+			// (*env)->ThrowNew(env, exception_cls, dl_error_c);
 		}
 	}
 
     LOGI("updateLdLibPath: %p", updateLdLibPath);
 	
-	if (updateLdLibPath != NULL) {
-		android_update_LD_LIBRARY_PATH = (android_update_LD_LIBRARY_PATH_t) updateLdLibPath;
-		const char* ldLibPathUtf = (*env)->GetStringUTFChars(env, ldLibraryPath, 0);
-		if (ldLibPathUtf != NULL) {
-			android_update_LD_LIBRARY_PATH(ldLibPathUtf);
-			(*env)->ReleaseStringUTFChars(env, ldLibraryPath, ldLibPathUtf);
-		}
-	}
-
-	dlclose(libdl_handle);
+	android_update_LD_LIBRARY_PATH = (android_update_LD_LIBRARY_PATH_t) updateLdLibPath;
+	const char* ldLibPathUtf = (*env)->GetStringUTFChars(env, ldLibraryPath, 0);
+	android_update_LD_LIBRARY_PATH(ldLibPathUtf);
+	(*env)->ReleaseStringUTFChars(env, ldLibraryPath, ldLibPathUtf);
 }
 
 

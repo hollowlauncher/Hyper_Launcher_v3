@@ -10,17 +10,19 @@ import static android.view.MotionEvent.AXIS_X;
 import static android.view.MotionEvent.AXIS_Y;
 import static android.view.MotionEvent.AXIS_Z;
 
+import static com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences.PREF_DEADZONE_SCALE;
+import static com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences.PREF_SCALE_FACTOR;
+
 import android.view.Choreographer;
 import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 
-import net.kdt.pojavlaunch.LwjglGlfwKeycode;
-
-import git.artdeell.dnbootstrap.glfw.GLFW;
 
 import net.kdt.pojavlaunch.CallbackBridge;
+import net.kdt.pojavlaunch.game.platform.input.PlatformGrabListener;
+import net.kdt.pojavlaunch.game.platform.Platform;
 
 import static net.kdt.pojavlaunch.Tools.currentDisplayMetrics;
 import static net.kdt.pojavlaunch.customcontrols.gamepad.GamepadJoystick.DIRECTION_EAST;
@@ -33,15 +35,14 @@ import static net.kdt.pojavlaunch.customcontrols.gamepad.GamepadJoystick.DIRECTI
 import static net.kdt.pojavlaunch.customcontrols.gamepad.GamepadJoystick.DIRECTION_SOUTH_WEST;
 import static net.kdt.pojavlaunch.customcontrols.gamepad.GamepadJoystick.DIRECTION_WEST;
 import static net.kdt.pojavlaunch.customcontrols.gamepad.GamepadJoystick.isJoystickEvent;
-import static com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences.PREF_DEADZONE_SCALE;
-import static com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences.PREF_SCALE_FACTOR;
+import static net.kdt.pojavlaunch.game.platform.Platform.PLATFORM;
+
 import static net.kdt.pojavlaunch.CallbackBridge.sendMouseButton;
 
 import fr.spse.gamepad_remapper.GamepadHandler;
 import fr.spse.gamepad_remapper.Settings;
-import git.artdeell.dnbootstrap.glfw.GrabListener;
 
-public class Gamepad implements GrabListener, GamepadHandler {
+public class Gamepad implements PlatformGrabListener, GamepadHandler {
 
     /* Sensitivity, adjusted according to screen size */
     private final double mSensitivityFactor = (1.4 * (1080f/ currentDisplayMetrics.heightPixels));
@@ -97,8 +98,8 @@ public class Gamepad implements GrabListener, GamepadHandler {
         mMapProvider = mapProvider;
         mTouchpadView = touchpadView;
 
-        GLFW.cursorX = GLFW.cursorY = 0.5;
-        GLFW.sendMousePos();
+        Platform.resetCursorPosition();
+        Platform.sendCursorPosition();
 
         enableTouchpadIfNecessary();
 
@@ -116,7 +117,7 @@ public class Gamepad implements GrabListener, GamepadHandler {
         mCurrentMap = mGameMap;
         // Force state refresh
         // Avoid going through the JNI each time.
-        boolean currentGrab = GLFW.isGrabbing();
+        boolean currentGrab = Platform.isGrabbing();
         isGrabbing = !currentGrab;
         onGrabState(currentGrab);
     }
@@ -131,8 +132,8 @@ public class Gamepad implements GrabListener, GamepadHandler {
         if(mTouchpadView.getVisibility() != View.VISIBLE) mTouchpadView.setVisibility(View.VISIBLE);
     }
 
-    public static void sendInput(short[] keycodes, boolean isDown){
-        for(short keycode : keycodes){
+    public static void sendInput(int[] keycodes, boolean isDown){
+        for(int keycode : keycodes){
             switch (keycode){
                 case GamepadMap.MOUSE_SCROLL_DOWN:
                     if(isDown) CallbackBridge.sendScroll(0, -1);
@@ -141,20 +142,20 @@ public class Gamepad implements GrabListener, GamepadHandler {
                     if(isDown) CallbackBridge.sendScroll(0, 1);
                     break;
                 case GamepadMap.MOUSE_LEFT:
-                    sendMouseButton(LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_LEFT, isDown);
+                    sendMouseButton(MotionEvent.BUTTON_PRIMARY, isDown);
                     break;
                 case GamepadMap.MOUSE_MIDDLE:
-                    sendMouseButton(LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_MIDDLE, isDown);
+                    sendMouseButton(MotionEvent.BUTTON_TERTIARY, isDown);
                     break;
                 case GamepadMap.MOUSE_RIGHT:
-                    sendMouseButton(LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_RIGHT, isDown);
+                    sendMouseButton(MotionEvent.BUTTON_SECONDARY, isDown);
                     break;
                 case GamepadMap.UNSPECIFIED:
                     break;
 
                 default:
                     CallbackBridge.setModifiers(keycode, isDown);
-                    GLFW.sendKeyEvent(keycode, isDown, CallbackBridge.getCurrentMods());
+                    PLATFORM.sendKeyEvent(keycode, isDown, CallbackBridge.getCurrentMods());
                     break;
             }
         }
@@ -192,11 +193,11 @@ public class Gamepad implements GrabListener, GamepadHandler {
             deltaX *= deltaTimeScale;
             deltaY *= deltaTimeScale;
 
-            GLFW.cursorX += deltaX / 1000;
-            GLFW.cursorY -= deltaY / 1000;
+            Platform.cursorX += deltaX;
+            Platform.cursorY -= deltaY;
 
             //Send the mouse to the game
-            GLFW.sendMousePos();
+            Platform.sendCursorPosition();
         }
 
         // Update last nano time
@@ -407,7 +408,7 @@ public class Gamepad implements GrabListener, GamepadHandler {
 
             default:
                 int modifiers = CallbackBridge.getCurrentMods();
-                GLFW.sendKeyEvent(LwjglGlfwKeycode.GLFW_KEY_SPACE, isKeyEventDown, modifiers);
+                PLATFORM.sendKeyEvent(KeyEvent.KEYCODE_SPACE, isKeyEventDown, modifiers);
                 break;
         }
     }

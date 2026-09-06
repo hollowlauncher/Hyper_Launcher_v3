@@ -7,6 +7,9 @@
     <integer name="gesture_delay_seekbar_min">100</integer>
     <integer name="gesture_delay_seekbar_max">1000</integer>
 
+    <integer name="button_opacity_seekbar_increment">50</integer>
+    <integer name="button_opacity_seekbar_min">80</integer>
+    <integer name="button_opacity_seekbar_max">100</integer>
 
     <integer name="button_scale_seekbar_increment">5</integer>
     <integer name="button_scale_seekbar_min">80</integer>

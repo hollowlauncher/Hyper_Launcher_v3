@@ -1,7 +1,6 @@
 package net.kdt.pojavlaunch;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,9 +8,13 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import net.ashmeet.hyperlauncher.R;
 import net.kdt.pojavlaunch.lifecycle.ContextExecutorTask;
 import net.kdt.pojavlaunch.utils.NotificationUtils;
+
+import org.jetbrains.annotations.UnknownNullability;
 
 import java.io.Serializable;
 
@@ -79,7 +82,7 @@ public class ShowErrorActivity extends BaseActivity {
      * @param callerActivity the activity provided by the ContextExecutorTask.executeWithActivity
      * @param builder the alert dialog builder.
      */
-    public static void installRemoteDialogHandling(Activity callerActivity, @NonNull AlertDialog.Builder builder) {
+    public static void installRemoteDialogHandling(Activity callerActivity, @NonNull @UnknownNullability MaterialAlertDialogBuilder builder) {
         if (callerActivity instanceof ShowErrorActivity) {
             builder.setOnDismissListener(d -> callerActivity.finish());
         }

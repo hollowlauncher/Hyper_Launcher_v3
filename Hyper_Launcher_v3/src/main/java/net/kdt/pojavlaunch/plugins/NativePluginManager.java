@@ -1,7 +1,6 @@
 package net.kdt.pojavlaunch.plugins;
 
 import android.content.Context;
-import android.os.Build;
 import android.util.Log;
 
 import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences;
@@ -177,13 +176,8 @@ public class NativePluginManager {
         if (sourcePthread != null) {
             try {
                 // Use a symlink if possible (requires API 21+)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    android.system.Os.symlink(sourcePthread.getAbsolutePath(), shim.getAbsolutePath());
-                    Log.i("jrelog", "Created libpthread.so.0 shim (symlink)");
-                } else {
-                    copyFile(sourcePthread, shim);
-                    Log.i("jrelog", "Created libpthread.so.0 shim (copy)");
-                }
+                android.system.Os.symlink(sourcePthread.getAbsolutePath(), shim.getAbsolutePath());
+                Log.i("jrelog", "Created libpthread.so.0 shim (symlink)");
             } catch (Exception e) {
                 Log.e("jrelog", "Failed to create libpthread.so.0 shim", e);
             }
@@ -287,22 +281,6 @@ public class NativePluginManager {
 
     public static List<BundledLibrary> getDiscoveredLibraries() {
         return sDiscoveredLibraries;
-    }
-
-    public static boolean isLibraryDiscovered(String name) {
-        for (BundledLibrary lib : sDiscoveredLibraries) {
-            if (lib.name.equals(name)) return true;
-        }
-        return false;
-    }
-
-    public static boolean isLibraryEnabled(String name) {
-        for (BundledLibrary lib : sDiscoveredLibraries) {
-            if (lib.name.equals(name)) {
-                return !lib.optional || LauncherPreferences.isPluginLibraryEnabled(name);
-            }
-        }
-        return false;
     }
 
     public static void loadOptionalLibraries(Context context) {

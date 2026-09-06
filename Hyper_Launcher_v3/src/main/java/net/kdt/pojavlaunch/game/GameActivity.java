@@ -2,11 +2,12 @@ package net.kdt.pojavlaunch.game;
 
 
 import static com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences.PREF_ENABLE_GYRO;
-import static com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences.PREF_IGNORE_NOTCH;
 import static com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences.PREF_SUSTAINED_PERFORMANCE;
 import static com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences.PREF_USE_ALTERNATE_SURFACE;
 import static com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences.PREF_VIRTUAL_MOUSE_START;
 import static net.kdt.pojavlaunch.Tools.dialogForceClose;
+import static net.kdt.pojavlaunch.game.platform.Platform.PLATFORM;
+
 
 import android.app.Activity;
 import android.content.ComponentName;
@@ -16,49 +17,41 @@ import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.hardware.input.InputManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.text.InputType;
 import android.util.Log;
+import android.text.InputType;
 import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
-import android.view.PointerIcon;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewPropertyAnimator;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.compose.ui.platform.ComposeView;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+
+import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences;
+import com.ashmeet.hyperlauncher.components.dialog.EditControlSideDialog;
 import com.ashmeet.hyperlauncher.components.dialog.QuickSettingSideDialog;
 import com.ashmeet.hyperlauncher.helper.LauncherComposeHelper;
-import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences;
 import com.ashmeet.hyperlauncher.screens.activity.game.LoggerView;
-import com.ashmeet.hyperlauncher.utils.LoggerProxy;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import net.ashmeet.hyperlauncher.R;
 import net.kdt.pojavlaunch.BaseActivity;
 import net.kdt.pojavlaunch.CallbackBridge;
-import net.kdt.pojavlaunch.EfficientAndroidLWJGLKeycode;
-import net.kdt.pojavlaunch.LauncherGLSurface;
+import net.kdt.pojavlaunch.utils.KeycodeUtils;
 import net.kdt.pojavlaunch.Logger;
-import net.kdt.pojavlaunch.LwjglGlfwKeycode;
 import net.kdt.pojavlaunch.Tools;
-import net.kdt.pojavlaunch.authenticator.accounts.Account;
 import net.kdt.pojavlaunch.authenticator.accounts.Accounts;
 import net.kdt.pojavlaunch.customcontrols.ControlButtonMenuListener;
 import net.kdt.pojavlaunch.customcontrols.ControlData;
@@ -67,18 +60,21 @@ import net.kdt.pojavlaunch.customcontrols.ControlJoystickData;
 import net.kdt.pojavlaunch.customcontrols.ControlLayout;
 import net.kdt.pojavlaunch.customcontrols.CustomControls;
 import net.kdt.pojavlaunch.customcontrols.EditorExitable;
-import net.kdt.pojavlaunch.customcontrols.handleview.DrawerPullButton;
-import net.kdt.pojavlaunch.customcontrols.keyboard.LwjglCharSender;
+import net.kdt.pojavlaunch.customcontrols.buttons.ControlInterface;
 import net.kdt.pojavlaunch.customcontrols.keyboard.TouchCharInput;
 import net.kdt.pojavlaunch.customcontrols.mouse.GyroControl;
 import net.kdt.pojavlaunch.customcontrols.mouse.HotbarView;
 import net.kdt.pojavlaunch.instances.Instance;
 import net.kdt.pojavlaunch.instances.Instances;
 import net.kdt.pojavlaunch.lifecycle.ContextExecutor;
+import net.kdt.pojavlaunch.game.platform.Platform;
+import net.kdt.pojavlaunch.game.platform.backend.DummyBackend;
+
 import net.kdt.pojavlaunch.services.GameService;
 import net.kdt.pojavlaunch.tasks.AsyncAssetManager;
 import net.kdt.pojavlaunch.utils.JREUtils;
 import net.kdt.pojavlaunch.utils.MCOptionUtils;
+import net.kdt.pojavlaunch.authenticator.accounts.Account;
 import net.kdt.pojavlaunch.utils.RendererCompatUtil;
 import net.kdt.pojavlaunch.utils.jre.GameRunner;
 
@@ -86,89 +82,40 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.Objects;
+import androidx.compose.ui.platform.ComposeView;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-import git.artdeell.dnbootstrap.glfw.AndroidClipboardProvider;
-import git.artdeell.dnbootstrap.glfw.GLFW;
-import git.artdeell.dnbootstrap.glfw.GLFWCursorView;
-import kotlin.Unit;
+
 
 public class GameActivity extends BaseActivity implements ControlButtonMenuListener, EditorExitable, ServiceConnection {
     public static final String INTENT_LAUNCH_VERSION = "intent_version";
     public static final String INTENT_LAUNCH_CLASSPATH = "intent_classpath";
 
     public static TouchCharInput touchCharInput;
-    public LauncherGLSurface launcherGLView;
-    private static WeakReference<GLFWCursorView> weakCursor;
-    public GLFWCursorView cursor;
-    public LoggerView loggerView;
-    public LauncherComposeHelper.DrawerController drawerController;
-    public ComposeView mMainComposeView;
+    private GameView launcherGLView;
+    private static WeakReference<GameCursorView> weakCursor;
+    private LoggerView loggerView;
     private GyroControl mGyroControl = null;
-    public ControlLayout mControlLayout;
-    public HotbarView mHotbarView;
-    private volatile AndroidClipboardProvider mClipboardProvider;
+    private ControlLayout mControlLayout;
+    private HotbarView mHotbarView;
+    private View mLoadingScreen;
+    private ComposeView mMainComposeView;
 
     Instance instance;
     Account account;
 
-    private ArrayAdapter<String> gameActionArrayAdapter;
-    private AdapterView.OnItemClickListener gameActionClickListener;
-    public ArrayAdapter<String> ingameControlsEditorArrayAdapter;
-    public AdapterView.OnItemClickListener ingameControlsEditorListener;
     private GameService.LocalBinder mServiceBinder;
 
     private QuickSettingSideDialog mQuickSettingSideDialog;
+    private EditControlSideDialog mEditControlSideDialog;
+    private LauncherComposeHelper.DrawerController mDrawerController;
 
-    public static boolean mForceFullPanning = false;
+    public static int mForcedPanningHeight = 0;
     public static int mImeHeight = 0;
-
-    private final InputManager.InputDeviceListener mInputDeviceListener = new InputManager.InputDeviceListener() {
-        @Override
-        public void onInputDeviceAdded(int deviceId) {
-            updateSystemCursor(hasWindowFocus());
-        }
-
-        @Override
-        public void onInputDeviceRemoved(int deviceId) {
-            updateSystemCursor(hasWindowFocus());
-        }
-
-        @Override
-        public void onInputDeviceChanged(int deviceId) {
-            updateSystemCursor(hasWindowFocus());
-        }
-    };
-
-    private void updateSystemCursor(boolean hasFocus) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            boolean shouldHide = false;
-            int[] ids = InputDevice.getDeviceIds();
-            for (int id : ids) {
-                InputDevice device = InputDevice.getDevice(id);
-                if (device != null && (device.getSources() & InputDevice.SOURCE_MOUSE) == InputDevice.SOURCE_MOUSE) {
-                    shouldHide = true;
-                    break;
-                }
-            }
-
-            if (shouldHide && hasFocus) {
-                getWindow().getDecorView().setPointerIcon(PointerIcon.getSystemIcon(this, PointerIcon.TYPE_NULL));
-            } else {
-                getWindow().getDecorView().setPointerIcon(null);
-            }
-        }
-    }
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        updateSystemCursor(hasFocus);
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        LoggerProxy.INSTANCE.init();
         instance = Instances.loadSelectedInstance();
         account = Accounts.getCurrent();
         if(instance == null) {
@@ -183,7 +130,8 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
         // Start the service a bit early
         ContextCompat.startForegroundService(this, gameServiceIntent);
         initLayout();
-        GLFW.addGrabListener(launcherGLView);
+
+        Platform.initialize(this, launcherGLView);
 
         mGyroControl = new GyroControl(this);
 
@@ -192,8 +140,7 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
         else getWindow().setBackgroundDrawable(new ColorDrawable(Color.BLACK));
 
         // Set the sustained performance mode for available APIs
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-            getWindow().setSustainedPerformanceMode(PREF_SUSTAINED_PERFORMANCE);
+        getWindow().setSustainedPerformanceMode(PREF_SUSTAINED_PERFORMANCE);
 
         // This is required on Android 10 for the insets listener
         // https://issuetracker.google.com/issues/266331465
@@ -206,7 +153,7 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
                 return insets;
             ViewPropertyAnimator animSurface = launcherGLView.mSurface.animate()
                     .setDuration(100);
-            ViewPropertyAnimator animCursor = cursor.animate()
+            ViewPropertyAnimator animCursor = launcherGLView.mCursorView.animate()
                     .setDuration(100);
             if(!insets.isVisible(WindowInsetsCompat.Type.ime())){
                 animSurface.translationY(0).start();
@@ -220,39 +167,24 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
                 }
                 return insets;
             }
-            if(!mForceFullPanning && !LauncherPreferences.PREF_KEYBOARD_AUTOPANNING)
+            if(mForcedPanningHeight == 0 && !LauncherPreferences.PREF_KEYBOARD_AUTOPANNING)
                 return insets;
             mImeHeight = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom;
             int translationY;
-            // Autopsying (if keyboardPan wasn't clicked)
-            if(!mForceFullPanning) {
-                int cursorY = (int) (GLFW.cursorY * launcherGLView.mSurface.getHeight()) + 100;
+            // Autopanning (if keyboardPan wasn't clicked)
+            if(mForcedPanningHeight == 0) {
                 translationY = Tools.getTranslationFromCursorY(
-                        cursorY,
-                        launcherGLView.mSurface.getHeight(),
+                        (int)(Platform.cursorY * launcherGLView.getCursorRatioY() + 100),
+                        launcherGLView.getHeight(),
                         mImeHeight,
                         0
                 );
             } else
-                translationY = mImeHeight;
+                translationY = mForcedPanningHeight == -1 ? mImeHeight : Math.clamp(mImeHeight - mForcedPanningHeight, 0, mImeHeight);
             animSurface.translationY(-translationY).start();
             animCursor.translationY(-translationY).start();
             return insets;
         });
-
-        ingameControlsEditorArrayAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.menu_customcontrol));
-        ingameControlsEditorListener = (parent, view, position, id) -> {
-            switch(position) {
-                case 0: mControlLayout.addControlButton(new ControlData("New")); break;
-                case 1: mControlLayout.addDrawer(new ControlDrawerData()); break;
-                case 2: mControlLayout.addJoystickButton(new ControlJoystickData()); break;
-                case 3: mControlLayout.openLoadDialog(); break;
-                case 4: mControlLayout.openSaveDialog(this); break;
-                case 5: mControlLayout.openSetDefaultDialog(); break;
-                case 6: mControlLayout.openExitDialog(this);
-            }
-        };
 
         // Recompute the gui scale when options are changed
         MCOptionUtils.MCOptionListener optionListener = MCOptionUtils::getMcScale;
@@ -262,22 +194,55 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
         // Set the activity for the executor. Must do this here, or else Tools.showErrorRemote() may not
         // execute the correct method
         ContextExecutor.setActivity(this);
-        InputManager im = (InputManager) getSystemService(Context.INPUT_SERVICE);
-        im.registerInputDeviceListener(mInputDeviceListener, null);
         //Now, attach to the service. The game will only start when this happens, to make sure that we know the right state.
         bindService(gameServiceIntent, this, 0);
     }
 
     protected void initLayout() {
-        mMainComposeView = new ComposeView(this);
-        mMainComposeView.setKeepScreenOn(true);
-        setContentView(mMainComposeView);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         bindValues();
-        setDrawerContent();
-
         mControlLayout.setMenuListener(this);
-        cursor.setCursorScale(LauncherPreferences.PREF_MOUSESCALE);
-        updatePointerIcon();
+
+        launcherGLView.mCursorView.setCursorScale(LauncherPreferences.PREF_MOUSESCALE);
+        weakCursor = new WeakReference<>(launcherGLView.mCursorView);
+
+        mMainComposeView = new ComposeView(this);
+        mMainComposeView.setClipChildren(false);
+        mMainComposeView.setClipToPadding(false);
+        setContentView(mMainComposeView);
+
+        LauncherComposeHelper.setBaseMainContent(
+                mMainComposeView,
+                isInEditor,
+                mControlLayout,
+                loggerView,
+                launcherGLView,
+                true, // hostViews = true
+                isOpen -> {
+                    return kotlin.Unit.INSTANCE;
+                },
+                controller -> { mDrawerController = controller; return kotlin.Unit.INSTANCE; },
+                action -> { onAction(action); return kotlin.Unit.INSTANCE; }
+        );
+
+        mControlLayout.setOnControlEditListener(new ControlLayout.OnControlEditListener() {
+            @Override
+            public void onEditControl(ControlInterface button) {
+                if (mEditControlSideDialog == null) {
+                    mEditControlSideDialog = new EditControlSideDialog(GameActivity.this, (ViewGroup) mMainComposeView.getParent());
+                }
+                mEditControlSideDialog.setCurrentlyEditedButton(button);
+                mEditControlSideDialog.adaptPanelPosition();
+            }
+
+            @Override
+            public boolean onDisappearLayer() {
+                if (mEditControlSideDialog != null) {
+                    return mEditControlSideDialog.disappearLayer();
+                }
+                return true;
+            }
+        });
 
         try {
             File latestLogFile = new File(Tools.DIR_GAME_HOME, "latestlog.txt");
@@ -285,36 +250,15 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
                 throw new IOException("Failed to create a new log file");
             Logger.begin(latestLogFile.getAbsolutePath());
 
-            mClipboardProvider = new AndroidClipboardProvider(getApplicationContext());
-            GLFW.setClipboardImpl(mClipboardProvider);
-
-            touchCharInput.setCharacterSender(new LwjglCharSender());
-
             Bundle extras = Objects.requireNonNull(getIntent().getExtras());
             String version = extras.getString(INTENT_LAUNCH_VERSION);
             File[] classpath = (File[]) extras.getSerializable(INTENT_LAUNCH_CLASSPATH);
 
             setTitle("HyperLauncher (" + version + ")");
 
-            // Menu
-            gameActionArrayAdapter = new ArrayAdapter<>(this,
-                    android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.menu_ingame));
-            gameActionClickListener = (parent, view, position, id) -> {
-                switch(position) {
-                     case 0: dialogForceClose(GameActivity.this); break;
-                     case 1: openLogOutput(); break;
-                     case 2: dialogSendCustomKey(); break;
-                     case 3: openQuickSettings(); break;
-                     case 4: openCustomControls(); break;
-                }
-                if (drawerController != null) drawerController.close();
-            };
-            setDrawerContent();
-            if (drawerController != null) drawerController.close();
-
             launcherGLView.setSurfaceReadyListener(() -> {
                 try {
-                    Tools.runOnUiThread(() -> { if(PREF_VIRTUAL_MOUSE_START) cursor.setVisibility(View.VISIBLE); });
+                    Tools.runOnUiThread(() -> { if(PREF_VIRTUAL_MOUSE_START) launcherGLView.mCursorView.setVisibility(View.VISIBLE); });
                     runCraft(version, classpath);
                 }catch (Throwable e){
                     Tools.showErrorRemote(e);
@@ -322,6 +266,30 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
             });
         } catch (Throwable e) {
             Tools.showError(this, e, true);
+        }
+    }
+
+    private void onAction(int action) {
+        if (isInEditor) {
+            switch (action) {
+                case -1: // Close
+                    break;
+                case 0: mControlLayout.addControlButton(new ControlData("New")); break;
+                case 1: mControlLayout.addDrawer(new ControlDrawerData()); break;
+                case 2: mControlLayout.addJoystickButton(new ControlJoystickData()); break;
+                case 3: mControlLayout.openLoadDialog(); break;
+                case 4: mControlLayout.openSaveDialog(this); break;
+                case 5: mControlLayout.openSetDefaultDialog(); break;
+                case 6: mControlLayout.openExitDialog(this); break;
+            }
+        } else {
+            switch (action) {
+                case 0: dialogForceClose(GameActivity.this); break;
+                case 1: openLogOutput(); break;
+                case 2: dialogSendCustomKey(); break;
+                case 3: openQuickSettings(); break;
+                case 4: openCustomControls(); break;
+            }
         }
     }
 
@@ -351,77 +319,60 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
         });
     }
 
-    private void setDrawerContent() {
-        if (mMainComposeView == null) return;
-        LauncherComposeHelper.setBaseMainContent(
-                mMainComposeView,
-                isInEditor,
-                mControlLayout,
-                loggerView,
-                instance.name,
-                controller -> { drawerController = controller; return Unit.INSTANCE; },
-                position -> {
-                    runOnUiThread(() -> {
-                        if (isInEditor) {
-                            ingameControlsEditorListener.onItemClick(null, null, position, 0);
-                        } else {
-                            gameActionClickListener.onItemClick(null, null, position, 0);
-                        }
-                        if (drawerController != null) drawerController.close();
-                    });
-                    return Unit.INSTANCE;
-                }
-        );
-    }
-
     /** Boilerplate binding */
     private void bindValues(){
-        float density = getResources().getDisplayMetrics().density;
-
         mControlLayout = new ControlLayout(this);
         mControlLayout.setId(R.id.main_control_layout);
-        mControlLayout.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        mControlLayout.setBackgroundResource(R.drawable.no_focus_shown);
-        mControlLayout.setKeepScreenOn(true);
+        mControlLayout.setClipChildren(false);
+        mControlLayout.setClipToPadding(false);
 
-        launcherGLView = new LauncherGLSurface(this);
+        launcherGLView = new GameView(this);
         launcherGLView.setId(R.id.main_game_render_view);
-        launcherGLView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            launcherGLView.setDefaultFocusHighlightEnabled(false);
-        }
-        mControlLayout.addView(launcherGLView);
+        launcherGLView.setClipChildren(false);
+        launcherGLView.setClipToPadding(false);
 
-        cursor = new GLFWCursorView(this);
-        cursor.setId(R.id.main_touchpad);
-        cursor.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        cursor.setFocusable(false);
-        cursor.setTranslationZ(density * 1f);
-        cursor.setVisibility(View.GONE);
-        cursor.setCursor(ContextCompat.getDrawable(this, R.drawable.ic_mouse_pointer), 0, 0);
-        mControlLayout.addView(cursor);
-        weakCursor = new WeakReference<>(cursor);
-
-        touchCharInput = new TouchCharInput(this);
-        touchCharInput.setId(R.id.mainTouchCharInput);
-        touchCharInput.setLayoutParams(new FrameLayout.LayoutParams((int)(1 * density), (int)(1 * density)));
-        touchCharInput.setBackgroundColor(Color.DKGRAY);
-        int imeOpts = EditorInfo.IME_FLAG_NO_FULLSCREEN | EditorInfo.IME_FLAG_NO_EXTRACT_UI | EditorInfo.IME_ACTION_DONE;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            imeOpts |= EditorInfo.IME_FLAG_NO_PERSONALIZED_LEARNING;
-        }
-        touchCharInput.setImeOptions(imeOpts);
-        touchCharInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_AUTO_COMPLETE | InputType.TYPE_TEXT_FLAG_AUTO_CORRECT | InputType.TYPE_TEXT_VARIATION_FILTER);
-        mControlLayout.addView(touchCharInput);
-
-        mHotbarView = new HotbarView(this);
-        mHotbarView.setId(R.id.hotbar_view);
-        mHotbarView.setLayoutParams(new FrameLayout.LayoutParams(0, 0));
-        mControlLayout.addView(mHotbarView);
+        GameCursorView cursorView = new GameCursorView(this);
+        cursorView.setId(R.id.main_cursorview);
+        cursorView.setVisibility(View.GONE);
+        FrameLayout.LayoutParams cursorLp = new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+        );
+        cursorView.setLayoutParams(cursorLp);
+        cursorView.setFocusable(false);
+        cursorView.setTranslationZ(Tools.dpToPx(1));
+        launcherGLView.addView(cursorView);
+        launcherGLView.mCursorView = cursorView;
 
         loggerView = new LoggerView(this);
         loggerView.setId(R.id.mainLoggerView);
         loggerView.setVisibility(View.GONE);
+
+        touchCharInput = new TouchCharInput(this);
+        touchCharInput.setId(R.id.mainTouchCharInput);
+        touchCharInput.setLayoutParams(new FrameLayout.LayoutParams((int)Tools.dpToPx(1), (int)Tools.dpToPx(1)));
+        
+        int imeOptions = EditorInfo.IME_FLAG_NO_FULLSCREEN | EditorInfo.IME_FLAG_NO_EXTRACT_UI | EditorInfo.IME_ACTION_DONE;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            imeOptions |= EditorInfo.IME_FLAG_NO_PERSONALIZED_LEARNING;
+        }
+        touchCharInput.setImeOptions(imeOptions);
+        touchCharInput.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_TEXT_FLAG_IME_MULTI_LINE | InputType.TYPE_TEXT_FLAG_AUTO_COMPLETE | InputType.TYPE_TEXT_FLAG_AUTO_CORRECT);
+
+        mHotbarView = new HotbarView(this);
+        mHotbarView.setId(R.id.hotbar_view);
+        mHotbarView.setLayoutParams(new FrameLayout.LayoutParams(0, 0));
+
+        // Setup hierarchy in ControlLayout
+        mControlLayout.addView(launcherGLView);
+        mControlLayout.addView(touchCharInput);
+        mControlLayout.addView(mHotbarView);
+
+        LauncherComposeHelper.setLoadingText(getString(R.string.loading_screen_title));
+        LauncherComposeHelper.setLoadingWarning(getString(R.string.loading_screen_warning));
+        LauncherComposeHelper.setLoadingVisible(true);
+
+        Platform.setCursorImplementor(cursorView);
     }
 
     @Override
@@ -429,7 +380,7 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
         super.onResume();
         ContextExecutor.setActivity(this);
         if(PREF_ENABLE_GYRO) mGyroControl.enable();
-        //CallbackBridge.nativeSetWindowAttrib(LwjglGlfwKeycode.GLFW_HOVERED, 1);
+        PLATFORM.setHovered(true);
     }
 
     @Override
@@ -437,33 +388,31 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
         ContextExecutor.clearActivity();
         mGyroControl.disable();
         // Avoid going through the JNI each time.
-        if (GLFW.isGrabbing()){
-            CallbackBridge.sendKeyPress(LwjglGlfwKeycode.GLFW_KEY_ESCAPE);
+        if (Platform.isGrabbing()){
+            CallbackBridge.sendKeyPress(KeyEvent.KEYCODE_ESCAPE);
         }
         if(mQuickSettingSideDialog != null) {
             mQuickSettingSideDialog.cancel();
         }
-        //CallbackBridge.nativeSetWindowAttrib(LwjglGlfwKeycode.GLFW_HOVERED, 0);
+        PLATFORM.setHovered(false);
         super.onPause();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        //CallbackBridge.nativeSetWindowAttrib(LwjglGlfwKeycode.GLFW_VISIBLE, 1);
+        PLATFORM.setVisible(true);
     }
 
     @Override
     protected void onStop() {
-        //CallbackBridge.nativeSetWindowAttrib(LwjglGlfwKeycode.GLFW_VISIBLE, 0);
+        PLATFORM.setVisible(false);
         super.onStop();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        InputManager im = (InputManager) getSystemService(Context.INPUT_SERVICE);
-        im.unregisterInputDeviceListener(mInputDeviceListener);
         ContextExecutor.clearActivity();
     }
 
@@ -487,13 +436,9 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
     @Override
     protected void onPostResume() {
         super.onPostResume();
+        if(mLoadingScreen != null && !(PLATFORM instanceof DummyBackend)) hideLoadingScreen();
         if(launcherGLView != null)  // Useful when backing out of the app
             Tools.MAIN_HANDLER.postDelayed(() -> launcherGLView.refreshSize(), 500);
-    }
-
-    @Override
-    protected boolean shouldIgnoreNotch() {
-        return PREF_IGNORE_NOTCH;
     }
 
     @Override
@@ -523,7 +468,6 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
             renderer = firstCompatibleRenderer;
         }
         Logger.appendToLog("--------- Starting game with Launcher Debug!");
-        LauncherPreferences.PREF_RENDERER = renderer;
         Tools.printLauncherInfo(versionId, instance.getLaunchArgs(), renderer, this);
         JREUtils.redirectAndPrintJRELog();
         GameRunner.launchGame(this, account, instance, versionId, classpath, renderer);
@@ -534,19 +478,25 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
     private void dialogSendCustomKey() {
         MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(this);
         dialog.setTitle(R.string.control_customkey);
-        dialog.setItems(EfficientAndroidLWJGLKeycode.generateKeyName(), (dInterface, position) -> EfficientAndroidLWJGLKeycode.execKeyIndex(position));
+        dialog.setItems(KeycodeUtils.generateKeyName(), (dInterface, position) -> KeycodeUtils.execKeyIndex(position));
         dialog.show();
     }
 
     boolean isInEditor;
     private void openCustomControls() {
-        if(ingameControlsEditorListener == null || ingameControlsEditorArrayAdapter == null) return;
-
-        mControlLayout.setModifiable(true);
         isInEditor = true;
-        setDrawerContent();
-        // navDrawer.setAdapter(ingameControlsEditorArrayAdapter);
-        // navDrawer.setOnItemClickListener(ingameControlsEditorListener);
+        LauncherComposeHelper.setBaseMainContent(
+                mMainComposeView,
+                isInEditor,
+                mControlLayout,
+                loggerView,
+                launcherGLView,
+                true, // hostViews = true
+                isOpen -> kotlin.Unit.INSTANCE,
+                controller -> { mDrawerController = controller; return kotlin.Unit.INSTANCE; },
+                action -> { onAction(action); return kotlin.Unit.INSTANCE; }
+        );
+        mControlLayout.setModifiable(true);
     }
 
     private void openLogOutput() {
@@ -555,7 +505,7 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
 
     private void openQuickSettings() {
         if(mQuickSettingSideDialog == null) {
-            mQuickSettingSideDialog = new QuickSettingSideDialog(this, mControlLayout) {
+            mQuickSettingSideDialog = new QuickSettingSideDialog(this, (ViewGroup) mMainComposeView.getParent()) {
                 @Override
                 public void onResolutionChanged() {
                     launcherGLView.refreshSize();
@@ -571,6 +521,11 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
                         mGyroControl.disable();
                     }
                 }
+
+                @Override
+                public void onButtonTransparencyChanged() {
+                    mControlLayout.updateButtonOpacity();
+                }
             };
         }
         mQuickSettingSideDialog.appear(true);
@@ -578,8 +533,8 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
 
     public static void toggleMouse(Context ctx) {
         // Avoid going through the JNI each time.
-        if (GLFW.isGrabbing()) return;
-        GLFWCursorView cursorView = Tools.getWeakReference(weakCursor);
+        if (Platform.isGrabbing()) return;
+        GameCursorView cursorView = Tools.getWeakReference(weakCursor);
         if(cursorView == null) return;
         int toastString = 0;
         switch (cursorView.getVisibility()) {
@@ -597,30 +552,8 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
         if(toastString != 0) Toast.makeText(ctx, toastString, Toast.LENGTH_SHORT).show();
     }
 
-    private void updatePointerIcon() {
-        if (cursor == null) return;
-        if (LauncherPreferences.PREF_POINTER_ICON_PATH != null) {
-            File iconFile = new File(LauncherPreferences.PREF_POINTER_ICON_PATH);
-            if (iconFile.exists()) {
-                android.graphics.drawable.Drawable drawable = android.graphics.drawable.Drawable.createFromPath(iconFile.getAbsolutePath());
-                if (drawable != null) {
-                    cursor.setCursor(drawable, LauncherPreferences.PREF_POINTER_HOTSPOT_X, LauncherPreferences.PREF_POINTER_HOTSPOT_Y);
-                    return;
-                }
-            }
-        }
-        // Fallback to default
-        cursor.setCursor(ContextCompat.getDrawable(this, R.drawable.ic_mouse_pointer), 0, 0);
-    }
-
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
-            if (drawerController != null && drawerController.isOpen()) {
-                drawerController.close();
-                return true;
-            }
-        }
         if(isInEditor) {
             if(event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
                 if(event.getAction() == KeyEvent.ACTION_DOWN) mControlLayout.askToExit(this);
@@ -632,7 +565,7 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
         if(!(handleEvent = launcherGLView.processKeyEvent(event))) {
             if (event.getKeyCode() == KeyEvent.KEYCODE_BACK && !touchCharInput.isEnabled()) {
                 if(event.getAction() != KeyEvent.ACTION_UP) return true; // We eat it anyway
-                CallbackBridge.sendKeyPress(LwjglGlfwKeycode.GLFW_KEY_ESCAPE);
+                CallbackBridge.sendKeyPress(KeyEvent.KEYCODE_ESCAPE);
                 return true;
             }
         }
@@ -642,13 +575,23 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
     public static void switchKeyboardState(boolean panning) {
         if(touchCharInput != null) {
             touchCharInput.switchKeyboardState();
-            GameActivity.mForceFullPanning = panning;
+            GameActivity.mForcedPanningHeight = panning ? -1 : 0;
         }
+    }
+
+    public void hideLoadingScreen(){
+        LauncherComposeHelper.setLoadingText(getString(R.string.loading_screen_booted, PLATFORM.backendName()));
+        Tools.MAIN_HANDLER.postDelayed(() -> {
+            LauncherComposeHelper.setLoadingVisible(false);
+            mLoadingScreen = null;
+        }, 1000);
     }
 
     @Override
     public void onClickedMenu() {
-        if (drawerController != null) drawerController.toggle();
+        if (mDrawerController != null) {
+            mDrawerController.open();
+        }
     }
 
     @Override
@@ -663,16 +606,24 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
         }
 
         isInEditor = false;
-        setDrawerContent();
-        // navDrawer.setAdapter(gameActionArrayAdapter);
-        // navDrawer.setOnItemClickListener(gameActionClickListener);
+        LauncherComposeHelper.setBaseMainContent(
+                mMainComposeView,
+                isInEditor,
+                mControlLayout,
+                loggerView,
+                launcherGLView,
+                true, // hostViews = true
+                isOpen -> kotlin.Unit.INSTANCE,
+                controller -> { mDrawerController = controller; return kotlin.Unit.INSTANCE; },
+                action -> { onAction(action); return kotlin.Unit.INSTANCE; }
+        );
     }
 
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
         GameService.LocalBinder localBinder = (GameService.LocalBinder) service;
         mServiceBinder = localBinder;
-        launcherGLView.start(localBinder.isActive, cursor);
+        launcherGLView.start(localBinder.isActive);
         localBinder.isActive = true;
     }
 

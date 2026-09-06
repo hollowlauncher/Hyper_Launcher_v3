@@ -11,7 +11,14 @@ public class LibraryTransformer implements BaseTransformer {
 
     @Override
     public void transform(CtClass clazz) throws Throwable {
-        CtMethod method = clazz.getDeclaredMethod("checkHash");
-        method.setBody("{}");
+        try {
+            CtMethod method = clazz.getDeclaredMethod("checkHash");
+            method.setBody("{}");
+        } catch (Exception ignored) {}
+
+        try {
+            CtMethod method = clazz.getDeclaredMethod("checkArchitecture");
+            method.setBody("{}");
+        } catch (Exception ignored) {}
     }
 }

@@ -7,6 +7,8 @@ import android.graphics.Rect;
 
 import net.kdt.pojavlaunch.utils.MatrixUtils;
 
+import java.util.Objects;
+
 public class BitmapCropBehaviour implements CropperBehaviour{
     private final Matrix mTranslateInverse = new Matrix();
     protected final Matrix mTranslateMatrix = new Matrix();
@@ -100,7 +102,7 @@ public class BitmapCropBehaviour implements CropperBehaviour{
         }
         Bitmap croppedBitmap = Bitmap.createBitmap(
                 targetWidth, targetHeight,
-                mOriginalBitmap.getConfig()
+                Objects.requireNonNull(mOriginalBitmap.getConfig())
         );
         // Draw the bitmap on the target. Doing this allows us to not bother with making sure
         // that targetRect is fully contained within image bounds.

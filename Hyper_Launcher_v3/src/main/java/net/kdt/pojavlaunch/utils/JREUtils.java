@@ -1,5 +1,7 @@
 package net.kdt.pojavlaunch.utils;
 
+
+
 import static com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences.PREF_DUMP_SHADERS;
 import static com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences.PREF_VSYNC_IN_ZINK;
 import static com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences.PREF_ZINK_PREFER_SYSTEM_DRIVER;
@@ -20,7 +22,9 @@ import net.kdt.pojavlaunch.extra.ExtraConstants;
 import net.kdt.pojavlaunch.extra.ExtraCore;
 import net.kdt.pojavlaunch.multirt.Runtime;
 import net.kdt.pojavlaunch.plugins.LibraryPlugin;
-import net.kdt.pojavlaunch.plugins.NativePluginManager;
+
+
+import git.artdeell.mojoexec.MojoExec;
 
 public class JREUtils {
     public static void redirectAndPrintJRELog() {
@@ -136,28 +140,16 @@ public class JREUtils {
 
         setupAngleEnv(context, envMap);
         setupFfmpegEnv(context, envMap);
-
-        // Add plugin environment variables
-        Map<String, String> pluginEnv = NativePluginManager.getRuntimeJVMEnv();
-        envMap.putAll(pluginEnv);
-
         // Init mesa renderers
         MesaUtils.initEnvironment(context, renderer, envMap);
 
-        String pluginPaths = NativePluginManager.getRuntimeLibraryPath();
-        String combinedNativePath = Tools.NATIVE_LIB_DIR;
-        if (!pluginPaths.isEmpty()) {
-            combinedNativePath = pluginPaths + ":" + combinedNativePath;
-        }
-
-        setRendererLibraryPath(combinedNativePath, MesaUtils.getCustomZinkLibraryPath());
-        envMap.put("POJAV_NATIVEDIR", Tools.NATIVE_LIB_DIR);
+        setRendererLibraryPath(Tools.NATIVE_LIB_DIR, MesaUtils.getCustomZinkLibraryPath());
 
         if(LauncherPreferences.PREF_BIG_CORE_AFFINITY) envMap.put("POJAV_BIG_CORE_AFFINITY", "1");
         if(LauncherPreferences.PREF_ALSOFT_FORCE_OPENSL) envMap.put("ALSOFT_DRIVERS", "opensl");
 
         if(GLInfoUtils.getGlInfo().isAdreno() && !PREF_ZINK_PREFER_SYSTEM_DRIVER) {
-            setUseTurnip(true);
+            MojoExec.setUseTurnip(true);
         }
 
         if(LauncherPreferences.PREF_FREEDRENO_SYSMEM) {
@@ -261,15 +253,15 @@ public class JREUtils {
                 useGles = false;
                 bypassNamespace = true; // Mesa is linked to a bunch of libraries not available in the pojavexec namespace
                 glesVersion = 3;
-                if(preloadVk) preloadVulkan(); // Zink requires Vulkan library to be preloaded
-                break;
-            case "mobileglues" :
-                renderLibrary = "libmobileglues.so";
-                useGles = true;
-                glesVersion = 3;
+                if(preloadVk) MojoExec.preloadVulkan(); // Zink requires Vulkan library to be preloaded
                 break;
             case "opengles3_ltw" :
                 renderLibrary = "libltw.so";
+                useGles = true;
+                glesVersion = 3;
+                break;
+            case "mobileglues" :
+                renderLibrary = "libmobileglues.so";
                 useGles = true;
                 glesVersion = 3;
                 break;
@@ -283,7 +275,7 @@ public class JREUtils {
                 break;
         }
 
-        if (!configureRenderspec(renderLibrary, bypassNamespace, useGles, glesVersion)) {
+        if (!MojoExec.prepareEgl(renderLibrary, bypassNamespace, useGles, glesVersion)) {
             Log.e("RENDER_LIBRARY","Failed to load renderer " + renderLibrary );
             return null;
         }
@@ -297,19 +289,11 @@ public class JREUtils {
     public static void setRendererLibraryPath(String mainPath, String additionalPath){
         if(additionalPath != null)
             mainPath = additionalPath + ":" + mainPath;
-        nsetRendererLibraryPath(mainPath);
+        MojoExec.setNativeLibraryDir(mainPath);
     }
     public static native int chdir(String path);
 
     public static native void setLdLibraryPath(String ldLibraryPath);
-    public static native boolean configureRenderspec(String eglPath, boolean useLoaderBypass, boolean useGles, int glesVersion);
-    public static native void configureRenderspecDisplay(int width, int height, int refreshRate);
-    private static native void nsetRendererLibraryPath(String path);
-    public static native void preloadVulkan();
-    public static native void setUseTurnip(boolean enable);
-    public static native void initializeHooks();
-    // Obtain AWT screen pixels to render on Android SurfaceView
-    public static native boolean renderAWTScreenFrame(ByteBuffer tempBuffer);
     static {
         System.loadLibrary("pojavexec");
         System.loadLibrary("pojavexec_awt");

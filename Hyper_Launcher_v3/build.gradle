@@ -364,6 +364,7 @@ dependencies {
 
     implementation project(":glfw:android-gradle")
     implementation project(":sdl:android-gradle")
+    implementation project(":mojoexec:jni_bindings")
     implementation project(":ColorPicker")
 
     def composeBom = platform('androidx.compose:compose-bom:2024.12.01')

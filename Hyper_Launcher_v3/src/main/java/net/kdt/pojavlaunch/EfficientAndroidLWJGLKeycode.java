@@ -176,13 +176,6 @@ public class EfficientAndroidLWJGLKeycode {
         return sLwjglKeycodes[index];
     }
 
-    public static short getLwjglKey(int androidKeycode) {
-        for (int i = 0; i < sAndroidKeycodes.length; i++) {
-            if (sAndroidKeycodes[i] == androidKeycode) return sLwjglKeycodes[i];
-        }
-        return LwjglGlfwKeycode.GLFW_KEY_UNKNOWN;
-    }
-
 
     /** @return the index at which the key is in the array, searching linearly */
     public static int getIndexByValue(int lwjglKey) {

@@ -9,4 +9,5 @@
     <item name="drawer_button" type="id" />
     <item name="hotbar_view" type="id" />
     <item name="mainLoggerView" type="id" />
+    <item name="main_cursorview" type="id" />
 </resources>

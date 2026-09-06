@@ -9,16 +9,9 @@
 #include <errno.h>
 #include <stdlib.h>
 
-#include "stdio_is.h"
-
 //
 // Created by maks on 17.02.21.
 //
-
-static volatile jobject exitTrap_ctx;
-static volatile jclass exitTrap_exitClass;
-static volatile jmethodID exitTrap_staticMethod;
-static JavaVM *exitTrap_jvm;
 
 static int pfd[2];
 static pthread_t logger;
@@ -49,7 +42,7 @@ static void *logger_thread(void* param) {
             rsize=rsize-1; //truncate
         }
         buf[rsize]=0x00;
-        if(shouldRecordString && logListener != NULL) {
+        if(shouldRecordString && logListener != NULL && logger_onEventLogged != NULL) {
             writeString = (*env)->NewStringUTF(env, buf); //send to app without newline
             (*env)->CallVoidMethod(env, logListener, logger_onEventLogged, writeString);
             (*env)->DeleteLocalRef(env, writeString);
@@ -60,6 +53,16 @@ static void *logger_thread(void* param) {
 }
 
 
+static void init_method_id(JNIEnv *env) {
+    if(logger_onEventLogged == NULL) {
+        jclass eventLogListener = (*env)->FindClass(env, "net/kdt/pojavlaunch/Logger$eventLogListener");
+        if (eventLogListener != NULL) {
+            logger_onEventLogged = (*env)->GetMethodID(env, eventLogListener, "onEventLogged", "(Ljava/lang/String;)V");
+            (*env)->DeleteLocalRef(env, eventLogListener);
+        }
+    }
+}
+
 JNIEXPORT void JNICALL
 Java_net_kdt_pojavlaunch_Logger_begin(JNIEnv *env, __attribute((unused)) jclass clazz, jstring logPath) {
     if(latestlog_fd != -1) {
@@ -67,10 +70,7 @@ Java_net_kdt_pojavlaunch_Logger_begin(JNIEnv *env, __attribute((unused)) jclass 
         latestlog_fd = -1;
         close(localfd);
     }
-    if(logger_onEventLogged == NULL) {
-        jclass eventLogListener = (*env)->FindClass(env, "net/kdt/pojavlaunch/Logger$eventLogListener");
-        logger_onEventLogged = (*env)->GetMethodID(env, eventLogListener, "onEventLogged", "(Ljava/lang/String;)V");
-    }
+    init_method_id(env);
     jclass ioeClass = (*env)->FindClass(env, "java/io/IOException");
 
 
@@ -110,7 +110,7 @@ JNIEXPORT void JNICALL Java_net_kdt_pojavlaunch_Logger_appendToLog(JNIEnv *env, 
     (*env)->GetStringUTFRegion(env, text, 0, (*env)->GetStringLength(env, text), newChars);
     newChars[appendStringLength] = '\n';
     newChars[appendStringLength+1] = 0;
-    if(recordBuffer(newChars, appendStringLength+1) && logListener != NULL) {
+    if(recordBuffer(newChars, appendStringLength+1) && logListener != NULL && logger_onEventLogged != NULL) {
         (*env)->CallVoidMethod(env, logListener, logger_onEventLogged, text);
     }
 }
@@ -121,6 +121,7 @@ Java_net_kdt_pojavlaunch_Logger_setLogListener(JNIEnv *env, __attribute((unused)
     if(log_listener == NULL) {
         logListener = NULL;
     }else{
+        init_method_id(env);
         logListener = (*env)->NewGlobalRef(env, log_listener);
     }
     if(logListenerLocal != NULL) (*env)->DeleteGlobalRef(env, logListenerLocal);
