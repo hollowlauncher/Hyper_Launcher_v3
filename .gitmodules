@@ -1,3 +1,9 @@
 [submodule "glfw"]
 	path = glfw
-	url = https://github.com/MojoLauncher/glfw
+	url = https://github.com/hollowlauncher/glfw.git
+[submodule "mojoexec"]
+	path = mojoexec
+	url = https://github.com/hollowlauncher/Hyperexec.git
+[submodule "sdl"]
+	path = sdl
+	url = https://github.com/hollowlauncher/HyperSDL.git

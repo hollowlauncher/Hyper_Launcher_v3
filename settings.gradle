@@ -27,5 +27,8 @@ project(':Hyper_Launcher_v3').projectDir = new File(settingsDir, 'Hyper_Launcher
 
 include ':forge_installer'
 include ':glfw:android-gradle'
+include ':sdl:android-gradle'
+include ':mojoexec:android-gradle'
+include ':mojoexec:jni_bindings'
 include ':ColorPicker'
 include ':MioLibPatcher'

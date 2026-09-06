@@ -363,6 +363,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3"
 
     implementation project(":glfw:android-gradle")
+    implementation project(":sdl:android-gradle")
     implementation project(":ColorPicker")
 
     def composeBom = platform('androidx.compose:compose-bom:2024.12.01')
