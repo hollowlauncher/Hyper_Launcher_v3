@@ -21,6 +21,7 @@ tasks.test {
 }
 
 tasks.jar {
+    archiveFileName.set("MioLibPatcher.jar")
     manifest {
         attributes(
             "Manifest-Version" to "1.0",
