@@ -2,26 +2,28 @@ package net.kdt.pojavlaunch.plugins;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LibraryPlugin {
     private static final String TAG = "LibraryPlugin";
 
-    // Plugin Metadata Keys
-    public static final String METADATA_PLUGIN_TYPE = "net.kdt.pojavlaunch.PLUGIN_TYPE";
-    public static final String METADATA_PLUGIN_LIBS = "net.kdt.pojavlaunch.PLUGIN_LIBS";
-    public static final String METADATA_API_VERSION = "net.kdt.pojavlaunch.PLUGIN_API_VERSION";
+    // FCL Metadata Keys
+    public static final String METADATA_FCL_PLUGIN = "FCLNativePlugin";
+    public static final String METADATA_FCL_DESCRIPTION = "des";
+    public static final String METADATA_FCL_ENVIRONMENT = "environment";
+    public static final String METADATA_FCL_MIN_MC_VER = "minMCVer";
+    public static final String METADATA_FCL_MAX_MC_VER = "maxMCVer";
 
     // Known plugins constants
     public static final String ID_ANGLE_PLUGIN = "git.mojo.angle";
     public static final String ID_FFMPEG_PLUGIN = "git.mojo.ffmpeg";
     public static final String ID_ZINK_PLUGIN = "git.mojo.zink";
-    public static final String ID_HYPER_PLUGIN = "com.ashmeet.hyperplugin";
 
     private final String appId;
     private final String libraryPath;
@@ -35,10 +37,14 @@ public class LibraryPlugin {
         this.metaData = metaData;
     }
 
+    public static LibraryPlugin fromApplicationInfo(ApplicationInfo info) {
+        return new LibraryPlugin(info.packageName, info.nativeLibraryDir, info.publicSourceDir, info.metaData);
+    }
+
     public static LibraryPlugin discoverPlugin(Context ctx, String appId){
         try {
             ApplicationInfo info = ctx.getPackageManager().getApplicationInfo(appId, PackageManager.GET_META_DATA);
-            return new LibraryPlugin(appId, info.nativeLibraryDir, info.publicSourceDir, info.metaData);
+            return fromApplicationInfo(info);
         } catch (PackageManager.NameNotFoundException e) {
             Log.i(TAG, "Plugin not installed: " + appId);
             return null;
@@ -46,6 +52,19 @@ public class LibraryPlugin {
             Log.e(TAG, "Plugin discover failed: " + e.getMessage());
             return null;
         }
+    }
+
+    public static List<LibraryPlugin> discoverAllPlugins(Context ctx) {
+        List<LibraryPlugin> plugins = new ArrayList<>();
+        PackageManager pm = ctx.getPackageManager();
+        List<ApplicationInfo> installedApps = pm.getInstalledApplications(PackageManager.GET_META_DATA);
+
+        for (ApplicationInfo info : installedApps) {
+            if (info.metaData != null && info.metaData.containsKey(METADATA_FCL_PLUGIN)) {
+                plugins.add(fromApplicationInfo(info));
+            }
+        }
+        return plugins;
     }
 
     public String getId(){

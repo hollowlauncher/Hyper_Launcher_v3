@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -41,18 +42,21 @@ fun SelectAuthMethodScreen(
             MineButton(
                 text = translatedText(stringResource(R.string.auth_select_microsoft)),
                 onClick = onMicrosoftClick,
+                icon = painterResource(R.drawable.ic_auth_ms),
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(16.dp))
             MineButton(
                 text = translatedText(stringResource(R.string.auth_select_elyby)),
                 onClick = onElyByClick,
+                icon = painterResource(R.drawable.ic_auth_elyby),
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(16.dp))
             MineButton(
                 text = translatedText(stringResource(R.string.auth_select_local)),
                 onClick = onLocalClick,
+                icon = painterResource(R.drawable.ic_px_gamepad),
                 modifier = Modifier.fillMaxWidth()
             )
         }

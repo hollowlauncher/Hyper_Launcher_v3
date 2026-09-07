@@ -145,7 +145,6 @@
         <package android:name="git.mojo.zink"/>
         <package android:name="net.ashmeet.hyperlauncher"/>
         <package android:name="net.ashmeet.hyperlauncher.debug"/>
-        <package android:name="com.ashmeet.hyperplugin" />
         <intent>
             <action android:name="android.intent.action.MAIN" />
         </intent>

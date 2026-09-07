@@ -150,9 +150,6 @@ object LauncherPreferences {
     var PREF_DEVELOPER_OPTIONS = false
 
     @JvmField
-    var PREF_DITCH_HYPER_PLUGIN = false
-
-    @JvmField
     var PREF_RAPID_START = true
 
     @JvmField
@@ -305,7 +302,6 @@ object LauncherPreferences {
         PREF_FULLSCREEN_LAUNCHER = pref.getBoolean("fullscreen_launcher", true)
         PREF_DYNAMIC_ORIENTATION = pref.getBoolean("dynamic_orientation", false)
         PREF_DEVELOPER_OPTIONS = pref.getBoolean("developer_options", false)
-        PREF_DITCH_HYPER_PLUGIN = pref.getBoolean("ditch_hyper_plugin", false)
         PREF_VERIFY_FILES = pref.getBoolean("checkGameFiles", true)
         PREF_RAPID_START = pref.getBoolean("fastStartupCheck", true)
         PREF_FREEDRENO_SYSMEM = pref.getBoolean("freedrenoSysmem", false)
@@ -381,16 +377,6 @@ object LauncherPreferences {
             PREF_DEFAULT_RUNTIME = runtimes[0].name
             pref.edit { putString("defaultRuntime", PREF_DEFAULT_RUNTIME) }
         }
-    }
-
-    @JvmStatic
-    fun isPluginLibraryEnabled(name: String): Boolean {
-        return prefs.getBoolean("pref_plugin_lib_$name", true)
-    }
-
-    @JvmStatic
-    fun setPluginLibraryEnabled(name: String, enabled: Boolean) {
-        prefs.edit { putBoolean("pref_plugin_lib_$name", enabled) }
     }
 
     @JvmStatic

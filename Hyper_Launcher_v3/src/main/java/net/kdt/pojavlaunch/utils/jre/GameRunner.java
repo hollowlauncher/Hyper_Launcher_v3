@@ -311,11 +311,7 @@ public class GameRunner {
         }
 
         javaArgList.addAll(getMoJsonJvmArgs(versionId));
-
         javaArgList.addAll(JREUtils.parseJavaArguments(instance.getLaunchArgs()));
-
-        // Apply Hyper Plugin hooks
-        Tools.applyHyperPluginHooks(activity, javaArgList, versionId);
 
         JREUtils.setEnviroimentForGame(activity, rendererName);
         JREUtils.chdir(instance.getGameDirectory().getAbsolutePath());
@@ -332,6 +328,8 @@ public class GameRunner {
         }
         javaArgList.add("-Dorg.lwjgl.opengl.libname=libGLMojo.so");
         javaArgList.add("-Dorg.lwjgl.freetype.libname="+ Tools.NATIVE_LIB_DIR+"/libfreetype.so");
+
+        Tools.applyHyperPluginHooks(activity, javaArgList, versionId);
 
         activity.runOnUiThread(() -> Toast.makeText(activity, activity.getString(R.string.autoram_info_msg,LauncherPreferences.PREF_RAM_ALLOCATION), Toast.LENGTH_SHORT).show());
 

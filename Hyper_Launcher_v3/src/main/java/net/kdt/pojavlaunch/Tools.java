@@ -85,6 +85,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import net.ashmeet.hyperlauncher.BuildConfig;
@@ -1002,11 +1003,21 @@ public final class Tools {
      * @param versionId The version ID of the game being launched.
      */
     public static void applyHyperPluginHooks(AppCompatActivity activity, List<String> javaArgList, String versionId) {
+        // Resolve MC version for plugin filtering
+        String mcVersion = versionId;
+        try {
+            JVersionList.Version vInfo = getVersionInfo(versionId);
+            if (vInfo.inheritsFrom != null) mcVersion = vInfo.inheritsFrom;
+            else mcVersion = vInfo.id;
+        } catch (Exception e) {
+            Log.w("HyperPlugin", "Failed to resolve MC version for " + versionId, e);
+        }
+
         // 1. Library path setup
         File versionSpecificNativesDir = new File(Tools.DIR_CACHE, "natives/"+versionId);
+        String pluginPaths = NativePluginManager.getRuntimeLibraryPath(mcVersion);
         if(versionSpecificNativesDir.exists()) {
             String dirPath = versionSpecificNativesDir.getAbsolutePath();
-            String pluginPaths = NativePluginManager.getRuntimeLibraryPath();
             String combinedPath = dirPath + ":" + Tools.NATIVE_LIB_DIR;
             if (!pluginPaths.isEmpty()) {
                 combinedPath = pluginPaths + ":" + combinedPath;
@@ -1015,6 +1026,18 @@ public final class Tools {
             javaArgList.add("-Djava.library.path="+combinedPath);
             javaArgList.add("-Djna.boot.library.path="+dirPath);
             javaArgList.add("-Djna.library.path="+combinedPath);
+        } else if (!pluginPaths.isEmpty()) {
+            String combinedPath = pluginPaths + ":" + Tools.NATIVE_LIB_DIR;
+            javaArgList.add("-Djava.library.path="+combinedPath);
+            javaArgList.add("-Djna.library.path="+combinedPath);
+        }
+
+        // Add plugin JVM environment variables
+        Map<String, String> pluginEnv = NativePluginManager.getRuntimeJVMEnv(mcVersion);
+        for (Map.Entry<String, String> entry : pluginEnv.entrySet()) {
+            if (!entry.getKey().equals("HYPERPLUGIN_PATH")) {
+                javaArgList.add("-D" + entry.getKey() + "=" + entry.getValue());
+            }
         }
 
         // 2. Apply MioLibPatcher agent
@@ -1044,11 +1067,10 @@ public final class Tools {
             Log.e("HyperPlugin", "Failed to apply MioLibPatcher agent", t);
         }
 
-        // 3. Prepare natives (ImGui, Zstd, Rapier, PhysX)
+        // 3. Prepare natives (ImGui, Zstd)
         try {
             String nativeLibDir = activity.getApplicationInfo().nativeLibraryDir;
-            String pluginPath = NativePluginManager.getRuntimeJVMEnv().get("HYPERPLUGIN_PATH");
-            File imguiLib = findImguiNative(activity);
+            File imguiLib = findImguiNative(activity, mcVersion);
 
             if (imguiLib != null) {
                 Log.i("HyperPlugin", "Found ImGui native at: " + imguiLib.getAbsolutePath());
@@ -1083,10 +1105,6 @@ public final class Tools {
             }
 
             File zstdLib = new File(nativeLibDir, "libzstd-jni_dh-1.5.7-6.so");
-            if (!zstdLib.exists() && pluginPath != null) {
-                zstdLib = new File(pluginPath, "libzstd-jni_dh-1.5.7-6.so");
-            }
-
             if (zstdLib.exists()) {
                 String zstdLibName = "zstd-jni_dh-1.5.7-6";
                 javaArgList.add("-Dzstd.libname=" + zstdLibName);
@@ -1094,55 +1112,30 @@ public final class Tools {
                 javaArgList.add("-Ddhzstd.libname=" + zstdLibName);
                 javaArgList.add("-Ddhzstd.libpath=" + zstdLib.getParent());
             }
-
-            File rapierLib = new File(nativeLibDir, "libsable_rapier.so");
-            if (!rapierLib.exists()) rapierLib = new File(nativeLibDir, "libPhysXJniBindings_64.so");
-
-            String hyperPluginPath = NativePluginManager.getRuntimeJVMEnv().get("HYPERPLUGIN_PATH");
-            if (!rapierLib.exists() && hyperPluginPath != null) {
-                rapierLib = new File(hyperPluginPath, "libsable_rapier.so");
-                if (!rapierLib.exists()) rapierLib = new File(hyperPluginPath, "libPhysXJniBindings_64.so");
-            }
-
-            if (rapierLib.exists()) {
-                javaArgList.add("-Dsable_rapier_path=" + rapierLib.getAbsolutePath());
-                try {
-                    String physxVersion = "2.3.2";
-                    File physxCacheDir = new File(Tools.DIR_CACHE, "de.fabmax.physx-jni/" + physxVersion);
-                    if (!physxCacheDir.exists() && !physxCacheDir.mkdirs()) {
-                        Log.e("HyperPlugin", "Failed to create PhysX cache directory");
-                    }
-                    File physxCacheFile = new File(physxCacheDir, "libPhysXJniBindings_64.so");
-                    if (!physxCacheFile.exists() || physxCacheFile.length() != rapierLib.length()) {
-                        org.apache.commons.io.FileUtils.copyFile(rapierLib, physxCacheFile);
-                        Log.i("HyperPlugin", "Pre-populated PhysX cache at: " + physxCacheFile.getAbsolutePath());
-                    }
-                } catch (Exception e) {
-                    Log.e("HyperPlugin", "Failed to pre-populate PhysX cache", e);
-                }
-            }
         } catch (Throwable t) {
             Log.e("HyperPlugin", "Failed to prepare natives", t);
         }
-
-        // 4. Load optional plugin libraries
-        NativePluginManager.loadOptionalLibraries(activity);
     }
 
-    private static File findImguiNative(AppCompatActivity activity) {
+    private static File findImguiNative(AppCompatActivity activity, String mcVersion) {
         String nativeLibDir = activity.getApplicationInfo().nativeLibraryDir;
-        String pluginPath = NativePluginManager.getRuntimeJVMEnv().get("HYPERPLUGIN_PATH");
+        String pluginPaths = NativePluginManager.getRuntimeLibraryPath(mcVersion);
         String[] possibleNames = {"libimgui-java.so", "libimgui.so", "libimgui-moulberry-java.so", "libimgui-moulberry92-java.so"};
 
+        // 1. Search in app native library dir
         for (String name : possibleNames) {
             File f = new File(nativeLibDir, name);
             if (f.exists()) return f;
         }
 
-        if (pluginPath != null) {
-            for (String name : possibleNames) {
-                File f = new File(pluginPath, name);
-                if (f.exists()) return f;
+        // 2. Search in plugin paths
+        if (!pluginPaths.isEmpty()) {
+            String[] paths = pluginPaths.split(":");
+            for (String path : paths) {
+                for (String name : possibleNames) {
+                    File f = new File(path, name);
+                    if (f.exists()) return f;
+                }
             }
         }
         return null;

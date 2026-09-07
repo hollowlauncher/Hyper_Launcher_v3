@@ -12,6 +12,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -30,13 +31,14 @@ fun SettingsCard(
     outerShape: Dp = 20.dp,
     innerShape: Dp = 6.dp,
     useSurface: Boolean = false,
+    containerColor: Color? = null,
     content: @Composable ColumnScope.() -> Unit
 ) {
     val topRadius = if (position == CardPosition.TOP || position == CardPosition.SINGLE) outerShape else innerShape
     val bottomRadius = if (position == CardPosition.BOTTOM || position == CardPosition.SINGLE) outerShape else innerShape
 
     val hasBg = LauncherPreferences.PREF_LAUNCHER_BACKGROUND_PATH != null
-    val cardColor = if (useSurface) {
+    val cardColor = containerColor ?: if (useSurface) {
         MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
     } else {
         if (hasBg) MaterialTheme.colorScheme.surface.copy(alpha = 0.3f)

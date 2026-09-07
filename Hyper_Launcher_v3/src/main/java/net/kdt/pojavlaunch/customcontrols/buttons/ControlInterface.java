@@ -116,8 +116,9 @@ public interface ControlInterface extends View.OnLongClickListener, PlatformGrab
     default void setBackground() {
         Drawable drawable = getControlView().getBackground();
         String bitmapTag = getProperties().bitmapTag;
-        if(Tools.isValidString(bitmapTag)) {
-            LayoutBitmaps storage = getControlLayoutParent().getBitmaps();
+        ControlLayout layout = getControlLayoutParent();
+        if(Tools.isValidString(bitmapTag) && layout != null) {
+            LayoutBitmaps storage = layout.getBitmaps();
             Bitmap bgBitmap = storage.getBitmap(getProperties().bitmapTag);
             if(drawable instanceof BitmapDrawable && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 ((BitmapDrawable)drawable).setBitmap(bgBitmap);
@@ -128,7 +129,8 @@ public interface ControlInterface extends View.OnLongClickListener, PlatformGrab
             GradientDrawable gd = drawable instanceof GradientDrawable ?
                     (GradientDrawable) drawable : new GradientDrawable();
             gd.setColor(getProperties().bgColor);
-            gd.setStroke((int) Tools.dpToPx(getProperties().strokeWidth * (getControlLayoutParent().getLayoutScale()/100f)), getProperties().strokeColor);
+            float scale = layout != null ? layout.getLayoutScale() : 100f;
+            gd.setStroke((int) Tools.dpToPx(getProperties().strokeWidth * (scale/100f)), getProperties().strokeColor);
             gd.setCornerRadius(computeCornerRadius(getProperties().cornerRadius));
             drawable = gd;
         }

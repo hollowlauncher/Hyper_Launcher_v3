@@ -1,5 +1,6 @@
 package com.ashmeet.hyperlauncher.screens.layouts.settings
 
+import android.content.SharedPreferences
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
@@ -11,15 +12,13 @@ import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Science
 import androidx.compose.material.icons.filled.SettingsApplications
-import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material.icons.filled.VideogameAsset
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalContext
-import androidx.core.content.edit
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ashmeet.hyperlauncher.screens.layouts.settings.layouts.CardPosition
@@ -28,7 +27,6 @@ import com.ashmeet.hyperlauncher.screens.layouts.settings.layouts.SettingsScreen
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.PreferenceCategory
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SettingsActionItem
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SettingsSwitchItem
-import com.ashmeet.hyperlauncher.utils.Translator
 import com.ashmeet.hyperlauncher.utils.translatedText
 import net.ashmeet.hyperlauncher.R
 import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences
@@ -46,8 +44,17 @@ fun MainSettingsScreen(
     showNotificationRequest: Boolean,
     onNotificationRequestClick: () -> Unit
 ) {
-    var forceEnglish by remember { mutableStateOf(LauncherPreferences.PREF_FORCE_ENGLISH) }
-    val context = LocalContext.current
+    var developerOptionsEnabled by remember { mutableStateOf(LauncherPreferences.PREF_DEVELOPER_OPTIONS) }
+
+    // Listen for preference changes to recompose when developer options are unlocked
+    LaunchedEffect(Unit) {
+        val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+            if (key == "developer_options") {
+                developerOptionsEnabled = LauncherPreferences.prefs.getBoolean("developer_options", false)
+            }
+        }
+        LauncherPreferences.prefs.registerOnSharedPreferenceChangeListener(listener)
+    }
 
     SettingsScreenWrapper(
         title = translatedText(stringResource(R.string.mcl_options)),
@@ -130,28 +137,11 @@ fun MainSettingsScreen(
             }
         }
 
-        PreferenceCategory(title = translatedText(stringResource(R.string.preference_category_miscellaneous)))
+        if (showNotificationRequest) {
+            PreferenceCategory(title = translatedText(stringResource(R.string.preference_category_miscellaneous)))
 
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            SettingsCard(position = if (showNotificationRequest) CardPosition.TOP else CardPosition.SINGLE, useSurface = true) {
-                SettingsSwitchItem(
-                    title = translatedText(stringResource(R.string.preference_force_english_title)),
-                    summary = translatedText(stringResource(R.string.preference_force_english_description)),
-                    icon = Icons.Default.Translate,
-                    checked = forceEnglish,
-                    onCheckedChange = {
-                        forceEnglish = it
-                        LauncherPreferences.prefs.edit { putBoolean("force_english", it) }
-                        LauncherPreferences.loadPreferences(context)
-                        if (!it) {
-                            Translator.prefetchTranslations(context)
-                        }
-                    }
-                )
-            }
-
-            if (showNotificationRequest) {
-                SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                SettingsCard(position = CardPosition.SINGLE, useSurface = true) {
                     SettingsActionItem(
                         title = translatedText(stringResource(R.string.preference_ask_for_notification_title)),
                         summary = translatedText(stringResource(R.string.preference_ask_for_notification_description)),

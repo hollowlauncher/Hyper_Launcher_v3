@@ -12,6 +12,7 @@ dependencies {
 }
 
 jar {
+    archiveFileName = "forge_installer.jar"
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }

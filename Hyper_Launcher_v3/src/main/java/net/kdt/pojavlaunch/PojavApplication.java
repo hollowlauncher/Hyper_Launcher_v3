@@ -91,7 +91,6 @@ public class PojavApplication extends Application {
 
 			Tools.DEVICE_ARCHITECTURE = Architecture.getDeviceArchitecture();
 			NativePluginManager.discoverAarPlugins(this);
-			NativePluginManager.discoverHyperPluginBundle(this);
 			//Force x86 lib directory for Asus x86 based zenfones
 			if(Architecture.isx86Device() && Architecture.is32BitsDevice()){
 				String originalJNIDirectory = getApplicationInfo().nativeLibraryDir;

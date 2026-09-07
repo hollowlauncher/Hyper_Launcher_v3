@@ -20,8 +20,7 @@ class LauncherPreferenceDeveloperFragment : Fragment() {
             setContent {
                 PojavTheme {
                     DeveloperSettingsScreen(
-                        onBack = { Tools.removeCurrentFragment(requireActivity()) },
-                        onNavigateToPlugins = { Tools.swapFragment(requireActivity(), LauncherPreferencePluginFragment::class.java, null, null) }
+                        onBack = { Tools.removeCurrentFragment(requireActivity()) }
                     )
                 }
             }

@@ -13,6 +13,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -40,6 +41,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -52,6 +54,7 @@ fun MineButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    icon: Painter? = null,
     height: Dp = 48.dp,
     shape: Shape = CircleShape,
     isUppercase: Boolean = false
@@ -98,10 +101,24 @@ fun MineButton(
         ),
         contentPadding = PaddingValues(horizontal = 24.dp, vertical = 0.dp)
     ) {
-        Text(
-            text = if (isUppercase) text.uppercase() else text,
-            fontWeight = if (isCustomTheme) FontWeight.Bold else FontWeight.Normal
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            if (icon != null) {
+                Icon(
+                    painter = icon,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp),
+                    tint = Color.Unspecified
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+            }
+            Text(
+                text = if (isUppercase) text.uppercase() else text,
+                fontWeight = if (isCustomTheme) FontWeight.Bold else FontWeight.Normal
+            )
+        }
     }
 }
 

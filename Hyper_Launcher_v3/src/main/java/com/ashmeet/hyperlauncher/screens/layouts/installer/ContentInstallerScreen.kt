@@ -277,8 +277,9 @@ fun ContentInstallerScreen(
                         } else {
                             ScrollableTabRow(
                                 selectedTabIndex = ContentInstallerType.entries.indexOf(selectedType),
+                                modifier = Modifier.fillMaxWidth(),
                                 containerColor = Color.Transparent,
-                                edgePadding = 16.dp,
+                                edgePadding = 0.dp,
                                 divider = {},
                                 indicator = { tabPositions ->
                                     val index = ContentInstallerType.entries.indexOf(selectedType)
