@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.appcompat.app.AlertDialog;
 
 
 import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences;
@@ -31,6 +32,7 @@ import net.kdt.pojavlaunch.game.platform.Platform;
 import net.kdt.pojavlaunch.game.platform.backend.AWTBackend;
 import net.kdt.pojavlaunch.multirt.MultiRTUtils;
 import net.kdt.pojavlaunch.multirt.Runtime;
+
 import net.kdt.pojavlaunch.utils.JREUtils;
 import net.kdt.pojavlaunch.utils.MathUtils;
 import net.kdt.pojavlaunch.utils.jre.JavaRunner;
@@ -49,7 +51,6 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
-
 
 public class AWTActivity extends BaseActivity implements View.OnTouchListener {
 
@@ -269,7 +270,7 @@ public class AWTActivity extends BaseActivity implements View.OnTouchListener {
     }
 
     private void finalErrorDialog(CharSequence msg) {
-        runOnUiThread(()-> new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+        runOnUiThread(()-> new AlertDialog.Builder(this)
                 .setTitle(R.string.global_error)
                 .setMessage(msg)
                 .setPositiveButton(android.R.string.ok, (d,w)->this.finish())
@@ -287,7 +288,7 @@ public class AWTActivity extends BaseActivity implements View.OnTouchListener {
 
 
 
-    @SuppressLint({"ClickableViewAccessibility", "NonConstantResourceId"})
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouch(View v, MotionEvent e) {
         boolean isDown;
@@ -304,12 +305,12 @@ public class AWTActivity extends BaseActivity implements View.OnTouchListener {
             default:
                 return false;
         }
-        
+
         switch (v.getId()) {
             case R.id.installmod_mouse_pri:
                 Platform.PLATFORM.sendMouseEvent(MotionEvent.BUTTON_PRIMARY, isDown ? 1 : 0, CallbackBridge.getCurrentMods());
                 break;
-                
+
             case R.id.installmod_mouse_sec:
                 Platform.PLATFORM.sendMouseEvent(MotionEvent.BUTTON_SECONDARY, isDown ? 1 : 0, CallbackBridge.getCurrentMods());
                 break;
@@ -374,7 +375,7 @@ public class AWTActivity extends BaseActivity implements View.OnTouchListener {
             if(javaArgs != null) {
                 javaArgList.addAll(javaArgs);
             }
-            
+
             if (LauncherPreferences.PREF_JAVA_SANDBOX && !mIsTrusted) {
                 Collections.reverse(javaArgList);
                 javaArgList.add("-Xbootclasspath/a:" + Tools.DIR_DATA + "/security/pro-grade.jar");
