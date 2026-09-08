@@ -36,8 +36,6 @@ target_link_libraries(SDL3-shared PRIVATE mojoexec)
 
 project("MojoLauncher")
 
-find_package(bytehook REQUIRED CONFIG)
-
 add_library(pojavexec SHARED
         affinity.c
         jvm_hooks/emui_iterator_fix_hook.c
@@ -50,12 +48,10 @@ add_library(pojavexec SHARED
         utils.c
         stdio_is.c
         minibridge.c
-        native_hooks/exit_hook.c
-        native_hooks/chmod_hook.c
 )
 
 target_include_directories(pojavexec PRIVATE .)
-target_link_libraries(pojavexec PRIVATE log mojoexec bytehook::bytehook)
+target_link_libraries(pojavexec PRIVATE log mojoexec)
 
 add_library(pojavexec_awt SHARED
 		awt/awt.c

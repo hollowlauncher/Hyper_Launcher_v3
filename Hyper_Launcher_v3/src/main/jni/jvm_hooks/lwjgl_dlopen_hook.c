@@ -34,10 +34,7 @@ static jlong ndlopen_bugfix(__attribute__((unused)) JNIEnv *env,
     // Load renderer using egl_acquire
     if(strstr(filename, "libGLMojo.so") == filename) {
         printf("LWJGL linkerhook: replacing OpenGL with renderspec driver\n");
-        if (mojoexec_renderspec.force_gles_context)
-            return (jlong) mojoexec_acq_gles_handle();
-        else
-            return (jlong) mojoexec_acq_gl_handle();
+        return (jlong) mojoexec_acq_egl_handle();
     }
 
     // This hook also serves the task of mitigating a bug: the idea is that since, on Android 10 and

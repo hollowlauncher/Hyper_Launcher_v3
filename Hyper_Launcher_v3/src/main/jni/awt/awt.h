@@ -14,8 +14,8 @@
 #define EVENT_TYPE_KEY 1005
 #define EVENT_TYPE_MOUSE_BUTTON 1006
 
-#define CANVAS_WIDTH 720
-#define CANVAS_HEIGHT 600
+#define CANVAS_WIDTH 1024
+#define CANVAS_HEIGHT 768
 
 extern JavaVM* androidVM;
 extern JavaVM* runtimeVM;

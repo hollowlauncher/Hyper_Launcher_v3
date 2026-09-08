@@ -8,7 +8,7 @@
 #include <bytehook.h>
 #include <dlfcn.h>
 #include <stdlib.h>
-#include <android/api-level.h>
+#include "stdio_is.h"
 
 #define TAG __FILE_NAME__
 #include <log.h>

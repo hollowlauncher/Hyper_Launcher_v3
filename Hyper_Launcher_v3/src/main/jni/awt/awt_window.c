@@ -203,29 +203,3 @@ Java_net_kdt_pojavlaunch_awt_AWTBridge_nativeResize(JNIEnv *env, jclass clazz,
                                                                        jint bridge_height) {
     update_dims(bridge_width, bridge_height);
 }
-
-JNIEXPORT jboolean JNICALL
-Java_net_kdt_pojavlaunch_utils_JREUtils_renderAWTScreenFrame(JNIEnv *env, jclass clazz, jobject tempBuffer) {
-    if (!isVmConnected) return JNI_FALSE;
-
-    JNIEnv *runtimeEnv;
-    if ((*runtimeVM)->GetEnv(runtimeVM, (void**)&runtimeEnv, JNI_VERSION_1_6) == JNI_EDETACHED) {
-        if ((*runtimeVM)->AttachCurrentThreadAsDaemon(runtimeVM, &runtimeEnv, NULL) != JNI_OK) {
-            return JNI_FALSE;
-        }
-    }
-
-    setup_jni(runtimeEnv);
-
-    jintArray array;
-    void* buf = acquire_cacio_screenbuffer(runtimeEnv, &array);
-    if (!buf) return JNI_FALSE;
-
-    void* dest = (*env)->GetDirectBufferAddress(env, tempBuffer);
-    if (dest) {
-        memcpy(dest, buf, CANVAS_WIDTH * CANVAS_HEIGHT * sizeof(jint));
-    }
-
-    release_cacio_screenbuffer(runtimeEnv, array, buf);
-    return JNI_TRUE;
-}
