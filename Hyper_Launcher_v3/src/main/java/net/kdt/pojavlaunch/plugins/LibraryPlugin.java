@@ -75,10 +75,6 @@ public class LibraryPlugin {
         return libraryPath;
     }
 
-    public String getApkPath() {
-        return apkPath;
-    }
-
     public Bundle getMetaData() {
         return metaData != null ? metaData : new Bundle();
     }

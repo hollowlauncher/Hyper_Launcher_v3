@@ -49,7 +49,6 @@ fun DeveloperSettingsScreen(
         addTopGap = true
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            // Warning header
             SettingsCard(
                 position = CardPosition.SINGLE,
                 containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.7f)

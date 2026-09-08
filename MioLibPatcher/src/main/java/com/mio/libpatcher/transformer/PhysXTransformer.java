@@ -39,12 +39,12 @@ public class PhysXTransformer implements BaseTransformer {
                             && (m.getMethodName().equals("load") || m.getMethodName().equals("loadLibrary"))) {
                         m.replace(
                                 "{ " +
-                                        "   String libPath = java.lang.System.getProperty(\"sable_rapier_path\");" +
+                                        "   String libPath = java.lang.System.getProperty(\"miolibpatcher.physx_redirect_path\");" +
                                         "   if (libPath != null) {" +
                                         "       java.lang.System.out.println(\"[MioLibPatcher] PhysX load intercepted. Redirecting to: \" + libPath);" +
                                         "       java.lang.System.load(new java.io.File(libPath).getAbsolutePath());" +
                                         "   } else {" +
-                                        "       java.lang.System.out.println(\"[MioLibPatcher] PhysX load NOT intercepted (sable_rapier_path is null)\");" +
+                                        "       java.lang.System.out.println(\"[MioLibPatcher] PhysX load NOT intercepted (miolibpatcher.physx_redirect_path is null)\");" +
                                         "       $_ = $proceed($$);" +
                                         "   }" +
                                         "}"

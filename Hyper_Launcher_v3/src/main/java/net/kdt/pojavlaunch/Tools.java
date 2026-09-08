@@ -1,5 +1,7 @@
 package net.kdt.pojavlaunch;
 
+import com.ashmeet.hyperlauncher.plugin.HyperPluginManager;
+
 import static android.os.Build.VERSION.SDK_INT;
 import static net.kdt.pojavlaunch.PojavApplication.sExecutorService;
 
@@ -1001,143 +1003,9 @@ public final class Tools {
      * @param activity The activity context.
      * @param javaArgList The list of JVM arguments to append to.
      * @param versionId The version ID of the game being launched.
+     * @param gameDir The game directory.
      */
-    public static void applyHyperPluginHooks(AppCompatActivity activity, List<String> javaArgList, String versionId) {
-        // Resolve MC version for plugin filtering
-        String mcVersion = versionId;
-        try {
-            JVersionList.Version vInfo = getVersionInfo(versionId);
-            if (vInfo.inheritsFrom != null) mcVersion = vInfo.inheritsFrom;
-            else mcVersion = vInfo.id;
-        } catch (Exception e) {
-            Log.w("HyperPlugin", "Failed to resolve MC version for " + versionId, e);
-        }
-
-        // 1. Library path setup
-        File versionSpecificNativesDir = new File(Tools.DIR_CACHE, "natives/"+versionId);
-        String pluginPaths = NativePluginManager.getRuntimeLibraryPath(mcVersion);
-        if(versionSpecificNativesDir.exists()) {
-            String dirPath = versionSpecificNativesDir.getAbsolutePath();
-            String combinedPath = dirPath + ":" + Tools.NATIVE_LIB_DIR;
-            if (!pluginPaths.isEmpty()) {
-                combinedPath = pluginPaths + ":" + combinedPath;
-            }
-
-            javaArgList.add("-Djava.library.path="+combinedPath);
-            javaArgList.add("-Djna.boot.library.path="+dirPath);
-            javaArgList.add("-Djna.library.path="+combinedPath);
-        } else if (!pluginPaths.isEmpty()) {
-            String combinedPath = pluginPaths + ":" + Tools.NATIVE_LIB_DIR;
-            javaArgList.add("-Djava.library.path="+combinedPath);
-            javaArgList.add("-Djna.library.path="+combinedPath);
-        }
-
-        // Add plugin JVM environment variables
-        Map<String, String> pluginEnv = NativePluginManager.getRuntimeJVMEnv(mcVersion);
-        for (Map.Entry<String, String> entry : pluginEnv.entrySet()) {
-            if (!entry.getKey().equals("HYPERPLUGIN_PATH")) {
-                javaArgList.add("-D" + entry.getKey() + "=" + entry.getValue());
-            }
-        }
-
-        // 2. Apply MioLibPatcher agent
-        try {
-            String patcherPath = Tools.DIR_DATA + "/MioLibPatcher/MioLibPatcher.jar";
-            File patcherJar = new File(patcherPath);
-            Log.i("HyperPlugin", "Checking for MioLibPatcher at: " + patcherPath);
-
-            if (!patcherJar.exists() || patcherJar.length() == 0) {
-                patcherPath = Tools.DIR_DATA + "/launcher/MioLibPatcher.jar";
-                patcherJar = new File(patcherPath);
-                Log.i("HyperPlugin", "Checking for MioLibPatcher at alternative path: " + patcherPath);
-            }
-
-            if (patcherJar.exists() && patcherJar.length() > 0) {
-                String agentArg = "-javaagent:" + patcherJar.getAbsolutePath();
-                javaArgList.add(agentArg);
-                Log.i("HyperPlugin", "SUCCESS: Applied MioLibPatcher agent: " + agentArg);
-            } else {
-                Log.e("HyperPlugin", "CRITICAL ERROR: MioLibPatcher.jar NOT FOUND or EMPTY! Axiom will crash.");
-                File launcherDir = new File(Tools.DIR_DATA, "launcher");
-                if (launcherDir.exists()) {
-                    Log.i("HyperPlugin", "Files in " + launcherDir.getAbsolutePath() + ": " + Arrays.toString(launcherDir.list()));
-                }
-            }
-        } catch (Throwable t) {
-            Log.e("HyperPlugin", "Failed to apply MioLibPatcher agent", t);
-        }
-
-        // 3. Prepare natives (ImGui, Zstd)
-        try {
-            String nativeLibDir = activity.getApplicationInfo().nativeLibraryDir;
-            File imguiLib = findImguiNative(activity, mcVersion);
-
-            if (imguiLib != null) {
-                Log.i("HyperPlugin", "Found ImGui native at: " + imguiLib.getAbsolutePath());
-                File imguiDir = new File(Tools.DIR_CACHE, "imgui_natives");
-                if (!imguiDir.exists() && !imguiDir.mkdirs()) {
-                    Log.e("HyperPlugin", "Failed to create ImGui natives directory");
-                }
-
-                String[] forkNames = {"libimgui-moulberry92-java64.so", "libimgui-moulberry-java64.so", "libimgui-java64.so"};
-                for (String forkName : forkNames) {
-                    File forkLib = new File(imguiDir, forkName);
-                    if (!forkLib.exists() || forkLib.length() != imguiLib.length()) {
-                        org.apache.commons.io.FileUtils.copyFile(imguiLib, forkLib);
-                    }
-                }
-
-                String libName = imguiLib.getName();
-                javaArgList.add("-Dimgui.library.path=" + imguiLib.getParent());
-                javaArgList.add("-Dimgui.library.name=" + libName);
-                javaArgList.add("-Dimgui.moulberry.library.path=" + imguiLib.getParent());
-                javaArgList.add("-Dimgui.moulberry.library.name=" + libName);
-                javaArgList.add("-Dimgui.moulberry92.library.path=" + imguiLib.getParent());
-                javaArgList.add("-Dimgui.moulberry92.library.name=" + libName);
-                javaArgList.add("-Dimgui.moulberry.native.path=" + imguiDir.getAbsolutePath());
-                javaArgList.add("-Dimgui.moulberry92.native.path=" + imguiDir.getAbsolutePath());
-            } else {
-                Log.w("HyperPlugin", "ImGui native library not found");
-                javaArgList.add("-Dimgui.library.path=" + nativeLibDir);
-                javaArgList.add("-Dimgui.library.name=libimgui-java.so");
-                javaArgList.add("-Dimgui.moulberry92.library.path=" + nativeLibDir);
-                javaArgList.add("-Dimgui.moulberry92.library.name=libimgui-java.so");
-            }
-
-            File zstdLib = new File(nativeLibDir, "libzstd-jni_dh-1.5.7-6.so");
-            if (zstdLib.exists()) {
-                String zstdLibName = "zstd-jni_dh-1.5.7-6";
-                javaArgList.add("-Dzstd.libname=" + zstdLibName);
-                javaArgList.add("-Dzstd.libpath=" + zstdLib.getParent());
-                javaArgList.add("-Ddhzstd.libname=" + zstdLibName);
-                javaArgList.add("-Ddhzstd.libpath=" + zstdLib.getParent());
-            }
-        } catch (Throwable t) {
-            Log.e("HyperPlugin", "Failed to prepare natives", t);
-        }
-    }
-
-    private static File findImguiNative(AppCompatActivity activity, String mcVersion) {
-        String nativeLibDir = activity.getApplicationInfo().nativeLibraryDir;
-        String pluginPaths = NativePluginManager.getRuntimeLibraryPath(mcVersion);
-        String[] possibleNames = {"libimgui-java.so", "libimgui.so", "libimgui-moulberry-java.so", "libimgui-moulberry92-java.so"};
-
-        // 1. Search in app native library dir
-        for (String name : possibleNames) {
-            File f = new File(nativeLibDir, name);
-            if (f.exists()) return f;
-        }
-
-        // 2. Search in plugin paths
-        if (!pluginPaths.isEmpty()) {
-            String[] paths = pluginPaths.split(":");
-            for (String path : paths) {
-                for (String name : possibleNames) {
-                    File f = new File(path, name);
-                    if (f.exists()) return f;
-                }
-            }
-        }
-        return null;
+    public static void applyHyperPluginHooks(AppCompatActivity activity, List<String> javaArgList, String versionId, File gameDir) {
+        HyperPluginManager.applyHooks(activity, javaArgList, versionId, gameDir);
     }
 }

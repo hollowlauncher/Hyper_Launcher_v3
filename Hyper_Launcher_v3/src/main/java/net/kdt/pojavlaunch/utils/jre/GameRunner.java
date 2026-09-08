@@ -329,7 +329,7 @@ public class GameRunner {
         javaArgList.add("-Dorg.lwjgl.opengl.libname=libGLMojo.so");
         javaArgList.add("-Dorg.lwjgl.freetype.libname="+ Tools.NATIVE_LIB_DIR+"/libfreetype.so");
 
-        Tools.applyHyperPluginHooks(activity, javaArgList, versionId);
+        Tools.applyHyperPluginHooks(activity, javaArgList, versionId, instance.getGameDirectory());
 
         activity.runOnUiThread(() -> Toast.makeText(activity, activity.getString(R.string.autoram_info_msg,LauncherPreferences.PREF_RAM_ALLOCATION), Toast.LENGTH_SHORT).show());
 
