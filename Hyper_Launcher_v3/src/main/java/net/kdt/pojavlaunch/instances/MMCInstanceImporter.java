@@ -1,7 +1,11 @@
 package net.kdt.pojavlaunch.instances;
 
 import android.util.Log;
-import net.kdt.pojavlaunch.modloaders.modpacks.api.ModLoader;
+import net.kdt.pojavlaunch.modloaders.FabriclikeUtils;
+import net.kdt.pojavlaunch.modloaders.ForgelikeUtils;
+import net.kdt.pojavlaunch.modloaders.modpacks.api.modloader.FabriclikeLoaderInstaller;
+import net.kdt.pojavlaunch.modloaders.modpacks.api.modloader.ForgelikeLoaderInstaller;
+import net.kdt.pojavlaunch.modloaders.modpacks.api.modloader.LoaderInstaller;
 import net.kdt.pojavlaunch.utils.JSONUtils;
 import net.kdt.pojavlaunch.utils.ZipUtils;
 import java.io.BufferedReader;
@@ -53,7 +57,7 @@ public class MMCInstanceImporter {
             if (instanceName == null || instanceName.isEmpty()) instanceName = suggestedName;
 
             String mcVersion = null;
-            ModLoader modLoader = null;
+            LoaderInstaller loaderInstaller = null;
 
             ZipEntry packEntry = zip.getEntry(rootPath + "mmc-pack.json");
             if (packEntry != null) {
@@ -63,11 +67,11 @@ public class MMCInstanceImporter {
                         if ("net.minecraft".equals(comp.uid)) {
                             mcVersion = comp.version;
                         } else if ("net.fabricmc.fabric-loader".equals(comp.uid)) {
-                            modLoader = new ModLoader(ModLoader.MOD_LOADER_FABRIC, comp.version, mcVersion);
+                            loaderInstaller = new FabriclikeLoaderInstaller(FabriclikeUtils.FABRIC_UTILS, mcVersion, comp.version);
                         } else if ("net.minecraftforge".equals(comp.uid)) {
-                            modLoader = new ModLoader(ModLoader.MOD_LOADER_FORGE, comp.version, mcVersion);
+                            loaderInstaller = new ForgelikeLoaderInstaller(ForgelikeUtils.FORGE_UTILS, mcVersion, comp.version);
                         } else if ("org.quiltmc.quilt-loader".equals(comp.uid)) {
-                            modLoader = new ModLoader(ModLoader.MOD_LOADER_QUILT, comp.version, mcVersion);
+                            loaderInstaller = new FabriclikeLoaderInstaller(FabriclikeUtils.QUILT_UTILS, mcVersion, comp.version);
                         }
                     }
                 }
@@ -80,12 +84,12 @@ public class MMCInstanceImporter {
             }
 
             final String finalMcVersion = mcVersion;
-            final ModLoader finalModLoader = modLoader;
+            final LoaderInstaller finalLoaderInstaller = loaderInstaller;
             final String finalName = instanceName;
 
             Instance instance = Instances.createInstance(i -> {
                 i.name = finalName;
-                i.versionId = finalModLoader != null ? finalModLoader.getVersionId() : finalMcVersion;
+                i.versionId = finalLoaderInstaller != null ? finalLoaderInstaller.getVersionId() : finalMcVersion;
             }, "mmc");
 
             // Extract game files

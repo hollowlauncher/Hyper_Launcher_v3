@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 import net.kdt.pojavlaunch.PojavApplication;
 import net.kdt.pojavlaunch.Tools;
+import net.kdt.pojavlaunch.modloaders.modpacks.api.modloader.LoaderInstaller;
 import net.kdt.pojavlaunch.modloaders.modpacks.models.Constants;
 import net.kdt.pojavlaunch.modloaders.modpacks.models.ModDetail;
 import net.kdt.pojavlaunch.modloaders.modpacks.models.ModItem;
@@ -121,11 +122,11 @@ public class CommonApi implements ModpackApi {
     }
 
     @Override
-    public ModLoader installModpack(ModDetail modDetail, int selectedVersion) throws IOException {
+    public LoaderInstaller installModpack(ModDetail modDetail, int selectedVersion) throws IOException {
         return getModpackApi(modDetail.apiSource).installModpack(modDetail, selectedVersion);
     }
 
-    public ModLoader installLocalModpack(String modpackName, File modpackFile, String icon) throws IOException {
+    public LoaderInstaller installLocalModpack(String modpackName, File modpackFile, String icon) throws IOException {
         short s = checkModpack(modpackFile);
         switch (s) {
             case PACK_MODRINTH:

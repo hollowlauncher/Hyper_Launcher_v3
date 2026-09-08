@@ -8,6 +8,7 @@ import com.kdt.mcgui.ProgressLayout;
 import net.kdt.pojavlaunch.PojavApplication;
 import net.ashmeet.hyperlauncher.R;
 import net.kdt.pojavlaunch.Tools;
+import net.kdt.pojavlaunch.modloaders.modpacks.api.modloader.LoaderInstaller;
 import net.kdt.pojavlaunch.modloaders.modpacks.models.ModDetail;
 import net.kdt.pojavlaunch.modloaders.modpacks.models.ModItem;
 import net.kdt.pojavlaunch.modloaders.modpacks.models.SearchFilters;
@@ -27,14 +28,6 @@ public interface ModpackApi {
      * @return the list of mod items from specified offset
      */
     SearchResult searchMod(SearchFilters searchFilters, SearchResult previousPageResult);
-
-    /**
-     * @param searchFilters Filters
-     * @return A list of mod items
-     */
-    default SearchResult searchMod(SearchFilters searchFilters) {
-        return searchMod(searchFilters, null);
-    }
 
     /**
      * Fetch the mod details
@@ -61,7 +54,7 @@ public interface ModpackApi {
         });
     }
 
-    ModLoader installLocalModpack(String modpackName, File modpackFile, String icon) throws IOException;
+    LoaderInstaller installLocalModpack(String modpackName, File modpackFile, String icon) throws IOException;
 
     /**
      * Install the mod(pack).
@@ -70,5 +63,5 @@ public interface ModpackApi {
      * @param modDetail The mod detail data
      * @param selectedVersion The selected version
      */
-    ModLoader installModpack(ModDetail modDetail, int selectedVersion) throws IOException;
+    LoaderInstaller installModpack(ModDetail modDetail, int selectedVersion) throws IOException;
 }
