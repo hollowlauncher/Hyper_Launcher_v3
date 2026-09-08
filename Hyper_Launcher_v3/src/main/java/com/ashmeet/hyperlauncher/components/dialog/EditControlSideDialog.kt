@@ -53,6 +53,7 @@ import net.kdt.pojavlaunch.customcontrols.ControlJoystickData
 import net.kdt.pojavlaunch.customcontrols.buttons.ControlDrawer
 import net.kdt.pojavlaunch.customcontrols.buttons.ControlInterface
 import net.kdt.pojavlaunch.utils.CropperUtils
+import net.kdt.pojavlaunch.utils.KeycodeUtils
 import kotlin.math.abs
 import androidx.compose.ui.graphics.Color as ComposeColor
 
@@ -242,7 +243,7 @@ private fun EditControlContent(
                 color = MaterialTheme.colorScheme.primary
             )
             val specialArray = remember { ControlData.buildSpecialButtonArray() }
-            val keyNames = remember { EfficientAndroidLWJGLKeycode.generateKeyName() }
+            val keyNames = remember { KeycodeUtils.generateKeyName() }
             val allKeyNames = remember { specialArray + keyNames }
 
             properties.keycodes.forEachIndexed { index, keycode ->
@@ -250,7 +251,7 @@ private fun EditControlContent(
                 val selectedIndex = if (keycode < 0) {
                     keycode + specialArray.size
                 } else {
-                    EfficientAndroidLWJGLKeycode.getIndexByValue(keycode) + specialArray.size
+                    KeycodeUtils.getIndexByValue(keycode) + specialArray.size
                 }
 
                 Box {
@@ -274,9 +275,9 @@ private fun EditControlContent(
                                     val newKeycode = if (i < specialArray.size) {
                                         i - specialArray.size
                                     } else {
-                                        EfficientAndroidLWJGLKeycode.getValueByIndex(i - specialArray.size)
+                                        KeycodeUtils.getValueByIndex(i - specialArray.size)
                                     }
-                                    properties.keycodes[index] = newKeycode.toInt()
+                                    properties.keycodes[index] = newKeycode
                                     button.updateProperties()
                                     expanded = false
                                 }
@@ -322,9 +323,8 @@ private fun EditControlContent(
         }
 
         if (isJoystick) {
-            val joystickData = properties as ControlJoystickData
-            var forwardLock by remember(joystickData) { mutableStateOf(joystickData.forwardLock) }
-            var absolute by remember(joystickData) { mutableStateOf(joystickData.absolute) }
+            var forwardLock by remember(properties) { mutableStateOf(properties.forwardLock) }
+            var absolute by remember(properties) { mutableStateOf(properties.absolute) }
 
             SettingsCard(position = CardPosition.TOP, useSurface = true) {
                 SettingsSwitchItem(
