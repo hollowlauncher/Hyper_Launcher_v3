@@ -46,7 +46,6 @@ import com.ashmeet.hyperlauncher.theme.PojavTheme
 import com.kdt.SideDialogView
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.CustomControlsActivity
-import net.kdt.pojavlaunch.EfficientAndroidLWJGLKeycode
 import net.kdt.pojavlaunch.Tools
 import net.kdt.pojavlaunch.colorselector.ColorSelectorContent
 import net.kdt.pojavlaunch.customcontrols.ControlData
