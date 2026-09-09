@@ -57,7 +57,8 @@ fun SelectAuthMethodScreen(
                 text = translatedText(stringResource(R.string.auth_select_local)),
                 onClick = onLocalClick,
                 icon = painterResource(R.drawable.ic_px_gamepad),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                tintIcon = true
             )
         }
     }

@@ -56,7 +56,8 @@ fun MineButton(
     icon: Painter? = null,
     height: Dp = 48.dp,
     shape: Shape = CircleShape,
-    isUppercase: Boolean = false
+    isUppercase: Boolean = false,
+    tintIcon: Boolean = false
 ) {
     val isCustomTheme = remember { LauncherPreferences.PREF_CUSTOM_THEME }
     val primaryColor = MaterialTheme.colorScheme.primary
@@ -109,7 +110,7 @@ fun MineButton(
                     painter = icon,
                     contentDescription = null,
                     modifier = Modifier.size(20.dp),
-                    tint = Color.Unspecified
+                    tint = if (tintIcon) androidx.compose.material3.LocalContentColor.current else Color.Unspecified
                 )
                 Spacer(modifier = Modifier.width(8.dp))
             }
