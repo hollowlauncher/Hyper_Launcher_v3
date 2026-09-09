@@ -6,7 +6,7 @@ import android.view.Surface;
 
 import net.kdt.pojavlaunch.game.GameView;
 import net.kdt.pojavlaunch.game.platform.Platform;
-import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences;
+import com.ashmeet.hyperlauncher.utils.LauncherPreferences;
 
 import git.mojo.sdl.SDL;
 import git.mojo.sdl.SDLActivity;

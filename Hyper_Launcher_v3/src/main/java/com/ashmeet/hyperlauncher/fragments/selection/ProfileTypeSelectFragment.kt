@@ -21,16 +21,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import com.ashmeet.hyperlauncher.components.MineButton
-import com.ashmeet.hyperlauncher.fragments.BTAInstallFragment
-import com.ashmeet.hyperlauncher.fragments.ContentInstallerFragment
-import com.ashmeet.hyperlauncher.fragments.FabricInstallFragment
-import com.ashmeet.hyperlauncher.fragments.ForgeInstallFragment
-import com.ashmeet.hyperlauncher.fragments.InstanceEditorFragment
-import com.ashmeet.hyperlauncher.fragments.LegacyFabricInstallFragment
-import com.ashmeet.hyperlauncher.fragments.NeoforgeInstallFragment
-import com.ashmeet.hyperlauncher.fragments.OptiFineInstallFragment
-import com.ashmeet.hyperlauncher.fragments.QuiltInstallFragment
-import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences
+import com.ashmeet.hyperlauncher.fragments.modloader.BTAInstallFragment
+import com.ashmeet.hyperlauncher.fragments.installer.ContentInstallerFragment
+import com.ashmeet.hyperlauncher.fragments.modloader.FabricInstallFragment
+import com.ashmeet.hyperlauncher.fragments.modloader.ForgeInstallFragment
+import com.ashmeet.hyperlauncher.fragments.instances.InstanceEditorFragment
+import com.ashmeet.hyperlauncher.fragments.modloader.LegacyFabricInstallFragment
+import com.ashmeet.hyperlauncher.fragments.modloader.NeoforgeInstallFragment
+import com.ashmeet.hyperlauncher.fragments.modloader.OptiFineInstallFragment
+import com.ashmeet.hyperlauncher.fragments.modloader.QuiltInstallFragment
+import com.ashmeet.hyperlauncher.utils.LauncherPreferences
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.Tools
@@ -63,7 +63,7 @@ class ProfileTypeSelectFragment : Fragment() {
                                     Tools.swapFragment(
                                         requireActivity(),
                                         InstanceEditorFragment::class.java,
-                                        InstanceEditorFragment.Companion.TAG,
+                                        InstanceEditorFragment.TAG,
                                         Bundle(1)
                                     )
                                 } catch (e: IOException) {
@@ -74,7 +74,7 @@ class ProfileTypeSelectFragment : Fragment() {
                                 Tools.swapFragment(
                                     requireActivity(),
                                     OptiFineInstallFragment::class.java,
-                                    OptiFineInstallFragment.Companion.TAG,
+                                    OptiFineInstallFragment.TAG,
                                     null
                                 )
                             },
@@ -82,7 +82,7 @@ class ProfileTypeSelectFragment : Fragment() {
                                 Tools.swapFragment(
                                     requireActivity(),
                                     FabricInstallFragment::class.java,
-                                    FabricInstallFragment.Companion.TAG,
+                                    FabricInstallFragment.TAG,
                                     null
                                 )
                             },
@@ -90,7 +90,7 @@ class ProfileTypeSelectFragment : Fragment() {
                                 Tools.swapFragment(
                                     requireActivity(),
                                     ForgeInstallFragment::class.java,
-                                    ForgeInstallFragment.Companion.TAG,
+                                    ForgeInstallFragment.TAG,
                                     null
                                 )
                             },
@@ -102,7 +102,7 @@ class ProfileTypeSelectFragment : Fragment() {
                                 Tools.swapFragment(
                                     requireActivity(),
                                     ContentInstallerFragment::class.java,
-                                    ContentInstallerFragment.Companion.TAG,
+                                    ContentInstallerFragment.TAG,
                                     args
                                 )
                             },
@@ -110,7 +110,7 @@ class ProfileTypeSelectFragment : Fragment() {
                                 Tools.swapFragment(
                                     requireActivity(),
                                     QuiltInstallFragment::class.java,
-                                    QuiltInstallFragment.Companion.TAG,
+                                    QuiltInstallFragment.TAG,
                                     null
                                 )
                             },
@@ -118,7 +118,7 @@ class ProfileTypeSelectFragment : Fragment() {
                                 Tools.swapFragment(
                                     requireActivity(),
                                     BTAInstallFragment::class.java,
-                                    BTAInstallFragment.Companion.TAG,
+                                    BTAInstallFragment.TAG,
                                     null
                                 )
                             },
@@ -126,7 +126,7 @@ class ProfileTypeSelectFragment : Fragment() {
                                 Tools.swapFragment(
                                     requireActivity(),
                                     NeoforgeInstallFragment::class.java,
-                                    NeoforgeInstallFragment.Companion.TAG,
+                                    NeoforgeInstallFragment.TAG,
                                     null
                                 )
                             },
@@ -134,7 +134,7 @@ class ProfileTypeSelectFragment : Fragment() {
                                 Tools.swapFragment(
                                     requireActivity(),
                                     LegacyFabricInstallFragment::class.java,
-                                    LegacyFabricInstallFragment.Companion.TAG,
+                                    LegacyFabricInstallFragment.TAG,
                                     null
                                 )
                             }

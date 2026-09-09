@@ -18,7 +18,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences
+import com.ashmeet.hyperlauncher.utils.LauncherPreferences
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.modloaders.FabricVersion
 import com.ashmeet.hyperlauncher.components.DefaultSwitch

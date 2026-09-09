@@ -4,9 +4,10 @@ import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import coil.imageLoader
 import coil.request.ImageRequest
-import com.ashmeet.hyperlauncher.screens.layouts.installer.models.ContentInstallerType
-import com.ashmeet.hyperlauncher.screens.layouts.installer.models.ModrinthProject
-import com.ashmeet.hyperlauncher.screens.layouts.installer.models.ModrinthVersion
+import com.ashmeet.hyperlauncher.utils.installer.ContentInstallerType
+import com.ashmeet.hyperlauncher.utils.installer.ModrinthProject
+import com.ashmeet.hyperlauncher.utils.installer.ModrinthVersion
+import com.ashmeet.hyperlauncher.utils.installer.ModDependency
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import kotlinx.coroutines.Dispatchers
@@ -86,7 +87,7 @@ object ModrinthService {
                 versionType = v.get("version_type").asString,
                 dependencies = v.getAsJsonArray("dependencies")?.map { dep ->
                     val d = dep.asJsonObject
-                    com.ashmeet.hyperlauncher.screens.layouts.installer.models.ModDependency(
+                    ModDependency(
                         projectId = if (d.has("project_id") && !d.get("project_id").isJsonNull) d.get("project_id").asString else null,
                         versionId = if (d.has("version_id") && !d.get("version_id").isJsonNull) d.get("version_id").asString else null,
                         fileName = if (d.has("file_name") && !d.get("file_name").isJsonNull) d.get("file_name").asString else null,

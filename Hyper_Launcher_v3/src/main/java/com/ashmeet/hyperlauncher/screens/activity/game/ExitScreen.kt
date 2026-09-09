@@ -47,7 +47,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ashmeet.hyperlauncher.components.MineButton
-import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences
+import com.ashmeet.hyperlauncher.utils.LauncherPreferences
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 import net.ashmeet.hyperlauncher.R
 

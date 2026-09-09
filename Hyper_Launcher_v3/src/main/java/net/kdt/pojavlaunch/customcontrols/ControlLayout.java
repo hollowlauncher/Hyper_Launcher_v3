@@ -21,7 +21,7 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 
-import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences;
+import com.ashmeet.hyperlauncher.utils.LauncherPreferences;
 import com.google.gson.JsonSyntaxException;
 import com.kdt.pickafile.FileListView;
 import com.kdt.pickafile.FileSelectedListener;

@@ -4,7 +4,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.MotionEvent;
 
-import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences;
+import com.ashmeet.hyperlauncher.utils.LauncherPreferences;
 
 import net.kdt.pojavlaunch.customcontrols.mouse.LeftClickGesture;
 import net.kdt.pojavlaunch.customcontrols.mouse.PointerTracker;

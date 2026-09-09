@@ -2,9 +2,9 @@ package net.kdt.pojavlaunch.utils;
 
 
 
-import static com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences.PREF_DUMP_SHADERS;
-import static com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences.PREF_VSYNC_IN_ZINK;
-import static com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences.PREF_ZINK_PREFER_SYSTEM_DRIVER;
+import static com.ashmeet.hyperlauncher.utils.LauncherPreferences.PREF_DUMP_SHADERS;
+import static com.ashmeet.hyperlauncher.utils.LauncherPreferences.PREF_VSYNC_IN_ZINK;
+import static com.ashmeet.hyperlauncher.utils.LauncherPreferences.PREF_ZINK_PREFER_SYSTEM_DRIVER;
 
 import android.content.*;
 import android.system.*;
@@ -12,10 +12,9 @@ import android.util.*;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences;
+import com.ashmeet.hyperlauncher.utils.LauncherPreferences;
 
 import java.io.*;
-import java.nio.ByteBuffer;
 import java.util.*;
 import net.kdt.pojavlaunch.*;
 import net.kdt.pojavlaunch.extra.ExtraConstants;

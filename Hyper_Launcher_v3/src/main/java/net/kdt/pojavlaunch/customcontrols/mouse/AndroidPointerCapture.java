@@ -8,7 +8,7 @@ import android.view.ViewTreeObserver;
 
 import androidx.annotation.RequiresApi;
 
-import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences;
+import com.ashmeet.hyperlauncher.utils.LauncherPreferences;
 
 import net.kdt.pojavlaunch.Tools;
 

@@ -32,7 +32,7 @@ import static net.kdt.pojavlaunch.customcontrols.buttons.BackgroundTint.DEFAULT_
 import static net.kdt.pojavlaunch.customcontrols.buttons.BackgroundTint.TOGGLE_TINT_LIST;
 import static net.kdt.pojavlaunch.game.platform.Platform.PLATFORM;
 
-import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences;
+import com.ashmeet.hyperlauncher.utils.LauncherPreferences;
 
 @SuppressLint({"ViewConstructor", "AppCompatCustomView"})
 public class ControlButton extends TextView implements ControlInterface {

@@ -110,7 +110,7 @@ import java.util.Date
 import java.util.Locale
 import net.kdt.pojavlaunch.modloaders.modpacks.api.ModrinthService
 import com.ashmeet.hyperlauncher.screens.layouts.installer.models.ModrinthVersion
-import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences
+import com.ashmeet.hyperlauncher.utils.LauncherPreferences
 import java.net.URL
 import android.util.Log
 
@@ -608,7 +608,7 @@ fun FileListItem(
                 worldMeta = wMeta
             }
 
-            if (mMeta != null && mMeta.name != null && mMeta.name.lowercase().contains("hyper client")) {
+            if (mMeta != null && mMeta.name != null && mMeta.name!!.lowercase().contains("hyper client")) {
                 withContext(Dispatchers.Main) { isCheckingUpdate = true }
                 try {
                     val versions = ModrinthService.getProjectVersions("hyperclient")

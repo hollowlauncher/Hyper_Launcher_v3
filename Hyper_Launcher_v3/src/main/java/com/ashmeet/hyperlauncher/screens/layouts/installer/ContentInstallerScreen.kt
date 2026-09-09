@@ -44,13 +44,12 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
-import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences
+import com.ashmeet.hyperlauncher.utils.LauncherPreferences
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -66,54 +65,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ashmeet.hyperlauncher.components.SideRail
-import com.ashmeet.hyperlauncher.screens.layouts.installer.components.ProjectDetailsSidebar
-import com.ashmeet.hyperlauncher.screens.layouts.installer.components.ProjectItemView
-import com.ashmeet.hyperlauncher.screens.layouts.installer.components.SearchFiltersSidebar
-import com.ashmeet.hyperlauncher.screens.layouts.installer.components.SubVersionItemView
-import com.ashmeet.hyperlauncher.screens.layouts.installer.components.VersionItemView
-import com.ashmeet.hyperlauncher.screens.layouts.installer.models.ContentInstallerType
-import com.ashmeet.hyperlauncher.screens.layouts.installer.models.ContentSource
-import com.ashmeet.hyperlauncher.screens.layouts.installer.models.ModrinthProject
-import com.ashmeet.hyperlauncher.screens.layouts.installer.models.ModrinthVersion
+import com.ashmeet.hyperlauncher.components.installer.ProjectDetailsSidebar
+import com.ashmeet.hyperlauncher.components.installer.ProjectItemView
+import com.ashmeet.hyperlauncher.components.installer.SearchFiltersSidebar
+import com.ashmeet.hyperlauncher.components.installer.VersionList
+import com.ashmeet.hyperlauncher.utils.installer.ContentInstallerType
+import com.ashmeet.hyperlauncher.utils.installer.ContentSource
+import com.ashmeet.hyperlauncher.utils.installer.ModrinthProject
+import com.ashmeet.hyperlauncher.utils.installer.ModrinthVersion
 import com.ashmeet.hyperlauncher.theme.PojavTheme
-import kotlinx.coroutines.delay
-import kotlin.time.Duration.Companion.milliseconds
-
-private fun isMcVersionCompatible(v1: String, v2: String): Boolean {
-    if (v1 == v2) return true
-
-    val releaseRegex = Regex("""^1\.\d+(\.\d+)*$""")
-    val isR1 = v1.matches(releaseRegex)
-    val isR2 = v2.matches(releaseRegex)
-
-    // Special check for RC, Pre-release, and Snapshots to be extra strict
-    val isNonRelease1 = v1.contains("-rc", ignoreCase = true) || v1.contains("-pre", ignoreCase = true) || v1.contains(Regex("""\d+w\d+[a-z]"""))
-    val isNonRelease2 = v2.contains("-rc", ignoreCase = true) || v2.contains("-pre", ignoreCase = true) || v2.contains(Regex("""\d+w\d+[a-z]"""))
-
-    // If one is a stable release and the other is a non-release type, they are incompatible
-    if ((isR1 && isNonRelease2) || (isR2 && isNonRelease1)) return false
-
-    // Strict: don't mix release and non-release strictly defined by regex
-    if (isR1 != isR2) return false
-
-    if (isR1) {
-        // Both are stable releases. Check if they share the same minor version (e.g., 1.21.x)
-        val parts1 = v1.split(".")
-        val parts2 = v2.split(".")
-        if (parts1.size >= 2 && parts2.size >= 2 && parts1[1] == parts2[1]) {
-            // If both specify a patch version, they must match
-            if (parts1.size >= 3 && parts2.size >= 3) {
-                return parts1[2] == parts2[2]
-            }
-            // Otherwise, allow family match (e.g. 1.21 matches 1.21.1)
-            return true
-        }
-    }
-
-    // For snapshots/RCs/Pre-releases, they must be an exact match (already handled) 
-    // or very closely related, but usually we just want exact matches for them.
-    return false
-}
 
 @Composable
 fun ContentInstallerScreen(
@@ -417,102 +377,6 @@ fun ContentInstallerScreen(
                         onLoaderChange = { onSearch(searchQuery, selectedType, selectedVersion, it, selectedSource) },
                         onSourceChange = { onSearch(searchQuery, selectedType, selectedVersion, selectedLoader, it) },
                         onImportModpack = onImportModpack
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun VersionList(
-    projectVersions: List<ModrinthVersion>,
-    availableProjectMCVersions: List<String>,
-    selectedProjectMCVersion: String?,
-    instanceVersion: String?,
-    instanceLoader: String?,
-    selectedType: ContentInstallerType,
-    isLoading: Boolean = false,
-    onProjectMCVersionClick: (String) -> Unit,
-    onVersionClick: (ModrinthVersion) -> Unit
-) {
-    Column(modifier = Modifier.fillMaxSize()) {
-        if (isLoading && projectVersions.isEmpty()) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-            }
-        } else if (selectedProjectMCVersion == null) {
-            Text(
-                text = translatedText("Select Game Version"),
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(16.dp)
-            )
-
-            val lazyListState = rememberLazyListState()
-            LaunchedEffect(availableProjectMCVersions, instanceVersion) {
-                if (availableProjectMCVersions.isNotEmpty()) {
-                    val compatibleIndex = availableProjectMCVersions.indexOfFirst { v ->
-                        instanceVersion != null && isMcVersionCompatible(instanceVersion, v)
-                    }
-                    if (compatibleIndex > 5) {
-                        delay(200.milliseconds)
-                        lazyListState.animateScrollToItem(compatibleIndex)
-                    }
-                }
-            }
-
-            LazyColumn(
-                state = lazyListState,
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 48.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(availableProjectMCVersions, key = { it }) { v ->
-                    val isCompatible = instanceVersion != null && isMcVersionCompatible(instanceVersion, v)
-                    SubVersionItemView(
-                        text = v,
-                        isCompatible = isCompatible,
-                        onClick = { onProjectMCVersionClick(v) }
-                    )
-                }
-            }
-        } else {
-            val filteredVersions = remember(projectVersions, selectedProjectMCVersion) {
-                projectVersions.filter { it.gameVersions.contains(selectedProjectMCVersion) }
-            }
-
-            val lazyListState = rememberLazyListState()
-            LaunchedEffect(filteredVersions, instanceVersion, instanceLoader) {
-                if (filteredVersions.isNotEmpty()) {
-                    val compatibleIndex = filteredVersions.indexOfFirst { version ->
-                        instanceVersion != null && version.gameVersions.any { isMcVersionCompatible(instanceVersion, it) } &&
-                                (instanceLoader == null || version.loaders.any { it.equals(instanceLoader, ignoreCase = true) })
-                    }
-                    if (compatibleIndex > 5) {
-                        delay(200.milliseconds)
-                        lazyListState.animateScrollToItem(compatibleIndex)
-                    }
-                }
-            }
-
-            LazyColumn(
-                state = lazyListState,
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 48.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(filteredVersions, key = { it.id }) { version ->
-                    val isMCCompatible = instanceVersion != null && version.gameVersions.any { isMcVersionCompatible(instanceVersion, it) }
-                    val isLoaderCompatible = selectedType == ContentInstallerType.RESOURCEPACKS ||
-                            selectedType == ContentInstallerType.SHADERS ||
-                            instanceLoader == null ||
-                            version.loaders.any { it.equals(instanceLoader, ignoreCase = true) }
-
-                    VersionItemView(
-                        version = version,
-                        isCompatible = isMCCompatible && isLoaderCompatible,
-                        isLoaderCompatible = isLoaderCompatible,
-                        onClick = { onVersionClick(version) }
                     )
                 }
             }

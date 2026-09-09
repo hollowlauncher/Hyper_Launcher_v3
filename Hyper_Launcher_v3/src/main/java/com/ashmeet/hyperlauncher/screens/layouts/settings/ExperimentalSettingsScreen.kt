@@ -22,7 +22,7 @@ import com.ashmeet.hyperlauncher.screens.layouts.settings.layouts.SettingsCard
 import com.ashmeet.hyperlauncher.screens.layouts.settings.layouts.SettingsScreenWrapper
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SettingsSwitchItem
 import net.ashmeet.hyperlauncher.R
-import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences
+import com.ashmeet.hyperlauncher.utils.LauncherPreferences
 
 @Composable
 fun ExperimentalSettingsScreen(

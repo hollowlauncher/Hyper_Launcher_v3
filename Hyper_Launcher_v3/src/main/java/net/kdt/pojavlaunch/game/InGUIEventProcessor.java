@@ -3,7 +3,7 @@ package net.kdt.pojavlaunch.game;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences;
+import com.ashmeet.hyperlauncher.utils.LauncherPreferences;
 
 import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.customcontrols.mouse.LeftClickGesture;

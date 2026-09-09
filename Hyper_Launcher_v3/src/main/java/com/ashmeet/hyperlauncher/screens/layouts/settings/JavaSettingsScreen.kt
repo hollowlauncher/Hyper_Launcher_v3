@@ -31,7 +31,7 @@ import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.TextInputD
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.multirt.MultiRTUtils
 import net.kdt.pojavlaunch.multirt.Runtime
-import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences
+import com.ashmeet.hyperlauncher.utils.LauncherPreferences
 
 @Composable
 fun JavaSettingsScreen(

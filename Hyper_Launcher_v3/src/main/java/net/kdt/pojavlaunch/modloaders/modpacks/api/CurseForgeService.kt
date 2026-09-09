@@ -4,9 +4,10 @@ import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import coil.imageLoader
 import coil.request.ImageRequest
-import com.ashmeet.hyperlauncher.screens.layouts.installer.models.ContentInstallerType
-import com.ashmeet.hyperlauncher.screens.layouts.installer.models.ModrinthProject
-import com.ashmeet.hyperlauncher.screens.layouts.installer.models.ModrinthVersion
+import com.ashmeet.hyperlauncher.utils.installer.ContentInstallerType
+import com.ashmeet.hyperlauncher.utils.installer.ModrinthProject
+import com.ashmeet.hyperlauncher.utils.installer.ModrinthVersion
+import com.ashmeet.hyperlauncher.utils.installer.ModDependency
 import com.google.gson.JsonObject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -197,7 +198,7 @@ object CurseForgeService {
                     val relationType = d.get("relationType").asInt
                     if (relationType == 5) return@mapNotNull null // Incompatible
                     
-                    com.ashmeet.hyperlauncher.screens.layouts.installer.models.ModDependency(
+                    ModDependency(
                         projectId = d.get("modId").asString,
                         versionId = null,
                         fileName = null,

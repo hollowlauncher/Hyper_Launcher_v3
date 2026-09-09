@@ -1,6 +1,6 @@
 package net.kdt.pojavlaunch.mirrors;
 
-import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences;
+import com.ashmeet.hyperlauncher.utils.LauncherPreferences;
 import net.kdt.pojavlaunch.utils.DownloadUtils;
 
 import java.io.File;

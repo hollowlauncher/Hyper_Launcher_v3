@@ -1,6 +1,6 @@
 package net.kdt.pojavlaunch.instances;
 
-import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences;
+import com.ashmeet.hyperlauncher.utils.LauncherPreferences;
 import com.google.gson.JsonSyntaxException;
 
 import net.kdt.pojavlaunch.Tools;

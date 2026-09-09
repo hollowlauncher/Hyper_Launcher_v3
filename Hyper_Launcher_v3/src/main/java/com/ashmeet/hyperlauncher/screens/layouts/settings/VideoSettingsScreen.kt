@@ -33,7 +33,7 @@ import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SettingsSl
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SettingsSwitchItem
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SingleChoiceDialog
 import net.ashmeet.hyperlauncher.R
-import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences
+import com.ashmeet.hyperlauncher.utils.LauncherPreferences
 import net.kdt.pojavlaunch.utils.RendererCompatUtil
 
 @Composable

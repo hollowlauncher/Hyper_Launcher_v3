@@ -22,13 +22,13 @@ import androidx.fragment.app.FragmentManager;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
-import com.ashmeet.hyperlauncher.fragments.AuthHostFragment;
-import com.ashmeet.hyperlauncher.fragments.ContentInstallerFragment;
-import com.ashmeet.hyperlauncher.fragments.InstanceDirectoryFragment;
-import com.ashmeet.hyperlauncher.LauncherPreference.LauncherPreferenceFragment;
-import com.ashmeet.hyperlauncher.fragments.MainMenuFragment;
+import com.ashmeet.hyperlauncher.fragments.auth.AuthHostFragment;
+import com.ashmeet.hyperlauncher.fragments.installer.ContentInstallerFragment;
+import com.ashmeet.hyperlauncher.fragments.instances.InstanceDirectoryFragment;
+import com.ashmeet.hyperlauncher.fragments.settings.LauncherPreferenceFragment;
+import com.ashmeet.hyperlauncher.fragments.home.MainMenuFragment;
 import com.ashmeet.hyperlauncher.helper.LauncherComposeHelper;
-import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences;
+import com.ashmeet.hyperlauncher.utils.LauncherPreferences;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import net.ashmeet.hyperlauncher.BuildConfig;

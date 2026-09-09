@@ -3,7 +3,7 @@ package com.ashmeet.hyperlauncher.utils.translation
 import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.*
-import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences
+import com.ashmeet.hyperlauncher.utils.LauncherPreferences
 import com.kdt.mcgui.ProgressLayout
 import io.ktor.client.*
 import io.ktor.client.call.*

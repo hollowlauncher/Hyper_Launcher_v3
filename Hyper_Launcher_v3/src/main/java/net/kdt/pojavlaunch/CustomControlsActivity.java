@@ -10,7 +10,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.compose.ui.platform.ComposeView;
 
 import com.ashmeet.hyperlauncher.helper.LauncherComposeHelper;
-import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences;
+import com.ashmeet.hyperlauncher.utils.LauncherPreferences;
 import com.google.gson.JsonSyntaxException;
 
 import net.ashmeet.hyperlauncher.R;

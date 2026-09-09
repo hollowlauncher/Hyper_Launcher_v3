@@ -50,7 +50,7 @@ import com.google.gson.Gson
 import net.kdt.pojavlaunch.PojavApplication
 import net.kdt.pojavlaunch.instances.DisplayInstance
 import net.kdt.pojavlaunch.instances.Instances
-import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences
+import com.ashmeet.hyperlauncher.utils.LauncherPreferences
 import com.ashmeet.hyperlauncher.components.SideRail
 import com.ashmeet.hyperlauncher.screens.layouts.compose.InstanceListItem
 import com.ashmeet.hyperlauncher.theme.PojavTheme

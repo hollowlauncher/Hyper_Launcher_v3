@@ -10,8 +10,8 @@ import static android.view.MotionEvent.AXIS_X;
 import static android.view.MotionEvent.AXIS_Y;
 import static android.view.MotionEvent.AXIS_Z;
 
-import static com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences.PREF_DEADZONE_SCALE;
-import static com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences.PREF_SCALE_FACTOR;
+import static com.ashmeet.hyperlauncher.utils.LauncherPreferences.PREF_DEADZONE_SCALE;
+import static com.ashmeet.hyperlauncher.utils.LauncherPreferences.PREF_SCALE_FACTOR;
 
 import android.view.Choreographer;
 import android.view.InputDevice;

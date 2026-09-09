@@ -23,7 +23,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
-import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences
+import com.ashmeet.hyperlauncher.utils.LauncherPreferences
 import com.ashmeet.hyperlauncher.screens.layouts.settings.layouts.CardPosition
 import com.ashmeet.hyperlauncher.screens.layouts.settings.layouts.SettingsCard
 import com.ashmeet.hyperlauncher.screens.layouts.settings.layouts.SettingsScreenWrapper

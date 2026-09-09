@@ -1,7 +1,7 @@
 package net.kdt.pojavlaunch.game;
 
 import android.view.MotionEvent;
-import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences;
+import com.ashmeet.hyperlauncher.utils.LauncherPreferences;
 import net.kdt.pojavlaunch.game.platform.Platform;
 
 
