@@ -46,7 +46,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class FolderProvider extends DocumentsProvider {
 
-    private static final List<String> BLOCKED_PACKAGES = List.of("com.dnamobile.modlymodmanager");
     private static final String ALL_MIME_TYPES = "*/*";
 
     private File BASE_DIR;
