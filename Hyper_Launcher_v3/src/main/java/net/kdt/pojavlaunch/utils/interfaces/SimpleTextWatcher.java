@@ -1,6 +1,5 @@
 package net.kdt.pojavlaunch.utils.interfaces;
 
-import android.text.Editable;
 import android.text.TextWatcher;
 
 /**
