@@ -1,14 +1,16 @@
-package net.kdt.pojavlaunch.colorselector
+package com.ashmeet.hyperlauncher.fragments.dialog
 
 import android.content.Context
 import android.graphics.Color
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
+import com.ashmeet.hyperlauncher.components.ColorSelectorContent
+import com.ashmeet.hyperlauncher.components.colorselector.ColorSelectionListener
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 import com.kdt.SideDialogView
 import net.ashmeet.hyperlauncher.R
 
-class ColorSelector(context: Context, parent: ViewGroup, private var colorSelectionListener: ColorSelectionListener?) :
+class ColorSelectorFragment(context: Context, parent: ViewGroup, private var colorSelectionListener: ColorSelectionListener?) :
     SideDialogView(context, parent, R.layout.dialog_compose) {
 
     private var selectedColor: Int = Color.RED
@@ -68,9 +70,5 @@ class ColorSelector(context: Context, parent: ViewGroup, private var colorSelect
     }
 
     companion object {
-        @JvmStatic
-        fun setAlpha(color: Int, alpha: Int): Int {
-            return (color and 0x00FFFFFF) or (alpha shl 24)
-        }
     }
 }

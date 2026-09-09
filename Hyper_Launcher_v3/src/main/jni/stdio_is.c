@@ -19,6 +19,22 @@ static jmethodID logger_onEventLogged;
 static volatile jobject logListener = NULL;
 static int latestlog_fd = -1;
 
+static void ensure_logger_initialized(JNIEnv *env) {
+    if (logger_onEventLogged == NULL) {
+        jclass eventLogListener = (*env)->FindClass(env, "net/kdt/pojavlaunch/Logger$eventLogListener");
+        if ((*env)->ExceptionCheck(env)) {
+            (*env)->ExceptionClear(env);
+            return;
+        }
+        if (eventLogListener != NULL) {
+            logger_onEventLogged = (*env)->GetMethodID(env, eventLogListener, "onEventLogged", "(Ljava/lang/String;)V");
+            if ((*env)->ExceptionCheck(env)) {
+                (*env)->ExceptionClear(env);
+            }
+            (*env)->DeleteLocalRef(env, eventLogListener);
+        }
+    }
+}
 
 static bool recordBuffer(char* buf, ssize_t len) {
     if(strstr(buf, "Session ID is")) return false;
@@ -43,9 +59,12 @@ static void *logger_thread(void* param) {
         }
         buf[rsize]=0x00;
         if(shouldRecordString && logListener != NULL) {
-            writeString = (*env)->NewStringUTF(env, buf); //send to app without newline
-            (*env)->CallVoidMethod(env, logListener, logger_onEventLogged, writeString);
-            (*env)->DeleteLocalRef(env, writeString);
+            ensure_logger_initialized(env);
+            if (logger_onEventLogged != NULL) {
+                writeString = (*env)->NewStringUTF(env, buf); //send to app without newline
+                (*env)->CallVoidMethod(env, logListener, logger_onEventLogged, writeString);
+                (*env)->DeleteLocalRef(env, writeString);
+            }
         }
     }
     (*dvm)->DetachCurrentThread(dvm);
@@ -60,10 +79,7 @@ Java_net_kdt_pojavlaunch_Logger_begin(JNIEnv *env, __attribute((unused)) jclass 
         latestlog_fd = -1;
         close(localfd);
     }
-    if(logger_onEventLogged == NULL) {
-        jclass eventLogListener = (*env)->FindClass(env, "net/kdt/pojavlaunch/Logger$eventLogListener");
-        logger_onEventLogged = (*env)->GetMethodID(env, eventLogListener, "onEventLogged", "(Ljava/lang/String;)V");
-    }
+    ensure_logger_initialized(env);
     jclass ioeClass = (*env)->FindClass(env, "java/io/IOException");
 
 
@@ -104,7 +120,10 @@ JNIEXPORT void JNICALL Java_net_kdt_pojavlaunch_Logger_appendToLog(JNIEnv *env, 
     newChars[appendStringLength] = '\n';
     newChars[appendStringLength+1] = 0;
     if(recordBuffer(newChars, appendStringLength+1) && logListener != NULL) {
-        (*env)->CallVoidMethod(env, logListener, logger_onEventLogged, text);
+        ensure_logger_initialized(env);
+        if (logger_onEventLogged != NULL) {
+            (*env)->CallVoidMethod(env, logListener, logger_onEventLogged, text);
+        }
     }
 }
 
@@ -114,6 +133,7 @@ Java_net_kdt_pojavlaunch_Logger_setLogListener(JNIEnv *env, __attribute((unused)
     if(log_listener == NULL) {
         logListener = NULL;
     }else{
+        ensure_logger_initialized(env);
         logListener = (*env)->NewGlobalRef(env, log_listener);
     }
     if(logListenerLocal != NULL) (*env)->DeleteGlobalRef(env, logListenerLocal);

@@ -63,7 +63,7 @@ import com.ashmeet.hyperlauncher.utils.translation.Translator
 import com.ashmeet.hyperlauncher.utils.translation.translatedText
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.Tools
-import net.kdt.pojavlaunch.colorselector.ColorSelector
+import com.ashmeet.hyperlauncher.fragments.dialog.ColorSelectorFragment
 import java.io.File
 import java.io.FileOutputStream
 
@@ -317,7 +317,7 @@ fun AppearanceSettingsScreen(
                         icon = Icons.Rounded.ColorLens,
                         onClick = {
                             if (parent != null) {
-                                val colorSelector = ColorSelector(context, parent) { color ->
+                                val colorSelector = ColorSelectorFragment(context, parent) { color ->
                                     themeColor = color
                                     LauncherPreferences.prefs.edit { putInt("app_theme_color", color) }
                                     LauncherPreferences.PREF_THEME_COLOR = color

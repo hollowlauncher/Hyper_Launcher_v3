@@ -47,7 +47,7 @@ import com.kdt.SideDialogView
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.CustomControlsActivity
 import net.kdt.pojavlaunch.Tools
-import net.kdt.pojavlaunch.colorselector.ColorSelectorContent
+import com.ashmeet.hyperlauncher.components.ColorSelectorContent
 import net.kdt.pojavlaunch.customcontrols.ControlData
 import net.kdt.pojavlaunch.customcontrols.ControlJoystickData
 import net.kdt.pojavlaunch.customcontrols.buttons.ControlDrawer

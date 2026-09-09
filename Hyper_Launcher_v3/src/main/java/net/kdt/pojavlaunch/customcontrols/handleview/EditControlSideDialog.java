@@ -25,7 +25,7 @@ import net.kdt.pojavlaunch.CustomControlsActivity;
 import net.kdt.pojavlaunch.utils.KeycodeUtils;
 
 import net.kdt.pojavlaunch.Tools;
-import net.kdt.pojavlaunch.colorselector.ColorSelector;
+import com.ashmeet.hyperlauncher.fragments.dialog.ColorSelectorFragment;
 import net.kdt.pojavlaunch.customcontrols.ControlData;
 import net.kdt.pojavlaunch.customcontrols.ControlDrawerData;
 import net.kdt.pojavlaunch.customcontrols.ControlJoystickData;
@@ -81,7 +81,7 @@ public class EditControlSideDialog extends SideDialogView {
             mSizeXTextView, mStrokeWidthTextView, mColorSelectWarningTextView;
 
     // Color selector related stuff
-    private ColorSelector mColorSelector;
+    private ColorSelectorFragment mColorSelector;
     private final ViewGroup mParent;
 
     public EditControlSideDialog(Context context, ViewGroup parent) {
@@ -103,7 +103,7 @@ public class EditControlSideDialog extends SideDialogView {
     }
 
     private void buildColorSelector() {
-        mColorSelector = new ColorSelector(mParent.getContext(), mParent, null);
+        mColorSelector = new ColorSelectorFragment(mParent.getContext(), mParent, null);
     }
 
     /**

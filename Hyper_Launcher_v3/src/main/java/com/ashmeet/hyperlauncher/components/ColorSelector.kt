@@ -1,4 +1,6 @@
-package net.kdt.pojavlaunch.colorselector
+@file:JvmName("ColorSelectorKt")
+
+package com.ashmeet.hyperlauncher.components
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
