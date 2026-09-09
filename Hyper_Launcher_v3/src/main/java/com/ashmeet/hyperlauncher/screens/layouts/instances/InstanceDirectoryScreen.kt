@@ -1,7 +1,7 @@
 package com.ashmeet.hyperlauncher.screens.layouts.instances
 
 import androidx.activity.compose.rememberLauncherForActivityResult
-import com.ashmeet.hyperlauncher.utils.translatedText
+import com.ashmeet.hyperlauncher.utils.translation.translatedText
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
@@ -37,7 +37,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.InsertDriveFile
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Edit
-import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material.icons.rounded.Folder
 import androidx.compose.material.icons.rounded.FolderOpen
 import androidx.compose.material.icons.rounded.Refresh
@@ -102,8 +101,8 @@ import net.kdt.pojavlaunch.PojavApplication
 import net.kdt.pojavlaunch.Tools
 import net.kdt.pojavlaunch.instances.Instances
 import net.kdt.pojavlaunch.progresskeeper.ProgressKeeper
-import net.kdt.pojavlaunch.utils.ModMetadataReader
-import net.kdt.pojavlaunch.utils.WorldMetadataReader
+import com.ashmeet.hyperlauncher.utils.ModMetadataReader
+import com.ashmeet.hyperlauncher.utils.WorldMetadataReader
 import org.apache.commons.io.FileUtils
 import java.io.File
 import java.text.SimpleDateFormat

@@ -1,7 +1,7 @@
 package com.ashmeet.hyperlauncher.screens.activity.game
 
 import androidx.compose.foundation.background
-import com.ashmeet.hyperlauncher.utils.translatedText
+import com.ashmeet.hyperlauncher.utils.translation.translatedText
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column

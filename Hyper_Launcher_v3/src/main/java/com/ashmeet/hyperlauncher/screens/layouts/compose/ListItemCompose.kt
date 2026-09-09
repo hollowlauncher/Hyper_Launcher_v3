@@ -1,7 +1,7 @@
 package com.ashmeet.hyperlauncher.screens.layouts.compose
 
 import androidx.compose.animation.core.Animatable
-import com.ashmeet.hyperlauncher.utils.translatedText
+import com.ashmeet.hyperlauncher.utils.translation.translatedText
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

@@ -1,7 +1,7 @@
 package com.ashmeet.hyperlauncher.fragments
 
 import android.os.Bundle
-import com.ashmeet.hyperlauncher.utils.translatedText
+import com.ashmeet.hyperlauncher.utils.translation.translatedText
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup

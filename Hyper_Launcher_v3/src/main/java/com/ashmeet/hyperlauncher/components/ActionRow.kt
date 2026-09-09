@@ -1,6 +1,6 @@
 package com.ashmeet.hyperlauncher.components
 
-import com.ashmeet.hyperlauncher.utils.translatedText
+import com.ashmeet.hyperlauncher.utils.translation.translatedText
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height

@@ -1,7 +1,6 @@
 package com.ashmeet.hyperlauncher.components
 
 import androidx.compose.animation.AnimatedVisibility
-import com.ashmeet.hyperlauncher.utils.translatedText
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandHorizontally

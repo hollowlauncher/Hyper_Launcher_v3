@@ -41,7 +41,7 @@ import androidx.compose.ui.unit.dp
 import com.ashmeet.hyperlauncher.components.DefaultSwitch
 import com.ashmeet.hyperlauncher.components.SimpleTextSlider
 import com.ashmeet.hyperlauncher.screens.layouts.settings.layouts.TitleAndSummary
-import com.ashmeet.hyperlauncher.utils.translatedText
+import com.ashmeet.hyperlauncher.utils.translation.translatedText
 import net.ashmeet.hyperlauncher.R
 import kotlinx.coroutines.launch
 

@@ -1,4 +1,4 @@
-package com.ashmeet.hyperlauncher.utils
+package com.ashmeet.hyperlauncher.utils.translation
 
 import android.content.Context
 import android.util.Log
@@ -23,6 +23,7 @@ import java.util.concurrent.ConcurrentHashMap
 import net.kdt.pojavlaunch.progresskeeper.ProgressKeeper
 import net.ashmeet.hyperlauncher.R
 import java.io.File
+import java.util.Locale
 import kotlin.time.Duration.Companion.milliseconds
 
 @Serializable
@@ -99,7 +100,7 @@ object Translator {
         if (LauncherPreferences.PREF_FORCE_ENGLISH) return "english"
         var lang = LauncherPreferences.PREF_LANGUAGE ?: "system"
         if (lang == "system") {
-            lang = java.util.Locale.getDefault().language
+            lang = Locale.getDefault().language
         }
         return languageMap[lang] ?: "english"
     }

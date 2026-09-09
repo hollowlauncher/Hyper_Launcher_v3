@@ -2,7 +2,7 @@ package com.ashmeet.hyperlauncher.screens.layouts.installer
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
-import com.ashmeet.hyperlauncher.utils.translatedText
+import com.ashmeet.hyperlauncher.utils.translation.translatedText
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween

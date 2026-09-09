@@ -1,7 +1,7 @@
 package com.ashmeet.hyperlauncher.screens.layouts.compose
 
 import androidx.compose.animation.AnimatedVisibility
-import com.ashmeet.hyperlauncher.utils.translatedText
+import com.ashmeet.hyperlauncher.utils.translation.translatedText
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*

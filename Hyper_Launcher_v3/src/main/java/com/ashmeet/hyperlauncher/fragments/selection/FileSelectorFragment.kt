@@ -1,6 +1,6 @@
 package com.ashmeet.hyperlauncher.fragments.selection
 
-import com.ashmeet.hyperlauncher.utils.translatedText
+import com.ashmeet.hyperlauncher.utils.translation.translatedText
 
 import android.app.AlertDialog
 import android.os.Build

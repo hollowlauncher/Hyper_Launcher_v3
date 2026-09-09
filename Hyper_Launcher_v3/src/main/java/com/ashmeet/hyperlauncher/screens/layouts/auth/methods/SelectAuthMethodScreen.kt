@@ -1,7 +1,7 @@
 package com.ashmeet.hyperlauncher.screens.layouts.auth.methods
 
 import androidx.compose.foundation.background
-import com.ashmeet.hyperlauncher.utils.translatedText
+import com.ashmeet.hyperlauncher.utils.translation.translatedText
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme

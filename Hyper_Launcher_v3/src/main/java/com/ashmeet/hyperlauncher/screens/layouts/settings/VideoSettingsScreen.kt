@@ -1,6 +1,6 @@
 package com.ashmeet.hyperlauncher.screens.layouts.settings
 
-import com.ashmeet.hyperlauncher.utils.translatedText
+import com.ashmeet.hyperlauncher.utils.translation.translatedText
 import android.os.Build
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

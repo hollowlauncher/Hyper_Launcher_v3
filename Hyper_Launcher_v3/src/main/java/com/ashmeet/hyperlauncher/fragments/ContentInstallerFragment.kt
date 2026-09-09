@@ -55,9 +55,9 @@ import net.kdt.pojavlaunch.modloaders.modpacks.api.ModpackApi
 import net.kdt.pojavlaunch.modloaders.modpacks.api.ModrinthApi
 import net.kdt.pojavlaunch.modloaders.modpacks.api.ModrinthService
 import net.kdt.pojavlaunch.modloaders.modpacks.models.ModItem
-import com.ashmeet.hyperlauncher.utils.Translator
+import com.ashmeet.hyperlauncher.utils.translation.Translator
 import net.kdt.pojavlaunch.progresskeeper.ProgressKeeper
-import net.kdt.pojavlaunch.utils.ModMetadataReader
+import com.ashmeet.hyperlauncher.utils.ModMetadataReader
 import net.kdt.pojavlaunch.instances.MMCInstanceImporter
 import java.io.File
 import java.io.IOException

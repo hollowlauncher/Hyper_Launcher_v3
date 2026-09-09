@@ -1,6 +1,6 @@
 package com.ashmeet.hyperlauncher.screens.layouts.compose
 
-import com.ashmeet.hyperlauncher.utils.translatedText
+import com.ashmeet.hyperlauncher.utils.translation.translatedText
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

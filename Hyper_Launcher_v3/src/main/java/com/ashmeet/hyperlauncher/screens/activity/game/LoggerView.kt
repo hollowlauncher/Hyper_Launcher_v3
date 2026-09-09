@@ -1,7 +1,7 @@
 package com.ashmeet.hyperlauncher.screens.activity.game
 
 import android.content.Context
-import com.ashmeet.hyperlauncher.utils.translatedText
+import com.ashmeet.hyperlauncher.utils.translation.translatedText
 import android.os.Handler
 import android.os.Looper
 import android.util.AttributeSet

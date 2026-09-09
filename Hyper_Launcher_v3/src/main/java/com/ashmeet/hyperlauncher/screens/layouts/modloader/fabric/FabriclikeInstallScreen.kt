@@ -1,6 +1,6 @@
 package com.ashmeet.hyperlauncher.screens.layouts.modloader.fabric
 
-import com.ashmeet.hyperlauncher.utils.translatedText
+import com.ashmeet.hyperlauncher.utils.translation.translatedText
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*

@@ -1,6 +1,6 @@
 package com.ashmeet.hyperlauncher.components.dialog
 
-import com.ashmeet.hyperlauncher.utils.translatedText
+import com.ashmeet.hyperlauncher.utils.translation.translatedText
 
 import android.content.Context
 import android.graphics.Bitmap

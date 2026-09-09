@@ -47,7 +47,7 @@ import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferenc
 import com.ashmeet.hyperlauncher.screens.layouts.compose.AccountSpinnerCompose
 import com.ashmeet.hyperlauncher.screens.layouts.compose.ProgressLayoutCompose
 import com.ashmeet.hyperlauncher.theme.PojavTheme
-import com.ashmeet.hyperlauncher.utils.translatedText
+import com.ashmeet.hyperlauncher.utils.translation.translatedText
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.progresskeeper.ProgressKeeper
 import net.kdt.pojavlaunch.progresskeeper.TaskCountListener

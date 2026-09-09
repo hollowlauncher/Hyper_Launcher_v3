@@ -23,7 +23,7 @@ import net.kdt.pojavlaunch.tasks.AsyncAssetManager;
 import net.kdt.pojavlaunch.tasks.MoJsonDownloader;
 import net.kdt.pojavlaunch.utils.FileUtils;
 import net.kdt.pojavlaunch.utils.LocaleUtils;
-import com.ashmeet.hyperlauncher.utils.Translator;
+import com.ashmeet.hyperlauncher.utils.translation.Translator;
 import com.ashmeet.hyperlauncher.utils.LoggerProxy;
 
 import java.io.File;

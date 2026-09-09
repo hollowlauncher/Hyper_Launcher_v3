@@ -26,8 +26,6 @@ import androidx.compose.material.icons.rounded.RadioButtonUnchecked
 import androidx.compose.material.icons.rounded.Repeat
 import androidx.compose.material.icons.rounded.Restore
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
 import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.runtime.Composable
@@ -53,8 +51,6 @@ import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferenc
 import com.ashmeet.hyperlauncher.screens.layouts.settings.layouts.CardPosition
 import com.ashmeet.hyperlauncher.screens.layouts.settings.layouts.SettingsCard
 import com.ashmeet.hyperlauncher.screens.layouts.settings.layouts.SettingsScreenWrapper
-import com.ashmeet.hyperlauncher.screens.layouts.settings.layouts.TitleAndSummary
-import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.CursorInfo
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.CursorPreferenceItem
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.PointerHotspotPickerDialog
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.PreferenceCategory
@@ -63,9 +59,8 @@ import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SettingsSl
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SettingsSwitchItem
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SingleChoiceDialog
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.cursorInfos
-import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.getDefaultCursorDrawable
-import com.ashmeet.hyperlauncher.utils.Translator
-import com.ashmeet.hyperlauncher.utils.translatedText
+import com.ashmeet.hyperlauncher.utils.translation.Translator
+import com.ashmeet.hyperlauncher.utils.translation.translatedText
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.Tools
 import net.kdt.pojavlaunch.colorselector.ColorSelector

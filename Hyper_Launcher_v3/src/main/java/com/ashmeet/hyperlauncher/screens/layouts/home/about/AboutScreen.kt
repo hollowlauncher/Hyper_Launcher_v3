@@ -40,7 +40,7 @@ import com.ashmeet.hyperlauncher.screens.layouts.settings.layouts.SettingsScreen
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.PreferenceCategory
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SettingsActionItem
 import com.ashmeet.hyperlauncher.utils.drawable.rememberDrawablePainter
-import com.ashmeet.hyperlauncher.utils.translatedText
+import com.ashmeet.hyperlauncher.utils.translation.translatedText
 import net.ashmeet.hyperlauncher.BuildConfig
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.Architecture

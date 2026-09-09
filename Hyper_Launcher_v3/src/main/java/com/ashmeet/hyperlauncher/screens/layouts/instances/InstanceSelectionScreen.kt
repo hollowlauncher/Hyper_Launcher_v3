@@ -1,7 +1,7 @@
 package com.ashmeet.hyperlauncher.screens.layouts.instances
 
 import androidx.compose.animation.core.tween
-import com.ashmeet.hyperlauncher.utils.translatedText
+import com.ashmeet.hyperlauncher.utils.translation.translatedText
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

@@ -1,6 +1,6 @@
 package com.ashmeet.hyperlauncher.screens.layouts.instances
 
-import com.ashmeet.hyperlauncher.utils.translatedText
+import com.ashmeet.hyperlauncher.utils.translation.translatedText
 
 import android.graphics.drawable.Drawable
 import androidx.compose.animation.AnimatedVisibility

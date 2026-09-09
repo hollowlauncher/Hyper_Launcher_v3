@@ -1,6 +1,6 @@
 package com.ashmeet.hyperlauncher.fragments
 
-import com.ashmeet.hyperlauncher.utils.translatedText
+import com.ashmeet.hyperlauncher.utils.translation.translatedText
 
 import android.os.Bundle
 import android.os.Handler

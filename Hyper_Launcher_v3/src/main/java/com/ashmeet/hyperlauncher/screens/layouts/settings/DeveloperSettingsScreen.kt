@@ -30,8 +30,8 @@ import com.ashmeet.hyperlauncher.screens.layouts.settings.layouts.SettingsScreen
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.PreferenceCategory
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SettingsActionItem
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SettingsSwitchItem
-import com.ashmeet.hyperlauncher.utils.Translator
-import com.ashmeet.hyperlauncher.utils.translatedText
+import com.ashmeet.hyperlauncher.utils.translation.Translator
+import com.ashmeet.hyperlauncher.utils.translation.translatedText
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.plugins.LibraryPlugin
 

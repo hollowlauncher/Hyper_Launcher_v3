@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.kdt.mcgui.ProgressLayout;
 
+import net.ashmeet.hyperlauncher.R;
 import net.kdt.pojavlaunch.instances.Instance;
 import net.kdt.pojavlaunch.instances.Instances;
 import net.kdt.pojavlaunch.multirt.MultiRTUtils;
@@ -24,7 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import net.ashmeet.hyperlauncher.R;
+
 
 public class NewJREUtil {
     private static final String DOWNLOAD_URL = "https://mojolauncher.github.io/jre-download/";
