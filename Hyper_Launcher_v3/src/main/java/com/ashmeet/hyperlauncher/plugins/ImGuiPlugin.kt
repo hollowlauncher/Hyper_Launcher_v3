@@ -1,8 +1,9 @@
-package com.ashmeet.hyperlauncher.natives.plugins
+package com.ashmeet.hyperlauncher.plugins
 
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.ashmeet.hyperlauncher.natives.HyperPluginManager
+import com.ashmeet.hyperlauncher.plugins.manager.HyperPlugin
+import com.ashmeet.hyperlauncher.plugins.manager.HyperPluginManager
 import net.kdt.pojavlaunch.Tools
 import org.apache.commons.io.FileUtils
 import java.io.File

@@ -1,11 +1,16 @@
-package com.ashmeet.hyperlauncher.natives
+package com.ashmeet.hyperlauncher.plugins.manager
 
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.ashmeet.hyperlauncher.natives.plugins.*
+import com.ashmeet.hyperlauncher.plugins.DhCompatPlugin
+import com.ashmeet.hyperlauncher.plugins.ImGuiPlugin
+import com.ashmeet.hyperlauncher.plugins.PhysicsPlugin
+import com.ashmeet.hyperlauncher.plugins.RapierPlugin
 import net.kdt.pojavlaunch.Tools
+import net.kdt.pojavlaunch.plugins.NativePlugin
 import net.kdt.pojavlaunch.plugins.NativePluginManager
 import java.io.File
+import kotlin.collections.iterator
 
 object HyperPluginManager {
     private const val TAG = "HyperPlugin"
@@ -39,7 +44,7 @@ object HyperPluginManager {
             return
         }
 
-        NativePluginManager.registerPlugin(object : net.kdt.pojavlaunch.plugins.NativePlugin {
+        NativePluginManager.registerPlugin(object : NativePlugin {
             override fun getPaths(): Array<String> = arrayOf(path)
             override fun getJVMEnv(): Map<String, String> = env
             override fun supportsVersion(targetVersion: String?): Boolean {

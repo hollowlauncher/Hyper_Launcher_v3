@@ -1,6 +1,6 @@
 package net.kdt.pojavlaunch;
 
-import com.ashmeet.hyperlauncher.natives.HyperPluginManager;
+import com.ashmeet.hyperlauncher.plugins.manager.HyperPluginManager;
 
 import static android.os.Build.VERSION.SDK_INT;
 import static net.kdt.pojavlaunch.PojavApplication.sExecutorService;

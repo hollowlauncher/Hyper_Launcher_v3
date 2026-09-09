@@ -2,7 +2,6 @@ package com.ashmeet.hyperlauncher.screens.layouts.installer
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
-import com.ashmeet.hyperlauncher.utils.translation.translatedText
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
@@ -15,9 +14,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -42,9 +39,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.ScrollableTabRow
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
-import com.ashmeet.hyperlauncher.utils.LauncherPreferences
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
@@ -64,16 +59,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ashmeet.hyperlauncher.components.SideRail
+import com.ashmeet.hyperlauncher.components.ProjectItemView
+import com.ashmeet.hyperlauncher.components.ScreenLayout
 import com.ashmeet.hyperlauncher.components.installer.ProjectDetailsSidebar
-import com.ashmeet.hyperlauncher.components.installer.ProjectItemView
 import com.ashmeet.hyperlauncher.components.installer.SearchFiltersSidebar
 import com.ashmeet.hyperlauncher.components.installer.VersionList
+import com.ashmeet.hyperlauncher.theme.PojavTheme
 import com.ashmeet.hyperlauncher.utils.installer.ContentInstallerType
 import com.ashmeet.hyperlauncher.utils.installer.ContentSource
 import com.ashmeet.hyperlauncher.utils.installer.ModrinthProject
 import com.ashmeet.hyperlauncher.utils.installer.ModrinthVersion
-import com.ashmeet.hyperlauncher.theme.PojavTheme
+import com.ashmeet.hyperlauncher.utils.translation.translatedText
 
 @Composable
 fun ContentInstallerScreen(
@@ -167,217 +163,187 @@ fun ContentInstallerScreen(
         )
     }
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = if (LauncherPreferences.PREF_LAUNCHER_BACKGROUND_PATH != null) Color.Transparent else MaterialTheme.colorScheme.background,
-        contentColor = MaterialTheme.colorScheme.onBackground
-    ) {
-        Row(modifier = Modifier.fillMaxSize()) {
-            SideRail(
-                onCreateNew = onImportModpack,
-                onRefresh = onRefresh,
-                onImportModpack = { isSearchActive = !isSearchActive },
-                onBack = handleBack
-            )
-
-            Surface(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
-                    .padding(top = 16.dp, bottom = 16.dp),
-                shape = RoundedCornerShape(32.dp),
-                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f),
-                tonalElevation = 2.dp
-            ) {
-                Column(modifier = Modifier.fillMaxSize()) {
-                    AnimatedContent(
-                        targetState = isSearchActive,
-                        transitionSpec = {
-                            (scaleIn(
-                                animationSpec = spring(
-                                    dampingRatio = Spring.DampingRatioMediumBouncy,
-                                    stiffness = Spring.StiffnessLow
-                                ),
-                                initialScale = 0.9f
-                            ) + fadeIn()) togetherWith fadeOut(animationSpec = tween(200))
+    ScreenLayout(
+        onBack = handleBack,
+        onRefresh = onRefresh,
+        onCreateNew = onImportModpack,
+        onImportModpack = { isSearchActive = !isSearchActive },
+        header = {
+            AnimatedContent(
+                targetState = isSearchActive,
+                transitionSpec = {
+                    (scaleIn(
+                        animationSpec = spring(
+                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                            stiffness = Spring.StiffnessLow
+                        ),
+                        initialScale = 0.9f
+                    ) + fadeIn()) togetherWith fadeOut(animationSpec = tween(200))
+                },
+                label = "search_transition"
+            ) { active ->
+                if (active) {
+                    OutlinedTextField(
+                        value = searchQuery,
+                        onValueChange = {
+                            searchQuery = it
+                            onSearch(it, selectedType, selectedVersion, selectedLoader, selectedSource)
                         },
-                        label = "search_transition"
-                    ) { active ->
-                        if (active) {
-                            OutlinedTextField(
-                                value = searchQuery,
-                                onValueChange = {
-                                    searchQuery = it
-                                    onSearch(it, selectedType, selectedVersion, selectedLoader, selectedSource)
-                                },
-                                enabled = viewingProject == null,
-                                textStyle = MaterialTheme.typography.bodyLarge.copy(lineHeight = 24.sp),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                                placeholder = { Text("Search content...") },
-                                leadingIcon = { Icon(Icons.Rounded.Search, contentDescription = null) },
-                                singleLine = true,
-                                shape = RoundedCornerShape(16.dp),
-                                keyboardOptions = KeyboardOptions(
-                                    imeAction = ImeAction.Search
-                                ),
-                                keyboardActions = KeyboardActions(
-                                    onSearch = {
-                                        onSearch(searchQuery, selectedType, selectedVersion, selectedLoader, selectedSource)
-                                    }
-                                ),
-                                colors = OutlinedTextFieldDefaults.colors(
-                                    focusedContainerColor = MaterialTheme.colorScheme.surface,
-                                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                                    focusedBorderColor = MaterialTheme.colorScheme.primary,
-                                    unfocusedBorderColor = Color.Transparent
+                        enabled = viewingProject == null,
+                        textStyle = MaterialTheme.typography.bodyLarge.copy(lineHeight = 24.sp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                        placeholder = { Text("Search content...") },
+                        leadingIcon = { Icon(Icons.Rounded.Search, contentDescription = null) },
+                        singleLine = true,
+                        shape = RoundedCornerShape(16.dp),
+                        keyboardOptions = KeyboardOptions(
+                            imeAction = ImeAction.Search
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onSearch = {
+                                onSearch(searchQuery, selectedType, selectedVersion, selectedLoader, selectedSource)
+                            }
+                        ),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedContainerColor = MaterialTheme.colorScheme.surface,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = Color.Transparent
+                        )
+                    )
+                } else {
+                    ScrollableTabRow(
+                        selectedTabIndex = ContentInstallerType.entries.indexOf(selectedType),
+                        modifier = Modifier.fillMaxWidth(),
+                        containerColor = Color.Transparent,
+                        edgePadding = 0.dp,
+                        divider = {},
+                        indicator = { tabPositions ->
+                            val index = ContentInstallerType.entries.indexOf(selectedType)
+                            if (index >= 0 && index < tabPositions.size) {
+                                TabRowDefaults.SecondaryIndicator(
+                                    modifier = Modifier.tabIndicatorOffset(tabPositions[index]),
+                                    height = 3.dp,
+                                    color = MaterialTheme.colorScheme.primary
                                 )
-                            )
-                        } else {
-                            ScrollableTabRow(
-                                selectedTabIndex = ContentInstallerType.entries.indexOf(selectedType),
-                                modifier = Modifier.fillMaxWidth(),
-                                containerColor = Color.Transparent,
-                                edgePadding = 0.dp,
-                                divider = {},
-                                indicator = { tabPositions ->
-                                    val index = ContentInstallerType.entries.indexOf(selectedType)
-                                    if (index >= 0 && index < tabPositions.size) {
-                                        TabRowDefaults.SecondaryIndicator(
-                                            modifier = Modifier.tabIndicatorOffset(tabPositions[index]),
-                                            height = 3.dp,
-                                            color = MaterialTheme.colorScheme.primary
-                                        )
-                                    }
-                                }
-                            ) {
-                                ContentInstallerType.entries.forEach { type ->
-                                    Tab(
-                                        selected = selectedType == type,
-                                        onClick = {
-                                            if (selectedType != type) {
-                                                if (viewingProject != null) onBackToProjects()
-                                                val newSource = if (type == ContentInstallerType.WORLDS) ContentSource.CURSEFORGE else ContentSource.MODRINTH
-                                                onSearch(searchQuery, type, selectedVersion, selectedLoader, newSource)
-                                            }
-                                        },
-                                        interactionSource = remember { MutableInteractionSource() },
-                                        text = {
-                                            Text(
-                                                text = stringResource(type.labelRes),
-                                                fontWeight = if (selectedType == type) FontWeight.Bold else FontWeight.Normal,
-                                                fontSize = 12.sp
-                                            )
-                                        }
-                                    )
-                                }
                             }
                         }
-                    }
-
-                    AnimatedContent(
-                        targetState = isLoading to viewingProject,
-                        transitionSpec = {
-                            fadeIn(animationSpec = tween(300)) togetherWith fadeOut(animationSpec = tween(300))
-                        },
-                        label = "content_transition",
-                        modifier = Modifier.weight(1f)
-                    ) { (loading, project) ->
-                        if (loading && projects.isEmpty() && project == null) {
-                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                CircularProgressIndicator()
-                            }
-                        } else if (project != null) {
-                            VersionList(
-                                projectVersions = projectVersions,
-                                availableProjectMCVersions = availableProjectMCVersions,
-                                selectedProjectMCVersion = selectedProjectMCVersion,
-                                instanceVersion = instanceVersion,
-                                instanceLoader = instanceLoader,
-                                selectedType = selectedType,
-                                isLoading = loading,
-                                onProjectMCVersionClick = onProjectMCVersionClick,
-                                onVersionClick = onVersionClick
-                            )
-                        } else if (projects.isEmpty()) {
-                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                    Icon(
-                                        imageVector = Icons.Rounded.Warning,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(64.dp),
-                                        tint = MaterialTheme.colorScheme.error.copy(alpha = 0.5f)
-                                    )
-                                    Spacer(modifier = Modifier.height(16.dp))
-                                    Text(
-                                        text = if (searchQuery.isNotEmpty()) "No results found" else "Search to find content",
-                                        style = MaterialTheme.typography.bodyLarge,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-
-                                    Spacer(modifier = Modifier.height(24.dp))
-
-                                    TextButton(
-                                        onClick = onRefresh,
-                                        shape = RoundedCornerShape(12.dp),
-                                        colors = ButtonDefaults.textButtonColors(
-                                            containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
-                                        )
-                                    ) {
-                                        Icon(Icons.Rounded.Refresh, contentDescription = null, modifier = Modifier.size(20.dp))
-                                        Spacer(modifier = Modifier.width(8.dp))
-                                        Text("Refresh")
+                    ) {
+                        ContentInstallerType.entries.forEach { type ->
+                            Tab(
+                                selected = selectedType == type,
+                                onClick = {
+                                    if (selectedType != type) {
+                                        if (viewingProject != null) onBackToProjects()
+                                        val newSource = if (type == ContentInstallerType.WORLDS) ContentSource.CURSEFORGE else ContentSource.MODRINTH
+                                        onSearch(searchQuery, type, selectedVersion, selectedLoader, newSource)
                                     }
-                                }
-                            }
-                        } else {
-                            val lazyListState = rememberLazyListState()
-                            LazyColumn(
-                                state = lazyListState,
-                                modifier = Modifier.fillMaxSize(),
-                                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 48.dp),
-                                verticalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                items(projects, key = { it.id }) { p ->
-                                    ProjectItemView(
-                                        project = p,
-                                        onClick = { onProjectClick(p) }
+                                },
+                                interactionSource = remember { MutableInteractionSource() },
+                                text = {
+                                    Text(
+                                        text = stringResource(type.labelRes),
+                                        fontWeight = if (selectedType == type) FontWeight.Bold else FontWeight.Normal,
+                                        fontSize = 12.sp
                                     )
                                 }
-                            }
+                            )
                         }
                     }
                 }
             }
+        },
+        sidebar = {
+            if (viewingProject != null) {
+                ProjectDetailsSidebar(viewingProject)
+            } else {
+                SearchFiltersSidebar(
+                    instanceVersion = instanceVersion,
+                    instanceLoader = instanceLoader,
+                    selectedVersion = selectedVersion,
+                    selectedLoader = selectedLoader,
+                    selectedSource = selectedSource,
+                    showLoaderFilter = (selectedType == ContentInstallerType.MODS || selectedType == ContentInstallerType.MODPACKS),
+                    selectedType = selectedType,
+                    onVersionChange = { onSearch(searchQuery, selectedType, it, selectedLoader, selectedSource) },
+                    onLoaderChange = { onSearch(searchQuery, selectedType, selectedVersion, it, selectedSource) },
+                    onSourceChange = { onSearch(searchQuery, selectedType, selectedVersion, selectedLoader, it) },
+                    onImportModpack = onImportModpack
+                )
+            }
+        }
+    ) {
+        AnimatedContent(
+            targetState = isLoading to viewingProject,
+            transitionSpec = {
+                fadeIn(animationSpec = tween(300)) togetherWith fadeOut(animationSpec = tween(300))
+            },
+            label = "content_transition",
+            modifier = Modifier.weight(1f)
+        ) { (loading, project) ->
+            if (loading && projects.isEmpty() && project == null) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+            } else if (project != null) {
+                VersionList(
+                    projectVersions = projectVersions,
+                    availableProjectMCVersions = availableProjectMCVersions,
+                    selectedProjectMCVersion = selectedProjectMCVersion,
+                    instanceVersion = instanceVersion,
+                    instanceLoader = instanceLoader,
+                    selectedType = selectedType,
+                    isLoading = loading,
+                    onProjectMCVersionClick = onProjectMCVersionClick,
+                    onVersionClick = onVersionClick
+                )
+            } else if (projects.isEmpty()) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(
+                            imageVector = Icons.Rounded.Warning,
+                            contentDescription = null,
+                            modifier = Modifier.size(64.dp),
+                            tint = MaterialTheme.colorScheme.error.copy(alpha = 0.5f)
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = if (searchQuery.isNotEmpty()) "No results found" else "Search to find content",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
 
-            Spacer(modifier = Modifier.width(16.dp))
+                        Spacer(modifier = Modifier.height(24.dp))
 
-            Surface(
-                modifier = Modifier
-                    .width(280.dp)
-                    .fillMaxHeight()
-                    .padding(end = 16.dp, top = 16.dp, bottom = 16.dp),
-                shape = RoundedCornerShape(32.dp),
-                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f),
-                tonalElevation = 4.dp
-            ) {
-                if (viewingProject != null) {
-                    ProjectDetailsSidebar(viewingProject)
-                } else {
-                    SearchFiltersSidebar(
-                        instanceVersion = instanceVersion,
-                        instanceLoader = instanceLoader,
-                        selectedVersion = selectedVersion,
-                        selectedLoader = selectedLoader,
-                        selectedSource = selectedSource,
-                        showLoaderFilter = (selectedType == ContentInstallerType.MODS || selectedType == ContentInstallerType.MODPACKS),
-                        selectedType = selectedType,
-                        onVersionChange = { onSearch(searchQuery, selectedType, it, selectedLoader, selectedSource) },
-                        onLoaderChange = { onSearch(searchQuery, selectedType, selectedVersion, it, selectedSource) },
-                        onSourceChange = { onSearch(searchQuery, selectedType, selectedVersion, selectedLoader, it) },
-                        onImportModpack = onImportModpack
-                    )
+                        TextButton(
+                            onClick = onRefresh,
+                            shape = RoundedCornerShape(12.dp),
+                            colors = ButtonDefaults.textButtonColors(
+                                containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+                            )
+                        ) {
+                            Icon(Icons.Rounded.Refresh, contentDescription = null, modifier = Modifier.size(20.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Refresh")
+                        }
+                    }
+                }
+            } else {
+                val lazyListState = rememberLazyListState()
+                LazyColumn(
+                    state = lazyListState,
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 48.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(projects, key = { it.id }) { p ->
+                        ProjectItemView(
+                            project = p,
+                            onClick = { onProjectClick(p) }
+                        )
+                    }
                 }
             }
         }

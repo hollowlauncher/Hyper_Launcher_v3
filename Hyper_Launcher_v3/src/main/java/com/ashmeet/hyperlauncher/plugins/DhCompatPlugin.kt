@@ -1,7 +1,8 @@
-package com.ashmeet.hyperlauncher.natives.plugins
+package com.ashmeet.hyperlauncher.plugins
 
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.ashmeet.hyperlauncher.plugins.manager.HyperPlugin
 import java.io.File
 
 class DhCompatPlugin : HyperPlugin {

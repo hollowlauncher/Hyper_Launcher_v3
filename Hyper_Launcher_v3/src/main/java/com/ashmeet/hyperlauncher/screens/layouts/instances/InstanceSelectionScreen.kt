@@ -1,18 +1,14 @@
 package com.ashmeet.hyperlauncher.screens.layouts.instances
 
 import androidx.compose.animation.core.tween
-import com.ashmeet.hyperlauncher.utils.translation.translatedText
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -26,7 +22,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
@@ -46,14 +41,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.ashmeet.hyperlauncher.components.InstanceListItem
+import com.ashmeet.hyperlauncher.components.ScreenLayout
+import com.ashmeet.hyperlauncher.theme.PojavTheme
+import com.ashmeet.hyperlauncher.utils.translation.translatedText
 import com.google.gson.Gson
 import net.kdt.pojavlaunch.PojavApplication
 import net.kdt.pojavlaunch.instances.DisplayInstance
 import net.kdt.pojavlaunch.instances.Instances
-import com.ashmeet.hyperlauncher.utils.LauncherPreferences
-import com.ashmeet.hyperlauncher.components.SideRail
-import com.ashmeet.hyperlauncher.screens.layouts.compose.InstanceListItem
-import com.ashmeet.hyperlauncher.theme.PojavTheme
 import java.io.File
 
 @Composable
@@ -131,129 +126,107 @@ private fun InstanceSelectionContent(
         }
     }
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = if (LauncherPreferences.PREF_LAUNCHER_BACKGROUND_PATH != null) Color.Transparent else MaterialTheme.colorScheme.background,
-        contentColor = MaterialTheme.colorScheme.onBackground
-    ) {
-        Row(modifier = Modifier.fillMaxSize()) {
-            SideRail(
-                onCreateNew = onCreateNew,
-                onRefresh = onRefresh,
-                onImportModpack = onImportModpack,
-                onBack = onBack
-            )
-
-            Surface(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
-                    .padding(top = 16.dp, bottom = 16.dp, end = 16.dp),
-                shape = RoundedCornerShape(32.dp),
-                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f),
-                tonalElevation = 2.dp
+    ScreenLayout(
+        onBack = onBack,
+        onRefresh = onRefresh,
+        onCreateNew = onCreateNew,
+        onImportModpack = onImportModpack,
+        header = {
+            TabRow(
+                selectedTabIndex = selectedTab,
+                containerColor = Color.Transparent,
+                divider = {},
+                indicator = { tabPositions ->
+                    if (selectedTab < tabPositions.size) {
+                        TabRowDefaults.SecondaryIndicator(
+                            modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTab]),
+                            height = 3.dp,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
             ) {
-                Column(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-
-                    TabRow(
-                        selectedTabIndex = selectedTab,
-                        containerColor = Color.Transparent,
-                        divider = {},
-                        indicator = { tabPositions ->
-                            if (selectedTab < tabPositions.size) {
-                                TabRowDefaults.SecondaryIndicator(
-                                    modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTab]),
-                                    height = 3.dp,
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            }
-                        }
-                    ) {
-                        val tabs = listOf("All", "Vanilla", "Modded")
-                        tabs.forEachIndexed { index, title ->
-                            Tab(
-                                selected = selectedTab == index,
-                                onClick = { selectedTab = index },
-                                interactionSource = remember { MutableInteractionSource() },
-                                text = {
-                                    Text(
-                                        text = title,
-                                        fontWeight = if (selectedTab == index) FontWeight.Bold else FontWeight.Normal
-                                    )
-                                }
+                val tabs = listOf("All", "Vanilla", "Modded")
+                tabs.forEachIndexed { index, title ->
+                    Tab(
+                        selected = selectedTab == index,
+                        onClick = { selectedTab = index },
+                        interactionSource = remember { MutableInteractionSource() },
+                        text = {
+                            Text(
+                                text = title,
+                                fontWeight = if (selectedTab == index) FontWeight.Bold else FontWeight.Normal
                             )
                         }
+                    )
+                }
+            }
+        }
+    ) {
+        if (isLoading) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+        } else if (filteredInstances.isEmpty()) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(
+                        imageVector = Icons.Rounded.Warning,
+                        contentDescription = null,
+                        modifier = Modifier.size(64.dp),
+                        tint = MaterialTheme.colorScheme.error.copy(alpha = 0.5f)
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = translatedText("No instances found"),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(modifier = Modifier.height(24.dp))
+                    TextButton(
+                        onClick = onRefresh,
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.textButtonColors(
+                            containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+                        )
+                    ) {
+                        Icon(Icons.Rounded.Refresh, contentDescription = null, modifier = Modifier.size(20.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Refresh")
                     }
+                }
+            }
+        } else {
+            val lazyListState = rememberLazyListState()
+            LazyColumn(
+                state = lazyListState,
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(
+                    items = filteredInstances,
+                    key = { it.mInstanceRoot.absolutePath }
+                ) { instance ->
+                    val actualIndex = instances.indexOf(instance)
+                    val isSelected = actualIndex == selectedIndex
 
-                    if (isLoading) {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            CircularProgressIndicator()
-                        }
-                    } else if (filteredInstances.isEmpty()) {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Icon(
-                                    imageVector = Icons.Rounded.Warning,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(64.dp),
-                                    tint = MaterialTheme.colorScheme.error.copy(alpha = 0.5f)
-                                )
-                                Spacer(modifier = Modifier.height(16.dp))
-                                Text(
-                                    text = translatedText("No instances found"),
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                                Spacer(modifier = Modifier.height(24.dp))
-                                TextButton(
-                                    onClick = onRefresh,
-                                    shape = RoundedCornerShape(12.dp),
-                                    colors = ButtonDefaults.textButtonColors(
-                                        containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
-                                    )
-                                ) {
-                                    Icon(Icons.Rounded.Refresh, contentDescription = null, modifier = Modifier.size(20.dp))
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text("Refresh")
-                                }
-                            }
-                        }
-                    } else {
-                        val lazyListState = rememberLazyListState()
-                        LazyColumn(
-                            state = lazyListState,
-                            modifier = Modifier.fillMaxSize(),
-                            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            items(
-                                items = filteredInstances,
-                                key = { it.mInstanceRoot.absolutePath }
-                            ) { instance ->
-                                val actualIndex = instances.indexOf(instance)
-                                val isSelected = actualIndex == selectedIndex
-
-                                InstanceListItem(
-                                    modifier = Modifier
-                                        .animateItem(
-                                            fadeInSpec = tween(300),
-                                            fadeOutSpec = tween(300),
-                                            placementSpec = tween(300)
-                                        ),
-                                    instance = instance,
-                                    isSelected = isSelected,
-                                    onClick = {
-                                        onSelectInstance(instance, actualIndex)
-                                    },
-                                    onEdit = { onEditInstance(instance) },
-                                    onRename = { onRenameInstance(instance) },
-                                    onDelete = { onDeleteInstance(instance) }
-                                )
-                            }
-                        }
-                    }
+                    InstanceListItem(
+                        modifier = Modifier
+                            .animateItem(
+                                fadeInSpec = tween(300),
+                                fadeOutSpec = tween(300),
+                                placementSpec = tween(300)
+                            ),
+                        instance = instance,
+                        isSelected = isSelected,
+                        onClick = {
+                            onSelectInstance(instance, actualIndex)
+                        },
+                        onEdit = { onEditInstance(instance) },
+                        onRename = { onRenameInstance(instance) },
+                        onDelete = { onDeleteInstance(instance) }
+                    )
                 }
             }
         }
