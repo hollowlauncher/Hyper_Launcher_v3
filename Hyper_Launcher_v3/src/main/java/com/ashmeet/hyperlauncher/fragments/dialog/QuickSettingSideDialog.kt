@@ -1,4 +1,4 @@
-package com.ashmeet.hyperlauncher.components.dialog
+package com.ashmeet.hyperlauncher.fragments.dialog
 
 import com.ashmeet.hyperlauncher.utils.translation.translatedText
 

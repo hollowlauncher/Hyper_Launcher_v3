@@ -41,8 +41,8 @@ import androidx.core.view.WindowInsetsCompat;
 
 
 import com.ashmeet.hyperlauncher.utils.LauncherPreferences;
-import com.ashmeet.hyperlauncher.components.dialog.EditControlSideDialog;
-import com.ashmeet.hyperlauncher.components.dialog.QuickSettingSideDialog;
+import com.ashmeet.hyperlauncher.fragments.dialog.EditControlSideDialog;
+import com.ashmeet.hyperlauncher.fragments.dialog.QuickSettingSideDialog;
 import com.ashmeet.hyperlauncher.helper.LauncherComposeHelper;
 import com.ashmeet.hyperlauncher.screens.activity.game.LoggerView;
 

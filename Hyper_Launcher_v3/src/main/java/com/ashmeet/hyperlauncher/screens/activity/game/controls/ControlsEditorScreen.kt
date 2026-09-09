@@ -25,7 +25,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.viewinterop.AndroidView
 import com.ashmeet.hyperlauncher.components.ActionRow
-import com.ashmeet.hyperlauncher.components.dialog.EditControlSideDialog
+import com.ashmeet.hyperlauncher.fragments.dialog.EditControlSideDialog
 import com.ashmeet.hyperlauncher.utils.translation.translatedText
 import kotlinx.coroutines.launch
 import net.ashmeet.hyperlauncher.R
