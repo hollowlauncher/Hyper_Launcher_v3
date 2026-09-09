@@ -33,8 +33,8 @@ import com.ashmeet.hyperlauncher.utils.LauncherPreferences
 import com.ashmeet.hyperlauncher.utils.ModMetadataReader
 import com.ashmeet.hyperlauncher.utils.translation.Translator
 import com.ashmeet.hyperlauncher.screens.layouts.installer.ContentInstallerScreen
-import com.ashmeet.hyperlauncher.components.dialog.DependencyDialog
-import com.ashmeet.hyperlauncher.components.dialog.MissingDependency
+import com.ashmeet.hyperlauncher.components.installer.DependencyDialog
+import com.ashmeet.hyperlauncher.components.installer.MissingDependency
 import com.ashmeet.hyperlauncher.utils.installer.ContentInstallerType
 import com.ashmeet.hyperlauncher.utils.installer.ContentSource
 import com.ashmeet.hyperlauncher.utils.installer.ModrinthProject
