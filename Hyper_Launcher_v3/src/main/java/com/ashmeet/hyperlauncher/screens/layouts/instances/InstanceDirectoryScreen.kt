@@ -109,10 +109,10 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import net.kdt.pojavlaunch.modloaders.modpacks.api.ModrinthService
-import com.ashmeet.hyperlauncher.screens.layouts.installer.models.ModrinthVersion
 import com.ashmeet.hyperlauncher.utils.LauncherPreferences
 import java.net.URL
 import android.util.Log
+import com.ashmeet.hyperlauncher.utils.installer.ModrinthVersion
 
 @Composable
 fun InstanceDirectoryScreen(

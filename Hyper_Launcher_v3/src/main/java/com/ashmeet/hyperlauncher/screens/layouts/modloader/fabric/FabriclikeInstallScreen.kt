@@ -22,7 +22,7 @@ import com.ashmeet.hyperlauncher.utils.LauncherPreferences
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.modloaders.FabricVersion
 import com.ashmeet.hyperlauncher.components.DefaultSwitch
-import com.ashmeet.hyperlauncher.screens.layouts.installer.models.ModrinthVersion
+import com.ashmeet.hyperlauncher.utils.installer.ModrinthVersion
 import net.kdt.pojavlaunch.modloaders.modpacks.api.ModrinthService
 
 @Composable
