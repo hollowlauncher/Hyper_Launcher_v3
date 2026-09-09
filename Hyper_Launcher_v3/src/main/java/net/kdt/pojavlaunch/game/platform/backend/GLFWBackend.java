@@ -6,8 +6,11 @@ import android.view.Surface;
 
 import net.kdt.pojavlaunch.LwjglGlfwKeycode;
 import net.kdt.pojavlaunch.game.platform.Platform;
+import net.kdt.pojavlaunch.game.platform.cursor.CursorUtils;
+import net.kdt.pojavlaunch.game.platform.cursor.PlatformCursor;
 
 import git.artdeell.dnbootstrap.glfw.GLFW;
+import git.artdeell.dnbootstrap.glfw.GLFWCursor;
 
 /**
  * GLFW Platform implementation
@@ -16,10 +19,37 @@ public class GLFWBackend implements PlatformBackend {
     public GLFWBackend() {
         GLFW.setGrabListener(Platform::grabStateChanged);
         GLFW.setPositionCallback(Platform::setCursorPosition);
-        GLFW.setCursorCallback(cursor -> {
-            if (cursor != null)
-                Platform.setCursor(cursor.getBitmap(), cursor.getXhot(), cursor.getYhot());
-            else Platform.setCursor(null, 0, 0);
+        GLFW.setCursorCallback(new GLFW.CursorCallback() {
+            @Override
+            public void onCursorUse(GLFWCursor cursor) {
+                if (cursor != null)
+                    Platform.setCursor(cursor.getBitmap(), cursor.getXhot(), cursor.getYhot());
+                else Platform.setCursor(null, 0, 0);
+            }
+
+            @Override
+            public void onStandardCursorUse(int shape) {
+                int shapeName = -1;
+                switch (shape) {
+                    case 0:
+                    case LwjglGlfwKeycode.GLFW_ARROW_CURSOR: shapeName = 0; break;
+                    case LwjglGlfwKeycode.GLFW_IBEAM_CURSOR: shapeName = 1; break;
+                    case LwjglGlfwKeycode.GLFW_CROSSHAIR_CURSOR: shapeName = 2; break;
+                    case LwjglGlfwKeycode.GLFW_HAND_CURSOR: shapeName = 3; break;
+                    case LwjglGlfwKeycode.GLFW_HRESIZE_CURSOR: shapeName = 4; break;
+                    case LwjglGlfwKeycode.GLFW_VRESIZE_CURSOR: shapeName = 5; break;
+                    case LwjglGlfwKeycode.GLFW_RESIZE_ALL_CURSOR: shapeName = 6; break;
+                    case LwjglGlfwKeycode.GLFW_NOT_ALLOWED_CURSOR: shapeName = 7; break;
+                }
+                if (shapeName != -1) {
+                    PlatformCursor cursor = CursorUtils.loadStandardCursor(Platform.getCursorImplementor().getImplementorContext(), shapeName);
+                    if (cursor != null) {
+                        Platform.setCursor(cursor.bitmap, cursor.hotX, cursor.hotY);
+                        return;
+                    }
+                }
+                Platform.setCursor(null, 0, 0);
+            }
         });
     }
 

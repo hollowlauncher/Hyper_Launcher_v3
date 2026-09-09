@@ -225,6 +225,62 @@ object LauncherPreferences {
     var PREF_POINTER_HOTSPOT_Y = 0
 
     @JvmField
+    var PREF_POINTER_ICON_PATH_ARROW: String? = null
+    @JvmField
+    var PREF_POINTER_HOTSPOT_X_ARROW = -1
+    @JvmField
+    var PREF_POINTER_HOTSPOT_Y_ARROW = -1
+
+    @JvmField
+    var PREF_POINTER_ICON_PATH_IBEAM: String? = null
+    @JvmField
+    var PREF_POINTER_HOTSPOT_X_IBEAM = -1
+    @JvmField
+    var PREF_POINTER_HOTSPOT_Y_IBEAM = -1
+
+    @JvmField
+    var PREF_POINTER_ICON_PATH_CROSSHAIR: String? = null
+    @JvmField
+    var PREF_POINTER_HOTSPOT_X_CROSSHAIR = -1
+    @JvmField
+    var PREF_POINTER_HOTSPOT_Y_CROSSHAIR = -1
+
+    @JvmField
+    var PREF_POINTER_ICON_PATH_HAND: String? = null
+    @JvmField
+    var PREF_POINTER_HOTSPOT_X_HAND = -1
+    @JvmField
+    var PREF_POINTER_HOTSPOT_Y_HAND = -1
+
+    @JvmField
+    var PREF_POINTER_ICON_PATH_HRESIZE: String? = null
+    @JvmField
+    var PREF_POINTER_HOTSPOT_X_HRESIZE = -1
+    @JvmField
+    var PREF_POINTER_HOTSPOT_Y_HRESIZE = -1
+
+    @JvmField
+    var PREF_POINTER_ICON_PATH_VRESIZE: String? = null
+    @JvmField
+    var PREF_POINTER_HOTSPOT_X_VRESIZE = -1
+    @JvmField
+    var PREF_POINTER_HOTSPOT_Y_VRESIZE = -1
+
+    @JvmField
+    var PREF_POINTER_ICON_PATH_ALL_RESIZE: String? = null
+    @JvmField
+    var PREF_POINTER_HOTSPOT_X_ALL_RESIZE = -1
+    @JvmField
+    var PREF_POINTER_HOTSPOT_Y_ALL_RESIZE = -1
+
+    @JvmField
+    var PREF_POINTER_ICON_PATH_NOT_ALLOWED: String? = null
+    @JvmField
+    var PREF_POINTER_HOTSPOT_X_NOT_ALLOWED = -1
+    @JvmField
+    var PREF_POINTER_HOTSPOT_Y_NOT_ALLOWED = -1
+
+    @JvmField
     var PREF_LAUNCHER_BACKGROUND_PATH: String? = null
 
     @JvmField
@@ -338,6 +394,38 @@ object LauncherPreferences {
         PREF_POINTER_ICON_PATH = pref.getString("pointer_icon_path", null)
         PREF_POINTER_HOTSPOT_X = pref.getInt("pointer_hotspot_x", 0)
         PREF_POINTER_HOTSPOT_Y = pref.getInt("pointer_hotspot_y", 0)
+
+        PREF_POINTER_ICON_PATH_ARROW = pref.getString("pointer_icon_path_arrow", null)
+        PREF_POINTER_HOTSPOT_X_ARROW = pref.getInt("pointer_hotspot_x_arrow", -1)
+        PREF_POINTER_HOTSPOT_Y_ARROW = pref.getInt("pointer_hotspot_y_arrow", -1)
+
+        PREF_POINTER_ICON_PATH_IBEAM = pref.getString("pointer_icon_path_ibeam", null)
+        PREF_POINTER_HOTSPOT_X_IBEAM = pref.getInt("pointer_hotspot_x_ibeam", -1)
+        PREF_POINTER_HOTSPOT_Y_IBEAM = pref.getInt("pointer_hotspot_y_ibeam", -1)
+
+        PREF_POINTER_ICON_PATH_CROSSHAIR = pref.getString("pointer_icon_path_crosshair", null)
+        PREF_POINTER_HOTSPOT_X_CROSSHAIR = pref.getInt("pointer_hotspot_x_crosshair", -1)
+        PREF_POINTER_HOTSPOT_Y_CROSSHAIR = pref.getInt("pointer_hotspot_y_crosshair", -1)
+
+        PREF_POINTER_ICON_PATH_HAND = pref.getString("pointer_icon_path_hand", null)
+        PREF_POINTER_HOTSPOT_X_HAND = pref.getInt("pointer_hotspot_x_hand", -1)
+        PREF_POINTER_HOTSPOT_Y_HAND = pref.getInt("pointer_hotspot_y_hand", -1)
+
+        PREF_POINTER_ICON_PATH_HRESIZE = pref.getString("pointer_icon_path_hresize", null)
+        PREF_POINTER_HOTSPOT_X_HRESIZE = pref.getInt("pointer_hotspot_x_hresize", -1)
+        PREF_POINTER_HOTSPOT_Y_HRESIZE = pref.getInt("pointer_hotspot_y_hresize", -1)
+
+        PREF_POINTER_ICON_PATH_VRESIZE = pref.getString("pointer_icon_path_vresize", null)
+        PREF_POINTER_HOTSPOT_X_VRESIZE = pref.getInt("pointer_hotspot_x_vresize", -1)
+        PREF_POINTER_HOTSPOT_Y_VRESIZE = pref.getInt("pointer_hotspot_y_vresize", -1)
+
+        PREF_POINTER_ICON_PATH_ALL_RESIZE = pref.getString("pointer_icon_path_all_resize", null)
+        PREF_POINTER_HOTSPOT_X_ALL_RESIZE = pref.getInt("pointer_hotspot_x_all_resize", -1)
+        PREF_POINTER_HOTSPOT_Y_ALL_RESIZE = pref.getInt("pointer_hotspot_y_all_resize", -1)
+
+        PREF_POINTER_ICON_PATH_NOT_ALLOWED = pref.getString("pointer_icon_path_not_allowed", null)
+        PREF_POINTER_HOTSPOT_X_NOT_ALLOWED = pref.getInt("pointer_hotspot_x_not_allowed", -1)
+        PREF_POINTER_HOTSPOT_Y_NOT_ALLOWED = pref.getInt("pointer_hotspot_y_not_allowed", -1)
 
         PREF_LAUNCHER_BACKGROUND_PATH = pref.getString("launcher_background_path", null)
         PREF_LAUNCHER_BACKGROUND_TYPE = pref.getString("launcher_background_type", "image") ?: "image"

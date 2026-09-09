@@ -248,7 +248,7 @@ fun PointerHotspotPickerDialog(
                         )
                     } else {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_mouse_pointer),
+                            painter = painterResource(id = R.drawable.img_mouse_pointer_arrow),
                             contentDescription = null,
                             modifier = Modifier.fillMaxSize(),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant

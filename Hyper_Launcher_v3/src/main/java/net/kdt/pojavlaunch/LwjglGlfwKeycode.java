@@ -199,4 +199,16 @@ public class LwjglGlfwKeycode {
     public static final int
     GLFW_VISIBLE                 = 0x20004,
     GLFW_HOVERED                 = 0x2000B;
+
+    public static final int
+    GLFW_ARROW_CURSOR         = 0x00036001,
+    GLFW_IBEAM_CURSOR         = 0x00036002,
+    GLFW_CROSSHAIR_CURSOR     = 0x00036003,
+    GLFW_HAND_CURSOR          = 0x00036004,
+    GLFW_HRESIZE_CURSOR       = 0x00036005,
+    GLFW_VRESIZE_CURSOR       = 0x00036006,
+    GLFW_RESIZE_NWSE_CURSOR   = 0x00036007,
+    GLFW_RESIZE_NESW_CURSOR   = 0x00036008,
+    GLFW_RESIZE_ALL_CURSOR    = 0x00036009,
+    GLFW_NOT_ALLOWED_CURSOR   = 0x0003600A;
 }

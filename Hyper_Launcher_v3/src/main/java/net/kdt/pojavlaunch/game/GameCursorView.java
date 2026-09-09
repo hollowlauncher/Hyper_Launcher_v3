@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
 import net.ashmeet.hyperlauncher.R;
+import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.game.platform.Platform;
 import net.kdt.pojavlaunch.game.platform.cursor.PlatformCursor;
 import net.kdt.pojavlaunch.game.platform.cursor.PlatformCursorImplementor;
@@ -39,15 +40,15 @@ public class GameCursorView extends View implements PlatformCursorImplementor {
 
     public GameCursorView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        cursorDrawable = ContextCompat.getDrawable(context, R.drawable.ic_mouse_pointer);
+        cursorDrawable = ContextCompat.getDrawable(context, R.drawable.img_mouse_pointer_arrow);
         assert cursorDrawable != null;
-        cursorDrawable.setBounds(0, 0, 36, 54);
+        int size = (int) Tools.dpToPx(24);
+        cursorDrawable.setBounds(0, 0, size, (int) (size * ((float) cursorDrawable.getIntrinsicHeight() / cursorDrawable.getIntrinsicWidth())));
     }
 
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
         if (noDraw) return;
-        // Scale coordinates back to the full unresized screen size
         int dx = (int) (Platform.cursorX * ((GameView)getParent()).cursorRatioX);
         int dy = (int) (Platform.cursorY * ((GameView)getParent()).cursorRatioY);
         canvas.translate(dx, dy);
@@ -78,5 +79,10 @@ public class GameCursorView extends View implements PlatformCursorImplementor {
 
     public void setCursorScale(float scale) {
         this.mouseScale = scale;
+    }
+
+    @Override
+    public Context getImplementorContext() {
+        return getContext();
     }
 }

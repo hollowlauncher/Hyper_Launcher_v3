@@ -6,12 +6,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ViewSidebar
@@ -31,15 +26,19 @@ import androidx.compose.material.icons.rounded.RadioButtonUnchecked
 import androidx.compose.material.icons.rounded.Repeat
 import androidx.compose.material.icons.rounded.Restore
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
 import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
@@ -49,16 +48,22 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import com.ashmeet.hyperlauncher.LauncherPreference.Preference.LauncherPreferences
 import com.ashmeet.hyperlauncher.screens.layouts.settings.layouts.CardPosition
 import com.ashmeet.hyperlauncher.screens.layouts.settings.layouts.SettingsCard
 import com.ashmeet.hyperlauncher.screens.layouts.settings.layouts.SettingsScreenWrapper
+import com.ashmeet.hyperlauncher.screens.layouts.settings.layouts.TitleAndSummary
+import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.CursorInfo
+import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.CursorPreferenceItem
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.PointerHotspotPickerDialog
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.PreferenceCategory
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SettingsActionItem
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SettingsSliderItem
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SettingsSwitchItem
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SingleChoiceDialog
+import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.cursorInfos
+import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.getDefaultCursorDrawable
 import com.ashmeet.hyperlauncher.utils.Translator
 import com.ashmeet.hyperlauncher.utils.translatedText
 import net.ashmeet.hyperlauncher.R
@@ -104,6 +109,35 @@ fun AppearanceSettingsScreen(
     var pointerHotspotY by remember { mutableFloatStateOf(LauncherPreferences.PREF_POINTER_HOTSPOT_Y.toFloat()) }
     var mouseScale by remember { mutableFloatStateOf(LauncherPreferences.PREF_MOUSESCALE * 100f) }
 
+    var pendingCursorShape by remember { mutableIntStateOf(-1) }
+    var editingCursorShape by remember { mutableIntStateOf(-1) }
+
+    val pointerPaths = remember {
+        mutableStateMapOf<Int, String?>().apply {
+            put(0, LauncherPreferences.PREF_POINTER_ICON_PATH_ARROW)
+            put(1, LauncherPreferences.PREF_POINTER_ICON_PATH_IBEAM)
+            put(2, LauncherPreferences.PREF_POINTER_ICON_PATH_CROSSHAIR)
+            put(3, LauncherPreferences.PREF_POINTER_ICON_PATH_HAND)
+            put(4, LauncherPreferences.PREF_POINTER_ICON_PATH_HRESIZE)
+            put(5, LauncherPreferences.PREF_POINTER_ICON_PATH_VRESIZE)
+            put(6, LauncherPreferences.PREF_POINTER_ICON_PATH_ALL_RESIZE)
+            put(7, LauncherPreferences.PREF_POINTER_ICON_PATH_NOT_ALLOWED)
+        }
+    }
+
+    val pointerHotspots = remember {
+        mutableStateMapOf<Int, Pair<Float, Float>>().apply {
+            put(0, LauncherPreferences.PREF_POINTER_HOTSPOT_X_ARROW.toFloat() to LauncherPreferences.PREF_POINTER_HOTSPOT_Y_ARROW.toFloat())
+            put(1, LauncherPreferences.PREF_POINTER_HOTSPOT_X_IBEAM.toFloat() to LauncherPreferences.PREF_POINTER_HOTSPOT_Y_IBEAM.toFloat())
+            put(2, LauncherPreferences.PREF_POINTER_HOTSPOT_X_CROSSHAIR.toFloat() to LauncherPreferences.PREF_POINTER_HOTSPOT_Y_CROSSHAIR.toFloat())
+            put(3, LauncherPreferences.PREF_POINTER_HOTSPOT_X_HAND.toFloat() to LauncherPreferences.PREF_POINTER_HOTSPOT_Y_HAND.toFloat())
+            put(4, LauncherPreferences.PREF_POINTER_HOTSPOT_X_HRESIZE.toFloat() to LauncherPreferences.PREF_POINTER_HOTSPOT_Y_HRESIZE.toFloat())
+            put(5, LauncherPreferences.PREF_POINTER_HOTSPOT_X_VRESIZE.toFloat() to LauncherPreferences.PREF_POINTER_HOTSPOT_Y_VRESIZE.toFloat())
+            put(6, LauncherPreferences.PREF_POINTER_HOTSPOT_X_ALL_RESIZE.toFloat() to LauncherPreferences.PREF_POINTER_HOTSPOT_Y_ALL_RESIZE.toFloat())
+            put(7, LauncherPreferences.PREF_POINTER_HOTSPOT_X_NOT_ALLOWED.toFloat() to LauncherPreferences.PREF_POINTER_HOTSPOT_Y_NOT_ALLOWED.toFloat())
+        }
+    }
+
     var launcherBgPath by remember { mutableStateOf(LauncherPreferences.PREF_LAUNCHER_BACKGROUND_PATH) }
     var launcherBgType by remember { mutableStateOf(LauncherPreferences.PREF_LAUNCHER_BACKGROUND_TYPE) }
     var launcherBgOverlayEnabled by remember { mutableStateOf(LauncherPreferences.PREF_LAUNCHER_BACKGROUND_OVERLAY_ENABLED) }
@@ -116,6 +150,90 @@ fun AppearanceSettingsScreen(
     var recentBackgrounds by remember { mutableStateOf(LauncherPreferences.PREF_RECENT_LAUNCHER_BACKGROUNDS.toList()) }
 
     val context = LocalContext.current
+
+    val individualPointerLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        if (uri != null && pendingCursorShape != -1) {
+            val shape = pendingCursorShape
+            val suffix = cursorInfos.find { it.shapeId == shape }?.suffix ?: ""
+            val destination = File(Tools.DIR_DATA, "custom_pointer_$suffix.png")
+            try {
+                context.contentResolver.openInputStream(uri)?.use { input ->
+                    FileOutputStream(destination).use { output ->
+                        input.copyTo(output)
+                    }
+                }
+                val path = destination.absolutePath
+                LauncherPreferences.prefs.edit { putString("pointer_icon_path_$suffix", path) }
+                when (shape) {
+                    0 -> LauncherPreferences.PREF_POINTER_ICON_PATH_ARROW = path
+                    1 -> LauncherPreferences.PREF_POINTER_ICON_PATH_IBEAM = path
+                    2 -> LauncherPreferences.PREF_POINTER_ICON_PATH_CROSSHAIR = path
+                    3 -> LauncherPreferences.PREF_POINTER_ICON_PATH_HAND = path
+                    4 -> LauncherPreferences.PREF_POINTER_ICON_PATH_HRESIZE = path
+                    5 -> LauncherPreferences.PREF_POINTER_ICON_PATH_VRESIZE = path
+                    6 -> LauncherPreferences.PREF_POINTER_ICON_PATH_ALL_RESIZE = path
+                    7 -> LauncherPreferences.PREF_POINTER_ICON_PATH_NOT_ALLOWED = path
+                }
+                pointerPaths[shape] = path
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun resetIndividualPointer(shape: Int) {
+        val suffix = cursorInfos.find { it.shapeId == shape }?.suffix ?: ""
+        LauncherPreferences.prefs.edit {
+            remove("pointer_icon_path_$suffix")
+            remove("pointer_hotspot_x_$suffix")
+            remove("pointer_hotspot_y_$suffix")
+        }
+        when (shape) {
+            0 -> {
+                LauncherPreferences.PREF_POINTER_ICON_PATH_ARROW = null
+                LauncherPreferences.PREF_POINTER_HOTSPOT_X_ARROW = -1
+                LauncherPreferences.PREF_POINTER_HOTSPOT_Y_ARROW = -1
+            }
+            1 -> {
+                LauncherPreferences.PREF_POINTER_ICON_PATH_IBEAM = null
+                LauncherPreferences.PREF_POINTER_HOTSPOT_X_IBEAM = -1
+                LauncherPreferences.PREF_POINTER_HOTSPOT_Y_IBEAM = -1
+            }
+            2 -> {
+                LauncherPreferences.PREF_POINTER_ICON_PATH_CROSSHAIR = null
+                LauncherPreferences.PREF_POINTER_HOTSPOT_X_CROSSHAIR = -1
+                LauncherPreferences.PREF_POINTER_HOTSPOT_Y_CROSSHAIR = -1
+            }
+            3 -> {
+                LauncherPreferences.PREF_POINTER_ICON_PATH_HAND = null
+                LauncherPreferences.PREF_POINTER_HOTSPOT_X_HAND = -1
+                LauncherPreferences.PREF_POINTER_HOTSPOT_Y_HAND = -1
+            }
+            4 -> {
+                LauncherPreferences.PREF_POINTER_ICON_PATH_HRESIZE = null
+                LauncherPreferences.PREF_POINTER_HOTSPOT_X_HRESIZE = -1
+                LauncherPreferences.PREF_POINTER_HOTSPOT_Y_HRESIZE = -1
+            }
+            5 -> {
+                LauncherPreferences.PREF_POINTER_ICON_PATH_VRESIZE = null
+                LauncherPreferences.PREF_POINTER_HOTSPOT_X_VRESIZE = -1
+                LauncherPreferences.PREF_POINTER_HOTSPOT_Y_VRESIZE = -1
+            }
+            6 -> {
+                LauncherPreferences.PREF_POINTER_ICON_PATH_ALL_RESIZE = null
+                LauncherPreferences.PREF_POINTER_HOTSPOT_X_ALL_RESIZE = -1
+                LauncherPreferences.PREF_POINTER_HOTSPOT_Y_ALL_RESIZE = -1
+            }
+            7 -> {
+                LauncherPreferences.PREF_POINTER_ICON_PATH_NOT_ALLOWED = null
+                LauncherPreferences.PREF_POINTER_HOTSPOT_X_NOT_ALLOWED = -1
+                LauncherPreferences.PREF_POINTER_HOTSPOT_Y_NOT_ALLOWED = -1
+            }
+        }
+        pointerPaths[shape] = null
+        pointerHotspots[shape] = -1f to -1f
+    }
+
     var showTransitionDialog by remember { mutableStateOf(false) }
     var showThemeDialog by remember { mutableStateOf(false) }
     var showLanguageDialog by remember { mutableStateOf(false) }
@@ -584,18 +702,53 @@ fun AppearanceSettingsScreen(
 
             PreferenceCategory(title = translatedText("Pointer Settings"))
             SettingsCard(position = CardPosition.TOP, useSurface = true) {
-                SettingsSliderItem(
-                    title = translatedText("Pointer Size"),
-                    icon = Icons.Rounded.AspectRatio,
-                    value = mouseScale,
-                    valueRange = 25f..300f,
-                    onValueChange = {
-                        mouseScale = it
-                        LauncherPreferences.prefs.edit { putInt("mousescale", it.toInt()) }
-                        LauncherPreferences.loadPreferences(context)
-                    },
-                    valueSuffix = "%"
-                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    val painter = if (pointerIconPath != null) {
+                        val bitmap = remember(pointerIconPath) {
+                            try {
+                                BitmapFactory.decodeFile(pointerIconPath)
+                            } catch (_: Exception) {
+                                null
+                            }
+                        }
+                        if (bitmap != null) {
+                            BitmapPainter(bitmap.asImageBitmap())
+                        } else {
+                            androidx.compose.ui.res.painterResource(id = R.drawable.img_mouse_pointer_arrow)
+                        }
+                    } else {
+                        androidx.compose.ui.res.painterResource(id = R.drawable.img_mouse_pointer_arrow)
+                    }
+
+                    Image(
+                        painter = painter,
+                        contentDescription = null,
+                        modifier = Modifier.size(32.dp),
+                        contentScale = ContentScale.Fit
+                    )
+
+                    Spacer(modifier = Modifier.width(16.dp))
+
+                    Column(modifier = Modifier.weight(1f)) {
+                        SettingsSliderItem(
+                            title = translatedText("Pointer Size"),
+                            icon = null,
+                            value = mouseScale,
+                            valueRange = 25f..300f,
+                            onValueChange = {
+                                mouseScale = it
+                                LauncherPreferences.prefs.edit { putInt("mousescale", it.toInt()) }
+                                LauncherPreferences.loadPreferences(context)
+                            },
+                            valueSuffix = "%"
+                        )
+                    }
+                }
             }
             SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
                 val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
@@ -649,6 +802,35 @@ fun AppearanceSettingsScreen(
                     }
                 )
             }
+
+            PreferenceCategory(title = translatedText("Individual Pointers"))
+            cursorInfos.forEachIndexed { index, cursorInfo ->
+                SettingsCard(
+                    position = when {
+                        cursorInfos.size == 1 -> CardPosition.SINGLE
+                        index == 0 -> CardPosition.TOP
+                        index == cursorInfos.size - 1 -> CardPosition.BOTTOM
+                        else -> CardPosition.MIDDLE
+                    },
+                    useSurface = true
+                ) {
+                    CursorPreferenceItem(
+                        title = translatedText(cursorInfo.name),
+                        shapeId = cursorInfo.shapeId,
+                        imagePath = pointerPaths[cursorInfo.shapeId],
+                        onPickImage = {
+                            pendingCursorShape = cursorInfo.shapeId
+                            individualPointerLauncher.launch("image/*")
+                        },
+                        onAdjustHotspot = {
+                            editingCursorShape = cursorInfo.shapeId
+                        },
+                        onReset = {
+                            resetIndividualPointer(cursorInfo.shapeId)
+                        }
+                    )
+                }
+            }
         }
 
     }
@@ -699,24 +881,50 @@ fun AppearanceSettingsScreen(
         )
     }
 
-    if (showHotspotDialog) {
+    if (showHotspotDialog || editingCursorShape != -1) {
+        val shape = editingCursorShape
+        val isGeneral = shape == -1
+
         PointerHotspotPickerDialog(
             title = translatedText("Adjust Hotspot"),
-            imagePath = pointerIconPath,
-            initialX = pointerHotspotX,
-            initialY = pointerHotspotY,
+            imagePath = if (isGeneral) pointerIconPath else pointerPaths[shape],
+            initialX = if (isGeneral) pointerHotspotX else pointerHotspots[shape]?.first ?: -1f,
+            initialY = if (isGeneral) pointerHotspotY else pointerHotspots[shape]?.second ?: -1f,
             onConfirm = { x, y ->
-                pointerHotspotX = x
-                pointerHotspotY = y
-                LauncherPreferences.prefs.edit {
-                    putInt("pointer_hotspot_x", x.toInt())
-                    putInt("pointer_hotspot_y", y.toInt())
+                if (isGeneral) {
+                    pointerHotspotX = x
+                    pointerHotspotY = y
+                    LauncherPreferences.prefs.edit {
+                        putInt("pointer_hotspot_x", x.toInt())
+                        putInt("pointer_hotspot_y", y.toInt())
+                    }
+                    LauncherPreferences.PREF_POINTER_HOTSPOT_X = x.toInt()
+                    LauncherPreferences.PREF_POINTER_HOTSPOT_Y = y.toInt()
+                    showHotspotDialog = false
+                } else {
+                    val suffix = cursorInfos.find { it.shapeId == shape }?.suffix ?: ""
+                    LauncherPreferences.prefs.edit {
+                        putInt("pointer_hotspot_x_$suffix", x.toInt())
+                        putInt("pointer_hotspot_y_$suffix", y.toInt())
+                    }
+                    when (shape) {
+                        0 -> { LauncherPreferences.PREF_POINTER_HOTSPOT_X_ARROW = x.toInt(); LauncherPreferences.PREF_POINTER_HOTSPOT_Y_ARROW = y.toInt() }
+                        1 -> { LauncherPreferences.PREF_POINTER_HOTSPOT_X_IBEAM = x.toInt(); LauncherPreferences.PREF_POINTER_HOTSPOT_Y_IBEAM = y.toInt() }
+                        2 -> { LauncherPreferences.PREF_POINTER_HOTSPOT_X_CROSSHAIR = x.toInt(); LauncherPreferences.PREF_POINTER_HOTSPOT_Y_CROSSHAIR = y.toInt() }
+                        3 -> { LauncherPreferences.PREF_POINTER_HOTSPOT_X_HAND = x.toInt(); LauncherPreferences.PREF_POINTER_HOTSPOT_Y_HAND = y.toInt() }
+                        4 -> { LauncherPreferences.PREF_POINTER_HOTSPOT_X_HRESIZE = x.toInt(); LauncherPreferences.PREF_POINTER_HOTSPOT_Y_HRESIZE = y.toInt() }
+                        5 -> { LauncherPreferences.PREF_POINTER_HOTSPOT_X_VRESIZE = x.toInt(); LauncherPreferences.PREF_POINTER_HOTSPOT_Y_VRESIZE = y.toInt() }
+                        6 -> { LauncherPreferences.PREF_POINTER_HOTSPOT_X_ALL_RESIZE = x.toInt(); LauncherPreferences.PREF_POINTER_HOTSPOT_Y_ALL_RESIZE = y.toInt() }
+                        7 -> { LauncherPreferences.PREF_POINTER_HOTSPOT_X_NOT_ALLOWED = x.toInt(); LauncherPreferences.PREF_POINTER_HOTSPOT_Y_NOT_ALLOWED = y.toInt() }
+                    }
+                    pointerHotspots[shape] = x to y
+                    editingCursorShape = -1
                 }
-                LauncherPreferences.PREF_POINTER_HOTSPOT_X = x.toInt()
-                LauncherPreferences.PREF_POINTER_HOTSPOT_Y = y.toInt()
-                showHotspotDialog = false
             },
-            onDismiss = { showHotspotDialog = false }
+            onDismiss = {
+                showHotspotDialog = false
+                editingCursorShape = -1
+            }
         )
     }
 }

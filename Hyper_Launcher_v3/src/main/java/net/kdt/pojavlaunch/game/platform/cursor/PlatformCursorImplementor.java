@@ -15,4 +15,6 @@ public interface PlatformCursorImplementor extends PlatformGrabListener {
      * Update cursor drawable on the screen
      */
     void onCursorChanged();
+
+    android.content.Context getImplementorContext();
 }

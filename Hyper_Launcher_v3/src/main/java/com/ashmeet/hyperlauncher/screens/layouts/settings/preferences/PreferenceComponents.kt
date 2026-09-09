@@ -1,5 +1,7 @@
 package com.ashmeet.hyperlauncher.screens.layouts.settings.preferences
 
+import android.graphics.BitmapFactory
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,9 +12,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.AddPhotoAlternate
+import androidx.compose.material.icons.rounded.DragIndicator
+import androidx.compose.material.icons.rounded.Restore
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
@@ -20,17 +26,115 @@ import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.ashmeet.hyperlauncher.components.DefaultSwitch
 import com.ashmeet.hyperlauncher.components.SimpleTextSlider
 import com.ashmeet.hyperlauncher.screens.layouts.settings.layouts.TitleAndSummary
+import com.ashmeet.hyperlauncher.utils.translatedText
+import net.ashmeet.hyperlauncher.R
 import kotlinx.coroutines.launch
+
+data class CursorInfo(val name: String, val shapeId: Int, val suffix: String)
+
+val cursorInfos = listOf(
+    CursorInfo("Arrow", 0, "arrow"),
+    CursorInfo("I-Beam", 1, "ibeam"),
+    CursorInfo("Crosshair", 2, "crosshair"),
+    CursorInfo("Hand", 3, "hand"),
+    CursorInfo("Horizontal Resize", 4, "hresize"),
+    CursorInfo("Vertical Resize", 5, "vresize"),
+    CursorInfo("All Resize", 6, "all_resize"),
+    CursorInfo("Not Allowed", 7, "not_allowed")
+)
+
+fun getDefaultCursorDrawable(shapeId: Int): Int {
+    return when (shapeId) {
+        0 -> R.drawable.img_mouse_pointer_arrow
+        1 -> R.drawable.img_mouse_pointer_ibeam
+        2 -> R.drawable.img_mouse_pointer_crosshair
+        3 -> R.drawable.img_mouse_pointer_link
+        4 -> R.drawable.img_mouse_pointer_resize_ew
+        5 -> R.drawable.img_mouse_pointer_resize_ns
+        6 -> R.drawable.img_mouse_pointer_resize_move
+        7 -> R.drawable.img_mouse_pointer_not_allowed
+        else -> R.drawable.img_mouse_pointer_arrow
+    }
+}
+
+@Composable
+fun CursorPreferenceItem(
+    title: String,
+    shapeId: Int,
+    imagePath: String?,
+    onPickImage: () -> Unit,
+    onAdjustHotspot: () -> Unit,
+    onReset: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        val painter = if (imagePath != null) {
+            val bitmap = remember(imagePath) {
+                try {
+                    BitmapFactory.decodeFile(imagePath)
+                } catch (_: Exception) {
+                    null
+                }
+            }
+            if (bitmap != null) {
+                BitmapPainter(bitmap.asImageBitmap())
+            } else {
+                painterResource(id = getDefaultCursorDrawable(shapeId))
+            }
+        } else {
+            painterResource(id = getDefaultCursorDrawable(shapeId))
+        }
+
+        Image(
+            painter = painter,
+            contentDescription = null,
+            modifier = Modifier.size(32.dp),
+            contentScale = ContentScale.Fit
+        )
+
+        Spacer(modifier = Modifier.width(16.dp))
+
+        Column(modifier = Modifier.weight(1f)) {
+            TitleAndSummary(
+                title = title,
+                summary = if (imagePath != null) translatedText("Custom active") else translatedText("Default active")
+            )
+        }
+
+        IconButton(onClick = onPickImage) {
+            Icon(Icons.Rounded.AddPhotoAlternate, contentDescription = translatedText("Change image"), tint = MaterialTheme.colorScheme.onSurface)
+        }
+
+        if (imagePath != null) {
+            IconButton(onClick = onAdjustHotspot) {
+                Icon(Icons.Rounded.DragIndicator, contentDescription = translatedText("Adjust hotspot"), tint = MaterialTheme.colorScheme.onSurface)
+            }
+        }
+
+        IconButton(onClick = onReset) {
+            Icon(Icons.Rounded.Restore, contentDescription = translatedText("Reset"), tint = MaterialTheme.colorScheme.onSurface)
+        }
+    }
+}
 
 @Composable
 fun PreferenceCategory(title: String) {
@@ -250,4 +354,5 @@ fun SettingsSliderItem(
             suffix = valueSuffix
         )
     }
+
 }

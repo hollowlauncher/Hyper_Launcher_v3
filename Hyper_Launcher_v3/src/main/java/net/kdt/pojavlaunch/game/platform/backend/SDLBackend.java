@@ -12,6 +12,9 @@ import git.mojo.sdl.SDL;
 import git.mojo.sdl.SDLActivity;
 import git.mojo.sdl.SDLControllerManager;
 import git.mojo.sdl.SDLInputConnection;
+import git.mojo.sdl.SDLCursor;
+import net.kdt.pojavlaunch.game.platform.cursor.PlatformCursor;
+import net.kdt.pojavlaunch.game.platform.cursor.CursorUtils;
 
 /**
  * SDL3 Platform implementation
@@ -20,18 +23,41 @@ public class SDLBackend implements PlatformBackend {
 
     public SDLBackend() {
         SDLActivity.setGrabListener(SDLBackend::handleGrabStateChange);
-        SDLActivity.setCursorCallback(cursor -> {
-            if (cursor != null)
-                Platform.setCursor(cursor.getBitmap(), cursor.getXhot(), cursor.getYhot());
-            else Platform.setCursor(null, 0, 0);
+        SDLActivity.setCursorCallback(new SDLCursor.CursorChangeCallback() {
+            @Override
+            public void onCursorChange(SDLCursor cursor) {
+                if (cursor != null)
+                    Platform.setCursor(cursor.getBitmap(), cursor.getXhot(), cursor.getYhot());
+                else Platform.setCursor(null, 0, 0);
+            }
+
+            @Override
+            public void onSystemCursorChange(int systemCursorID) {
+                int shape = -1;
+                switch (systemCursorID) {
+                    case 0: shape = 0; break; // DEFAULT -> ARROW
+                    case 1: shape = 1; break; // TEXT -> IBEAM
+                    case 3: shape = 2; break; // CROSSHAIR -> CROSSHAIR
+                    case 7: shape = 4; break; // WE_RESIZE -> RESIZE_EW
+                    case 8: shape = 5; break; // NS_RESIZE -> RESIZE_NS
+                    case 9: shape = 6; break; // ALL_RESIZE -> RESIZE_MOVE
+                    case 10: shape = 7; break; // NO -> NOT_ALLOWED
+                    case 11: shape = 3; break; // HAND -> LINK
+                }
+                if (shape != -1) {
+                    PlatformCursor cursor = CursorUtils.loadStandardCursor(Platform.getCursorImplementor().getImplementorContext(), shape);
+                    if (cursor != null) {
+                        Platform.setCursor(cursor.bitmap, cursor.hotX, cursor.hotY);
+                        return;
+                    }
+                }
+                Platform.setCursor(null, 0, 0);
+            }
         });
     }
 
     private static void handleGrabStateChange(boolean isGrabbing) {
         if (isGrabbing) {
-            // SDL really expects cursor to be at 0x0 position when relative mode (grabbing = true) is enabled
-            // This caused weird jumps when gaining grab because Platform cursor position values contain stale non-zero values at that point.
-            // Reset position to 0x0 when gaining grab state
             Platform.cursorX = 0;
             Platform.cursorY = 0;
         }
@@ -39,8 +65,6 @@ public class SDLBackend implements PlatformBackend {
     }
 
     public static void initialize(Activity activity) {
-        // TODO: check what can be moved to the initialize point
-        // we need to setup enough SDL for the game to not crash to initialize it later
         SDL.initialize();
         SDL.setContext(activity);
         SDL.setupJNI();
@@ -75,7 +99,7 @@ public class SDLBackend implements PlatformBackend {
     public void sendMousePosition() {
         SDLActivity.onNativeMouse(0, MotionEvent.ACTION_MOVE, (float) Platform.cursorX, (float) Platform.cursorY, Platform.isGrabbing());
         if (Platform.isGrabbing()) {
-            // SDL in relative mode expects these to be reset to 0 or it will freak out (classic:tm: way)
+            // SDL in relative mode expects these to be reset to 0, or it will freak out (classic:tm: way)
             Platform.cursorX = 0;
             Platform.cursorY = 0;
         }
