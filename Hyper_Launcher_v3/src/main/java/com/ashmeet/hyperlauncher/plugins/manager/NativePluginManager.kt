@@ -48,6 +48,7 @@ object NativePluginManager {
     @JvmStatic
     fun discoverFCLPlugins(context: Context) {
         val fclPlugins = LibraryPlugin.discoverAllPlugins(context)
+        val pm = context.packageManager
         for (plugin in fclPlugins) {
             val libDir = plugin.libraryPath
             val metaData = plugin.getMetaData()
@@ -59,6 +60,13 @@ object NativePluginManager {
             val minVerStr = metaData.getString(LibraryPlugin.METADATA_FCL_MIN_MC_VER)
             val maxVerStr = metaData.getString(LibraryPlugin.METADATA_FCL_MAX_MC_VER)
 
+            val appLabel = try {
+                val info = pm.getApplicationInfo(plugin.appId, 0)
+                pm.getApplicationLabel(info).toString()
+            } catch (e: Exception) {
+                null
+            }
+
             registerPlugin(object : NativePlugin {
                 override fun getPaths(): Array<String> = arrayOf(libDir)
 
@@ -69,6 +77,9 @@ object NativePluginManager {
                     parseEnvString(pojavEnv, libDir, envMap)
                     return envMap
                 }
+
+                override val name: String?
+                    get() = appLabel
 
                 override val rendererName: String?
                     get() = rendererNameMetadata

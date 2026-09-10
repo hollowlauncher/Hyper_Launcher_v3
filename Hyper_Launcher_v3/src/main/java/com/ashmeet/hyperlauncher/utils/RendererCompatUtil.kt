@@ -65,8 +65,13 @@ object RendererCompatUtil {
             val rendererId = plugin.rendererName
             if (rendererId != null && !rendererIds.contains(rendererId)) {
                 rendererIds.add(rendererId)
-                val displayName = plugin.displayName
-                rendererNames.add(displayName ?: ("FCL: $rendererId"))
+                val displayName = plugin.displayName ?: ("FCL: $rendererId")
+                val pluginName = plugin.name
+                if (pluginName != null) {
+                    rendererNames.add("$displayName (from $pluginName plugin)")
+                } else {
+                    rendererNames.add(displayName)
+                }
             }
         }
 
