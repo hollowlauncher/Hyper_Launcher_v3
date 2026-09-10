@@ -15,7 +15,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.viewinterop.AndroidView
-import com.ashmeet.hyperlauncher.screens.layouts.game.LoggerView
+import com.ashmeet.hyperlauncher.screens.game.LoggerView
 import kotlinx.coroutines.launch
 import net.kdt.pojavlaunch.customcontrols.ControlLayout
 import net.kdt.pojavlaunch.game.GameView

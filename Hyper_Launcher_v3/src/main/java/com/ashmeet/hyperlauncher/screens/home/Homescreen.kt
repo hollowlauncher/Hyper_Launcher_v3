@@ -66,8 +66,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences
 import com.ashmeet.hyperlauncher.components.MineButton
-import com.ashmeet.hyperlauncher.screens.layouts.settings.layouts.CardPosition
-import com.ashmeet.hyperlauncher.screens.layouts.settings.layouts.SettingsCard
+import com.ashmeet.hyperlauncher.screens.settings.layouts.CardPosition
+import com.ashmeet.hyperlauncher.screens.settings.layouts.SettingsCard
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 import com.ashmeet.hyperlauncher.utils.SkinUtils
 import com.ashmeet.hyperlauncher.utils.drawable.rememberDrawablePainter

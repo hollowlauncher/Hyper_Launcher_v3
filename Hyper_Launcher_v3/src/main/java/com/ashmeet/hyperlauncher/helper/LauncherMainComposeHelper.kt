@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.FragmentActivity
-import com.ashmeet.hyperlauncher.screens.layouts.launcher.PojavLauncherScreen
+import com.ashmeet.hyperlauncher.screens.launcher.PojavLauncherScreen
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 
 object LauncherMainComposeHelper {

@@ -9,8 +9,8 @@ import android.widget.Toast
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
-import com.ashmeet.hyperlauncher.screens.layouts.modloader.ModloaderInstallScreen
-import com.ashmeet.hyperlauncher.screens.layouts.modloader.ModloaderVersionGroup
+import com.ashmeet.hyperlauncher.screens.modloader.ModloaderInstallScreen
+import com.ashmeet.hyperlauncher.screens.modloader.ModloaderVersionGroup
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.Tools

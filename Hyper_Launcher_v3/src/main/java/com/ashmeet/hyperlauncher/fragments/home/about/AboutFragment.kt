@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
-import com.ashmeet.hyperlauncher.screens.layouts.home.about.AboutScreen
+import com.ashmeet.hyperlauncher.screens.home.about.AboutScreen
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 
 class AboutFragment : Fragment() {

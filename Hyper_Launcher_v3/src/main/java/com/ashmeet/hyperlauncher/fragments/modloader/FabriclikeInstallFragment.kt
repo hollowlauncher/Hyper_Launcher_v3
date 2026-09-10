@@ -9,7 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.ashmeet.hyperlauncher.screens.layouts.modloader.fabric.FabriclikeInstallScreen
+import com.ashmeet.hyperlauncher.screens.modloader.fabric.FabriclikeInstallScreen
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

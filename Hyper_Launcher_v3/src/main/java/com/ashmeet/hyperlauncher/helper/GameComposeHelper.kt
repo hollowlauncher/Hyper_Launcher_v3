@@ -20,10 +20,10 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.viewinterop.AndroidView
 import com.ashmeet.hyperlauncher.components.SideNavigationRail
-import com.ashmeet.hyperlauncher.screens.layouts.game.GameBasemainScreen
-import com.ashmeet.hyperlauncher.screens.layouts.game.LoggerView
-import com.ashmeet.hyperlauncher.screens.layouts.controls.ControlsEditorScreen
-import com.ashmeet.hyperlauncher.screens.layouts.controls.GameControlsScreen
+import com.ashmeet.hyperlauncher.screens.game.GameBasemainScreen
+import com.ashmeet.hyperlauncher.screens.game.LoggerView
+import com.ashmeet.hyperlauncher.screens.controls.ControlsEditorScreen
+import com.ashmeet.hyperlauncher.screens.controls.GameControlsScreen
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 import kotlinx.coroutines.launch
 import net.kdt.pojavlaunch.customcontrols.ControlLayout

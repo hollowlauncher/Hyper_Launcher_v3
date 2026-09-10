@@ -24,7 +24,7 @@ import net.kdt.pojavlaunch.instances.Instances
 import net.kdt.pojavlaunch.multirt.MultiRTUtils
 import net.kdt.pojavlaunch.multirt.Runtime
 import net.kdt.pojavlaunch.profiles.VersionSelectorDialog
-import com.ashmeet.hyperlauncher.screens.layouts.instances.InstanceEditorScreen
+import com.ashmeet.hyperlauncher.screens.instances.InstanceEditorScreen
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 import net.kdt.pojavlaunch.utils.CropperUtils
 import com.ashmeet.hyperlauncher.utils.RendererCompatUtil

@@ -43,7 +43,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences
 import com.ashmeet.hyperlauncher.utils.drawable.rememberDrawablePainter
 import com.ashmeet.hyperlauncher.utils.translation.translatedText
-import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SingleChoiceDialog
+import com.ashmeet.hyperlauncher.screens.settings.preferences.SingleChoiceDialog
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 import fr.spse.gamepad_remapper.RemapperManager
 import fr.spse.gamepad_remapper.RemapperView

@@ -17,7 +17,7 @@ import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.CustomControlsActivity
 import net.kdt.pojavlaunch.Tools
 import com.ashmeet.hyperlauncher.fragments.controls.GamepadMapperFragment
-import com.ashmeet.hyperlauncher.screens.layouts.settings.ControlSettingsScreen
+import com.ashmeet.hyperlauncher.screens.settings.ControlSettingsScreen
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences
 

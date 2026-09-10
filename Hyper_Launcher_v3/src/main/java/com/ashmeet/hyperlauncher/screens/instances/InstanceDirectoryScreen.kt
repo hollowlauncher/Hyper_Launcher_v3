@@ -65,7 +65,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ashmeet.hyperlauncher.components.FileListItem
 import com.ashmeet.hyperlauncher.components.ScreenLayout
-import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.TextInputDialog
+import com.ashmeet.hyperlauncher.screens.settings.preferences.TextInputDialog
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 import com.ashmeet.hyperlauncher.utils.translation.translatedText
 import net.kdt.pojavlaunch.PojavApplication

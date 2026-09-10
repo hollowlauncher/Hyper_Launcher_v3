@@ -10,7 +10,7 @@ import android.webkit.WebView
 import androidx.activity.OnBackPressedCallback
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
-import com.ashmeet.hyperlauncher.screens.layouts.auth.methods.MicrosoftLoginScreen
+import com.ashmeet.hyperlauncher.screens.auth.methods.MicrosoftLoginScreen
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.Tools

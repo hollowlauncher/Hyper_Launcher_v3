@@ -1,7 +1,7 @@
 package com.ashmeet.hyperlauncher.helper
 
 import androidx.compose.ui.platform.ComposeView
-import com.ashmeet.hyperlauncher.screens.layouts.game.ExitScreen
+import com.ashmeet.hyperlauncher.screens.game.ExitScreen
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 
 object ExitComposeHelper {

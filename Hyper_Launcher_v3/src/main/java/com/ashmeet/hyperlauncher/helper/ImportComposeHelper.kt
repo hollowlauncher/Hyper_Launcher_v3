@@ -1,7 +1,7 @@
 package com.ashmeet.hyperlauncher.helper
 
 import androidx.compose.ui.platform.ComposeView
-import com.ashmeet.hyperlauncher.screens.layouts.controls.ImportControlScreen
+import com.ashmeet.hyperlauncher.screens.controls.ImportControlScreen
 
 object ImportComposeHelper {
     @JvmStatic

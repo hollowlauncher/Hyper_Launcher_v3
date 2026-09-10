@@ -37,11 +37,11 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.ashmeet.hyperlauncher.screens.layouts.settings.layouts.CardPosition
-import com.ashmeet.hyperlauncher.screens.layouts.settings.layouts.SettingsCard
-import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SettingsActionItem
-import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SettingsSliderItem
-import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SettingsSwitchItem
+import com.ashmeet.hyperlauncher.screens.settings.layouts.CardPosition
+import com.ashmeet.hyperlauncher.screens.settings.layouts.SettingsCard
+import com.ashmeet.hyperlauncher.screens.settings.preferences.SettingsActionItem
+import com.ashmeet.hyperlauncher.screens.settings.preferences.SettingsSliderItem
+import com.ashmeet.hyperlauncher.screens.settings.preferences.SettingsSwitchItem
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 import com.kdt.SideDialogView
 import net.ashmeet.hyperlauncher.R

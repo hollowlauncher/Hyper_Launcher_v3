@@ -11,7 +11,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences
-import com.ashmeet.hyperlauncher.screens.layouts.settings.JavaSettingsScreen
+import com.ashmeet.hyperlauncher.screens.settings.JavaSettingsScreen
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.Dispatchers

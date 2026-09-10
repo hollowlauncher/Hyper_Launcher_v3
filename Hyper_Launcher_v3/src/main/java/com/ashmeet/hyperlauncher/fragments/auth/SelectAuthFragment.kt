@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
-import com.ashmeet.hyperlauncher.screens.layouts.auth.methods.SelectAuthMethodScreen
+import com.ashmeet.hyperlauncher.screens.auth.methods.SelectAuthMethodScreen
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 import com.kdt.mcgui.ProgressLayout
 import net.ashmeet.hyperlauncher.R

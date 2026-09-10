@@ -17,10 +17,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.core.content.edit
 import androidx.compose.ui.unit.dp
-import com.ashmeet.hyperlauncher.screens.layouts.settings.layouts.CardPosition
-import com.ashmeet.hyperlauncher.screens.layouts.settings.layouts.SettingsCard
-import com.ashmeet.hyperlauncher.screens.layouts.settings.layouts.SettingsScreenWrapper
-import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SettingsSwitchItem
+import com.ashmeet.hyperlauncher.screens.settings.layouts.CardPosition
+import com.ashmeet.hyperlauncher.screens.settings.layouts.SettingsCard
+import com.ashmeet.hyperlauncher.screens.settings.layouts.SettingsScreenWrapper
+import com.ashmeet.hyperlauncher.screens.settings.preferences.SettingsSwitchItem
 import net.ashmeet.hyperlauncher.R
 import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences
 

@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment
 import com.ashmeet.hyperlauncher.fragments.instances.InstanceEditorFragment
 import com.ashmeet.hyperlauncher.fragments.instances.InstanceSelectionFragment
 import com.ashmeet.hyperlauncher.fragments.home.about.AboutFragment
-import com.ashmeet.hyperlauncher.screens.layouts.home.MainMenuFragmentCompose
+import com.ashmeet.hyperlauncher.screens.home.MainMenuFragmentCompose
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.CustomControlsActivity

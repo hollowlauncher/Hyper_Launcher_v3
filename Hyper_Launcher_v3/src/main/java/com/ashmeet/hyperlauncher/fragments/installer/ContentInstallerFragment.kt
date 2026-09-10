@@ -32,7 +32,7 @@ import androidx.fragment.app.Fragment
 import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences
 import com.ashmeet.hyperlauncher.utils.ModMetadataReader
 import com.ashmeet.hyperlauncher.utils.translation.Translator
-import com.ashmeet.hyperlauncher.screens.layouts.installer.ContentInstallerScreen
+import com.ashmeet.hyperlauncher.screens.installer.ContentInstallerScreen
 import com.ashmeet.hyperlauncher.components.dialogs.DependencyDialog
 import com.ashmeet.hyperlauncher.components.dialogs.MissingDependency
 import com.ashmeet.hyperlauncher.utils.installer.ContentInstallerType

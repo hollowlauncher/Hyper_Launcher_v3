@@ -8,7 +8,7 @@ import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.lifecycle.setViewTreeLifecycleOwner
 import androidx.lifecycle.setViewTreeViewModelStoreOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
-import com.ashmeet.hyperlauncher.screens.layouts.game.LoggerView
+import com.ashmeet.hyperlauncher.screens.game.LoggerView
 import net.kdt.pojavlaunch.customcontrols.ControlLayout
 import net.kdt.pojavlaunch.game.GameView
 
