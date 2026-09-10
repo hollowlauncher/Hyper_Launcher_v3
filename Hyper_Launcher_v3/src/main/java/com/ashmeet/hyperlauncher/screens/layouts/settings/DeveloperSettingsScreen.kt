@@ -33,7 +33,7 @@ import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SettingsSw
 import com.ashmeet.hyperlauncher.utils.translation.Translator
 import com.ashmeet.hyperlauncher.utils.translation.translatedText
 import net.ashmeet.hyperlauncher.R
-import net.kdt.pojavlaunch.plugins.LibraryPlugin
+import com.ashmeet.hyperlauncher.plugins.manager.LibraryPlugin
 
 @Composable
 fun DeveloperSettingsScreen(
@@ -111,9 +111,9 @@ fun DeveloperSettingsScreen(
                     }
 
                     SettingsCard(position = position, useSurface = true) {
-                        val description = plugin.metaData.getString(LibraryPlugin.METADATA_FCL_DESCRIPTION)
+                        val description = plugin.getMetaData().getString(LibraryPlugin.METADATA_FCL_DESCRIPTION)
                         SettingsActionItem(
-                            title = plugin.id,
+                            title = plugin.appId,
                             summary = translatedText(description ?: "No description provided."),
                             icon = Icons.Default.Extension,
                             onClick = {}

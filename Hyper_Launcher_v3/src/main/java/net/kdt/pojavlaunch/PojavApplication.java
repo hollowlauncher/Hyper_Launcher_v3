@@ -18,7 +18,7 @@ import com.ashmeet.hyperlauncher.utils.LauncherPreferences;
 
 import net.ashmeet.hyperlauncher.BuildConfig;
 import net.kdt.pojavlaunch.lifecycle.ContextExecutor;
-import net.kdt.pojavlaunch.plugins.NativePluginManager;
+import com.ashmeet.hyperlauncher.plugins.manager.NativePluginManager;
 import net.kdt.pojavlaunch.tasks.AsyncAssetManager;
 import net.kdt.pojavlaunch.tasks.MoJsonDownloader;
 import net.kdt.pojavlaunch.utils.FileUtils;

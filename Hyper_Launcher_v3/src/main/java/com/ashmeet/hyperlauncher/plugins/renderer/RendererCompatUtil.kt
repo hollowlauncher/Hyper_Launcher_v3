@@ -6,7 +6,7 @@ import android.os.Build
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.Tools
 import com.ashmeet.hyperlauncher.plugins.manager.NativePlugin
-import net.kdt.pojavlaunch.plugins.NativePluginManager
+import com.ashmeet.hyperlauncher.plugins.manager.NativePluginManager
 import net.kdt.pojavlaunch.utils.GLInfoUtils
 import net.kdt.pojavlaunch.utils.JREUtils
 import java.io.File

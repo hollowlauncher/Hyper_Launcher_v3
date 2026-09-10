@@ -13,6 +13,7 @@ import android.util.*;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.ashmeet.hyperlauncher.utils.LauncherPreferences;
+import com.ashmeet.hyperlauncher.plugins.manager.LibraryPlugin;
 
 import java.io.*;
 import java.util.*;
@@ -20,8 +21,6 @@ import net.kdt.pojavlaunch.*;
 import net.kdt.pojavlaunch.extra.ExtraConstants;
 import net.kdt.pojavlaunch.extra.ExtraCore;
 import net.kdt.pojavlaunch.multirt.Runtime;
-import net.kdt.pojavlaunch.plugins.LibraryPlugin;
-
 
 import git.artdeell.mojoexec.MojoExec;
 

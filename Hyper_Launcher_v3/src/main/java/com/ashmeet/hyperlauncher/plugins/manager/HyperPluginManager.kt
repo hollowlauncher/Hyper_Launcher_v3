@@ -8,8 +8,6 @@ import com.ashmeet.hyperlauncher.plugins.natives.PhysicsPlugin
 import com.ashmeet.hyperlauncher.plugins.natives.RapierPlugin
 import com.ashmeet.hyperlauncher.plugins.renderer.FCLRenderer
 import net.kdt.pojavlaunch.Tools
-import net.kdt.pojavlaunch.plugins.NativePluginManager
-import net.kdt.pojavlaunch.plugins.NativePluginManager.registerPlugin
 import java.io.File
 import kotlin.collections.iterator
 
@@ -46,7 +44,7 @@ object HyperPluginManager {
             return
         }
 
-        registerPlugin(object : NativePlugin {
+        NativePluginManager.registerPlugin(object : NativePlugin {
             override fun getPaths(): Array<String> = arrayOf(path)
             override fun getJVMEnv(): Map<String, String> = env
             override fun supportsVersion(targetVersion: String?): Boolean {
