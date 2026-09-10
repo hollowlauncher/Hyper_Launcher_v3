@@ -2,13 +2,14 @@ package com.ashmeet.hyperlauncher.plugins.manager
 
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.ashmeet.hyperlauncher.plugins.DhCompatPlugin
-import com.ashmeet.hyperlauncher.plugins.ImGuiPlugin
-import com.ashmeet.hyperlauncher.plugins.PhysicsPlugin
-import com.ashmeet.hyperlauncher.plugins.RapierPlugin
+import com.ashmeet.hyperlauncher.plugins.natives.DhCompatPlugin
+import com.ashmeet.hyperlauncher.plugins.natives.ImGuiPlugin
+import com.ashmeet.hyperlauncher.plugins.natives.PhysicsPlugin
+import com.ashmeet.hyperlauncher.plugins.natives.RapierPlugin
+import com.ashmeet.hyperlauncher.plugins.renderer.FCLRenderer
 import net.kdt.pojavlaunch.Tools
-import net.kdt.pojavlaunch.plugins.NativePlugin
 import net.kdt.pojavlaunch.plugins.NativePluginManager
+import net.kdt.pojavlaunch.plugins.NativePluginManager.registerPlugin
 import java.io.File
 import kotlin.collections.iterator
 
@@ -19,7 +20,8 @@ object HyperPluginManager {
         PhysicsPlugin(),
         RapierPlugin(),
         ImGuiPlugin(),
-        DhCompatPlugin()
+        DhCompatPlugin(),
+        FCLRenderer()
     )
 
     @JvmStatic
@@ -44,7 +46,7 @@ object HyperPluginManager {
             return
         }
 
-        NativePluginManager.registerPlugin(object : NativePlugin {
+        registerPlugin(object : NativePlugin {
             override fun getPaths(): Array<String> = arrayOf(path)
             override fun getJVMEnv(): Map<String, String> = env
             override fun supportsVersion(targetVersion: String?): Boolean {

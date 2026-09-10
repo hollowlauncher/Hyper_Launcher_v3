@@ -12,15 +12,16 @@ import java.util.List;
 
 public class LibraryPlugin {
     private static final String TAG = "LibraryPlugin";
-
-    // FCL Metadata Keys
     public static final String METADATA_FCL_PLUGIN = "FCLNativePlugin";
+    public static final String METADATA_FCL_PLUGIN_ALT = "fclPlugin";
     public static final String METADATA_FCL_DESCRIPTION = "des";
     public static final String METADATA_FCL_ENVIRONMENT = "environment";
+    public static final String METADATA_FCL_RENDERER = "renderer";
+    public static final String METADATA_FCL_BOAT_ENV = "boatEnv";
+    public static final String METADATA_FCL_POJAV_ENV = "pojavEnv";
     public static final String METADATA_FCL_MIN_MC_VER = "minMCVer";
     public static final String METADATA_FCL_MAX_MC_VER = "maxMCVer";
-
-    // Known plugins constants
+    
     public static final String ID_ANGLE_PLUGIN = "git.mojo.angle";
     public static final String ID_FFMPEG_PLUGIN = "git.mojo.ffmpeg";
     public static final String ID_ZINK_PLUGIN = "git.mojo.zink";
@@ -60,7 +61,7 @@ public class LibraryPlugin {
         List<ApplicationInfo> installedApps = pm.getInstalledApplications(PackageManager.GET_META_DATA);
 
         for (ApplicationInfo info : installedApps) {
-            if (info.metaData != null && info.metaData.containsKey(METADATA_FCL_PLUGIN)) {
+            if (info.metaData != null && (info.metaData.containsKey(METADATA_FCL_PLUGIN) || info.metaData.containsKey(METADATA_FCL_PLUGIN_ALT))) {
                 plugins.add(fromApplicationInfo(info));
             }
         }
@@ -88,5 +89,10 @@ public class LibraryPlugin {
             if(!(new File(libraryPath, lib).exists())) return false;
         }
         return true;
+    }
+
+    @SuppressWarnings("unused")
+    public String getApkPath() {
+        return apkPath;
     }
 }

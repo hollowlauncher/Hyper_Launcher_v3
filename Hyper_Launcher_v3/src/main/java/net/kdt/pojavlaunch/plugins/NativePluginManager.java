@@ -5,6 +5,8 @@ import android.util.Log;
 
 import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.modloaders.ComparableVersionString;
+import com.ashmeet.hyperlauncher.utils.LauncherPreferences;
+import com.ashmeet.hyperlauncher.plugins.manager.NativePlugin;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -19,6 +21,10 @@ public class NativePluginManager {
 
     public static void registerPlugin(NativePlugin plugin) {
         sPlugins.add(plugin);
+    }
+
+    public static List<NativePlugin> getPlugins() {
+        return new ArrayList<>(sPlugins);
     }
 
     public static void discoverAarPlugins(Context context) {
@@ -48,6 +54,10 @@ public class NativePluginManager {
         for (LibraryPlugin plugin : fclPlugins) {
             final String libDir = plugin.getLibraryPath();
             final String envString = plugin.getMetaData().getString(LibraryPlugin.METADATA_FCL_ENVIRONMENT);
+            final String boatEnv = plugin.getMetaData().getString(LibraryPlugin.METADATA_FCL_BOAT_ENV);
+            final String pojavEnv = plugin.getMetaData().getString(LibraryPlugin.METADATA_FCL_POJAV_ENV);
+            final String vzh = plugin.getMetaData().getString(LibraryPlugin.METADATA_FCL_DESCRIPTION);
+            final String rendererName = plugin.getMetaData().getString(LibraryPlugin.METADATA_FCL_RENDERER);
             final String minVerStr = plugin.getMetaData().getString(LibraryPlugin.METADATA_FCL_MIN_MC_VER);
             final String maxVerStr = plugin.getMetaData().getString(LibraryPlugin.METADATA_FCL_MAX_MC_VER);
             
@@ -60,22 +70,20 @@ public class NativePluginManager {
                 @Override
                 public Map<String, String> getJVMEnv() {
                     Map<String, String> envMap = new HashMap<>();
-                    if (envString != null && !envString.isEmpty()) {
-                        // Assuming space or semicolon separated key=value pairs
-                        String[] pairs = envString.split("[ ;]");
-                        for (String pair : pairs) {
-                            String[] kv = pair.split("=", 2);
-                            if (kv.length == 2) {
-                                String key = kv[0].trim();
-                                String value = kv[1].trim().replace("{nativeLibraryDir}", libDir);
-                                if (!key.isEmpty()) {
-                                    envMap.put(key, value);
-                                    Log.i(TAG, "Plugin " + plugin.getId() + " env: " + key + "=" + value);
-                                }
-                            }
-                        }
-                    }
+                    parseEnvString(envString, libDir, envMap);
+                    parseEnvString(boatEnv, libDir, envMap);
+                    parseEnvString(pojavEnv, libDir, envMap);
                     return envMap;
+                }
+
+                @Override
+                public String getRendererName() {
+                    return rendererName;
+                }
+
+                @Override
+                public String getDisplayName() {
+                    return vzh;
                 }
 
                 @Override
@@ -97,7 +105,24 @@ public class NativePluginManager {
                     return true;
                 }
             });
-            Log.i(TAG, "Discovered FCL plugin: " + plugin.getId());
+            Log.i(TAG, "Discovered FCL plugin: " + plugin.getId() + (rendererName != null ? " (Renderer: " + rendererName + ")" : ""));
+        }
+    }
+
+    private static void parseEnvString(String envString, String libDir, Map<String, String> envMap) {
+        if (envString == null || envString.isEmpty()) return;
+        // Assuming space or semicolon separated key=value pairs
+        String[] pairs = envString.split("[ ;]");
+        for (String pair : pairs) {
+            String[] kv = pair.split("=", 2);
+            if (kv.length == 2) {
+                String key = kv[0].trim();
+                String value = kv[1].trim().replace("{nativeLibraryDir}", libDir);
+                if (!key.isEmpty()) {
+                    envMap.put(key, value);
+                    Log.i(TAG, "Env: " + key + "=" + value);
+                }
+            }
         }
     }
 
@@ -136,6 +161,10 @@ public class NativePluginManager {
         StringBuilder sb = new StringBuilder();
         for (NativePlugin plugin : sPlugins) {
             if (mcVersion != null && !plugin.supportsVersion(mcVersion)) continue;
+            
+            String pluginRenderer = plugin.getRendererName();
+            if (pluginRenderer != null && !pluginRenderer.equals(LauncherPreferences.PREF_RENDERER)) continue;
+
             for (String path : plugin.getPaths()) {
                 if (sb.length() > 0) {
                     sb.append(":");
@@ -154,6 +183,10 @@ public class NativePluginManager {
         Map<String, String> env = new HashMap<>();
         for (NativePlugin plugin : sPlugins) {
             if (mcVersion != null && !plugin.supportsVersion(mcVersion)) continue;
+            
+            String pluginRenderer = plugin.getRendererName();
+            if (pluginRenderer != null && !pluginRenderer.equals(LauncherPreferences.PREF_RENDERER)) continue;
+            
             env.putAll(plugin.getJVMEnv());
         }
         return env;

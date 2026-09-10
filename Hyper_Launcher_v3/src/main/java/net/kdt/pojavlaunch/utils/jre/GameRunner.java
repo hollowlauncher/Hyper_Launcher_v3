@@ -30,7 +30,7 @@ import net.kdt.pojavlaunch.utils.JREUtils;
 import net.kdt.pojavlaunch.utils.JSONUtils;
 import net.kdt.pojavlaunch.utils.MCOptionUtils;
 import net.kdt.pojavlaunch.utils.OldVersionsUtils;
-import net.kdt.pojavlaunch.utils.RendererCompatUtil;
+import com.ashmeet.hyperlauncher.plugins.renderer.RendererCompatUtil;
 
 import java.io.File;
 import java.io.IOException;
