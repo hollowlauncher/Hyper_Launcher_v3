@@ -2,6 +2,7 @@ package net.kdt.pojavlaunch;
 
 import static com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences.PREF_DYNAMIC_ORIENTATION;
 import static com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences.PREF_FULLSCREEN_LAUNCHER;
+import static com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences.PREF_IGNORE_NOTCH;
 
 import android.content.Context;
 import android.content.pm.ActivityInfo;
@@ -104,7 +105,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     /** @return Whether the notch should be ignored */
     protected boolean shouldIgnoreNotch(){
-        return true;
+        return PREF_IGNORE_NOTCH;
     }
 
     /** @return Whether the activity should enable Edge-to-Edge */

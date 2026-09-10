@@ -602,7 +602,8 @@ public final class Tools {
         Logger.appendToLog("Info: Total RAM on device: " + getTotalDeviceMemory(ctx) + " Mb");
         Logger.appendToLog("Info: RAM allocated: " + LauncherPreferences.PREF_RAM_ALLOCATION + " Mb");
         Logger.appendToLog("Info: Graphics device: "+info.vendor+ " "+info.renderer+" (OpenGL ES "+info.glesMajorVersion+")");
-        Logger.appendToLog("Info: Selected renderer: " + renderer);
+        String rendererDisplayName = renderer.split(":")[0];
+        Logger.appendToLog("Info: Selected renderer: " + rendererDisplayName);
     }
 
     public static JVersionList.Version getVersionInfo(String versionName) {

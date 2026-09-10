@@ -24,14 +24,17 @@ import androidx.compose.material.icons.filled.Title
 import androidx.compose.material.icons.filled.TouchApp
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.VideogameAsset
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -43,6 +46,7 @@ import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
 import com.ashmeet.hyperlauncher.screens.settings.layouts.CardPosition
@@ -408,7 +412,7 @@ fun ControlSettingsScreen(
             SettingsCard(position = CardPosition.TOP, useSurface = true) {
                 SettingsSwitchItem(
                     title = translatedText("Enable Volume Key Controls"),
-                    summary = translatedText("Use volume keys for custom actions in the launcher"),
+                    summary = translatedText("Use volume buttons to trigger game key events"),
                     icon = Icons.AutoMirrored.Rounded.VolumeUp,
                     checked = volumeKeysControlEnabled,
                     onCheckedChange = {
@@ -422,7 +426,7 @@ fun ControlSettingsScreen(
             SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
                 SettingsActionItem(
                     title = translatedText("Volume Up Keybind"),
-                    summary = translatedText("Current: ${KeyEvent.keyCodeToString(volumeUpKeybind)}"),
+                    summary = translatedText("Current Keycode: $volumeUpKeybind (${KeyEvent.keyCodeToString(volumeUpKeybind)})"),
                     icon = Icons.AutoMirrored.Rounded.VolumeUp,
                     enabled = volumeKeysControlEnabled,
                     onClick = { showKeyPickerFor = "up" }
@@ -432,7 +436,7 @@ fun ControlSettingsScreen(
             SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {
                 SettingsActionItem(
                     title = translatedText("Volume Down Keybind"),
-                    summary = translatedText("Current: ${KeyEvent.keyCodeToString(volumeDownKeybind)}"),
+                    summary = translatedText("Current Keycode: $volumeDownKeybind (${KeyEvent.keyCodeToString(volumeDownKeybind)})"),
                     icon = Icons.AutoMirrored.Rounded.VolumeUp,
                     enabled = volumeKeysControlEnabled,
                     onClick = { showKeyPickerFor = "down" }
@@ -442,9 +446,10 @@ fun ControlSettingsScreen(
     }
 
     if (showKeyPickerFor != null) {
-        KeyPickerDialog(
+        KeycodeInputDialog(
             title = if (showKeyPickerFor == "up") translatedText("Volume Up Keybind") else translatedText("Volume Down Keybind"),
-            onKeyPicked = { keyCode ->
+            initialValue = if (showKeyPickerFor == "up") volumeUpKeybind else volumeDownKeybind,
+            onKeycodePicked = { keyCode ->
                 if (showKeyPickerFor == "up") {
                     volumeUpKeybind = keyCode
                     LauncherPreferences.prefs.edit { putInt("volume_up_keybind", keyCode) }
@@ -460,36 +465,47 @@ fun ControlSettingsScreen(
 }
 
 @Composable
-fun KeyPickerDialog(
+fun KeycodeInputDialog(
     title: String,
-    onKeyPicked: (Int) -> Unit,
+    initialValue: Int,
+    onKeycodePicked: (Int) -> Unit,
     onDismiss: () -> Unit
 ) {
-    val focusRequester = remember { FocusRequester() }
+    var textValue by remember { mutableStateOf(initialValue.toString()) }
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(text = title) },
         text = {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(100.dp)
-                    .focusRequester(focusRequester)
-                    .focusable()
-                    .onKeyEvent {
-                        onKeyPicked(it.nativeKeyEvent.keyCode)
-                        onDismiss()
-                        true
+            Column {
+                Text(translatedText("Enter the Android keycode for this button:"))
+                OutlinedTextField(
+                    value = textValue,
+                    onValueChange = { if (it.all { char -> char.isDigit() }) textValue = it },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Text(
+                    text = try {
+                        val code = textValue.toInt()
+                        "Resolved: ${KeyEvent.keyCodeToString(code)}"
+                    } catch (e: Exception) {
+                        "Invalid keycode"
                     },
-                contentAlignment = Alignment.Center
-            ) {
-                Text(translatedText("Press a key..."))
-            }
-            LaunchedEffect(Unit) {
-                focusRequester.requestFocus()
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.secondary
+                )
             }
         },
-        confirmButton = {},
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    textValue.toIntOrNull()?.let { onKeycodePicked(it) }
+                    onDismiss()
+                }
+            ) {
+                Text(stringResource(android.R.string.ok))
+            }
+        },
         dismissButton = {
             TextButton(onClick = onDismiss) {
                 Text(stringResource(android.R.string.cancel))

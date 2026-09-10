@@ -210,8 +210,21 @@ public class GameView extends FrameLayout implements PlatformGrabListener, Surfa
         //Filtering useless events by order of probability
         int eventKeycode = event.getKeyCode();
         if(eventKeycode == KeyEvent.KEYCODE_UNKNOWN) return true;
-        if(eventKeycode == KeyEvent.KEYCODE_VOLUME_DOWN) return false;
-        if(eventKeycode == KeyEvent.KEYCODE_VOLUME_UP) return false;
+
+        if (eventKeycode == KeyEvent.KEYCODE_VOLUME_DOWN || eventKeycode == KeyEvent.KEYCODE_VOLUME_UP) {
+            if (LauncherPreferences.PREF_VOLUME_KEYS_CONTROL_ENABLED) {
+                int action = event.getAction();
+                int mappedKey = eventKeycode == KeyEvent.KEYCODE_VOLUME_UP ?
+                        LauncherPreferences.PREF_VOLUME_UP_KEYBIND :
+                        LauncherPreferences.PREF_VOLUME_DOWN_KEYBIND;
+
+                CallbackBridge.setModifiers(event);
+                PLATFORM.sendKeyEvent(mappedKey, action == KeyEvent.ACTION_DOWN, CallbackBridge.getCurrentMods());
+                return true;
+            }
+            return false;
+        }
+
         if(event.getRepeatCount() != 0) return true;
         int action = event.getAction();
         if(action == KeyEvent.ACTION_MULTIPLE) return true;
@@ -298,7 +311,7 @@ public class GameView extends FrameLayout implements PlatformGrabListener, Surfa
         refreshSize(true);
 
         //Load Minecraft options:
-        MCOptionUtils.set("fullscreen", "off");
+        MCOptionUtils.set("fullscreen", "false");
         MCOptionUtils.set("overrideWidth", String.valueOf(windowWidth));
         MCOptionUtils.set("overrideHeight", String.valueOf(windowHeight));
         MCOptionUtils.save();
