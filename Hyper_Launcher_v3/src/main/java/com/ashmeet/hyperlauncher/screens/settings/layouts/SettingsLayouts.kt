@@ -2,6 +2,7 @@ package com.ashmeet.hyperlauncher.screens.settings.layouts
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -52,8 +53,7 @@ fun SettingsCard(
 
     Surface(
         modifier = modifier
-            .fillMaxWidth()
-            .then(if (isMatte) Modifier.blur(12.dp) else Modifier),
+            .fillMaxWidth(),
         shape = RoundedCornerShape(
             topStart = topRadius,
             topEnd = topRadius,
@@ -62,11 +62,20 @@ fun SettingsCard(
         ),
         color = cardColor,
         content = {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                content = content
-            )
+            Box(modifier = Modifier.fillMaxWidth()) {
+                if (isMatte) {
+                    Box(
+                        modifier = Modifier
+                            .matchParentSize()
+                            .blur(12.dp)
+                            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.1f))
+                    )
+                }
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    content = content
+                )
+            }
         }
     )
 }

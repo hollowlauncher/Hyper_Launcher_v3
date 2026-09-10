@@ -15,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences
@@ -52,12 +53,25 @@ fun ScreenLayout(
                     .fillMaxHeight()
                     .padding(top = 16.dp, bottom = 16.dp, end = if (sidebar == null) 16.dp else 0.dp),
                 shape = RoundedCornerShape(32.dp),
-                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f),
+                color = if (LauncherPreferences.PREF_BLURRED_ELEMENTS_ENABLED) {
+                    MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
+                } else {
+                    MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f)
+                },
                 tonalElevation = 2.dp
             ) {
-                Column(modifier = Modifier.fillMaxSize()) {
-                    header()
-                    content()
+                Box(modifier = Modifier.fillMaxSize()) {
+                    if (LauncherPreferences.PREF_BLURRED_ELEMENTS_ENABLED) {
+                        Box(
+                            modifier = Modifier
+                                .matchParentSize()
+                                .blur(16.dp)
+                        )
+                    }
+                    Column(modifier = Modifier.fillMaxSize()) {
+                        header()
+                        content()
+                    }
                 }
             }
 
@@ -69,10 +83,23 @@ fun ScreenLayout(
                         .fillMaxHeight()
                         .padding(end = 16.dp, top = 16.dp, bottom = 16.dp),
                     shape = RoundedCornerShape(32.dp),
-                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f),
+                    color = if (LauncherPreferences.PREF_BLURRED_ELEMENTS_ENABLED) {
+                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
+                    } else {
+                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f)
+                    },
                     tonalElevation = 4.dp
                 ) {
-                    sidebar()
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        if (LauncherPreferences.PREF_BLURRED_ELEMENTS_ENABLED) {
+                            Box(
+                                modifier = Modifier
+                                    .matchParentSize()
+                                    .blur(16.dp)
+                            )
+                        }
+                        sidebar()
+                    }
                 }
             }
         }

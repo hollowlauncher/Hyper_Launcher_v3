@@ -233,17 +233,23 @@ fun PojavLauncherScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp)
-                        .then(
-                            if (launcherBlurredElementsEnabled) {
-                                Modifier
-                                    .blur(16.dp)
-                                    .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.4f))
-                            } else {
-                                Modifier.background(if (launcherBgPath != null) Color.Transparent else MaterialTheme.colorScheme.surface)
-                            }
-                        )
                         .zIndex(1f)
                 ) {
+                    if (launcherBlurredElementsEnabled) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .blur(16.dp)
+                                .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.4f))
+                        )
+                    } else {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(if (launcherBgPath != null) Color.Transparent else MaterialTheme.colorScheme.surface)
+                        )
+                    }
+
                     AccountSpinnerCompose(
                         modifier = Modifier.fillMaxSize(),
                         hideDivider = taskCount > 0,

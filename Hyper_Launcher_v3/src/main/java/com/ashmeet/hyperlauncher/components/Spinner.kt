@@ -237,12 +237,18 @@ fun AccountSpinnerUI(
         Surface(
             modifier = Modifier
                 .fillMaxSize()
-                .then(if (isMatte) Modifier.blur(16.dp) else Modifier)
                 .clickable { onExpandedChange(true) },
             color = if (isMatte) containerColor.copy(alpha = 0.4f) else containerColor,
             shape = RoundedCornerShape(0.dp)
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
+                if (isMatte) {
+                    Box(
+                        modifier = Modifier
+                            .matchParentSize()
+                            .blur(16.dp)
+                    )
+                }
                 Row(
                     modifier = Modifier
                         .fillMaxSize()
