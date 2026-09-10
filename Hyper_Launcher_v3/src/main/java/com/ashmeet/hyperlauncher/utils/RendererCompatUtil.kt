@@ -25,17 +25,23 @@ object RendererCompatUtil {
                 packageManager.hasSystemFeature(PackageManager.FEATURE_VULKAN_HARDWARE_VERSION)
     }
 
-    private fun hasNativeLibrary(name: String): Boolean {
-        if (File(Tools.NATIVE_LIB_DIR, name).exists()) return true
+    private fun findNativeLibraryPath(name: String): String? {
+        val file = File(Tools.NATIVE_LIB_DIR, name)
+        if (file.exists()) return file.absolutePath
 
         val pluginPaths = NativePluginManager.getRuntimeLibraryPath()
 
         if (pluginPaths.isNotEmpty()) {
             for (path in pluginPaths.split(":").toTypedArray()) {
-                if (File(path, name).exists()) return true
+                val pFile = File(path, name)
+                if (pFile.exists()) return pFile.absolutePath
             }
         }
-        return false
+        return null
+    }
+
+    private fun hasNativeLibrary(name: String): Boolean {
+        return findNativeLibraryPath(name) != null
     }
 
     @JvmStatic
@@ -110,13 +116,23 @@ object RendererCompatUtil {
 
         if (renderer.contains(":")) {
             val parts = renderer.split(":")
-            renderLibrary = when {
-                parts.size >= 3 -> parts[2]
-                parts.size == 2 -> parts[1]
-                else -> "libgl4es_114.so"
+            if (parts.size >= 3) {
+                val providerPath = findNativeLibraryPath(parts[2])
+                if (providerPath != null) {
+                    try {
+                        System.loadLibrary(providerPath)
+                    } catch (e: Throwable) {
+                        Log.e("RENDER_LIBRARY", "Failed to System.load provider: $providerPath", e)
+                    }
+                }
+                renderLibrary = parts[1]
+            } else if (parts.size == 2) {
+                renderLibrary = parts[1]
+            } else {
+                renderLibrary = "libgl4es_114.so"
             }
             useGles = true
-            glesVersion = 3
+            glesVersion = if (JREUtils.getDetectedVersion() >= 3) 3 else 2
         } else {
             when (renderer) {
                 "freedreno_kgsl", "vulkan_zink" -> {

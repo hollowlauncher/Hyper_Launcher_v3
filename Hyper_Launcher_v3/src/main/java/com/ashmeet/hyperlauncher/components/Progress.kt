@@ -1,5 +1,6 @@
 package com.ashmeet.hyperlauncher.components
 
+import android.R.attr.left
 import androidx.compose.animation.AnimatedVisibility
 import com.ashmeet.hyperlauncher.utils.translation.translatedText
 import androidx.compose.foundation.background
@@ -10,6 +11,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.border
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -44,7 +50,7 @@ private val OBSERVED_PROGRESS_KEYS = listOf(
 )
 
 @Composable
-fun ProgressLayoutCompose(
+fun ProgressLayout(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -121,9 +127,11 @@ fun ProgressLayoutContent(
     if (taskCount > 0) {
         Column(
             modifier = modifier
+                .padding(bottom = 2.dp, start = 2.dp , end =  2.dp )
+                .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom))
                 .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.surface)
-                .navigationBarsPadding()
+                .clip(RoundedCornerShape(8.dp))
+                .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.95f))
         ) {
             Surface(
                 modifier = Modifier
@@ -183,18 +191,30 @@ fun TaskItem(task: TaskProgressState) {
 @Composable
 fun TaskProgressIndicator(task: TaskProgressState) {
     val isIndeterminate by remember { derivedStateOf { task.progress < 0 } }
+    val animatedProgress by animateFloatAsState(
+        targetValue = if (task.progress >= 0) task.progress / 100f else 0f,
+        animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
+        label = "Smooth Progress"
+    )
+
     if (!isIndeterminate) {
         LinearProgressIndicator(
-            progress = { task.progress / 100f },
-            modifier = Modifier.fillMaxWidth().height(4.dp),
+            progress = { animatedProgress },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(8.dp)
+                .clip(CircleShape),
             color = MaterialTheme.colorScheme.primary,
-            trackColor = MaterialTheme.colorScheme.outline,
+            trackColor = MaterialTheme.colorScheme.surfaceVariant,
         )
     } else {
         LinearProgressIndicator(
-            modifier = Modifier.fillMaxWidth().height(4.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(8.dp)
+                .clip(CircleShape),
             color = MaterialTheme.colorScheme.primary,
-            trackColor = MaterialTheme.colorScheme.outline,
+            trackColor = MaterialTheme.colorScheme.surfaceVariant,
         )
     }
 }

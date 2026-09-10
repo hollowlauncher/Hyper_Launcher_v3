@@ -47,7 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
 import com.ashmeet.hyperlauncher.components.AccountSpinnerCompose
-import com.ashmeet.hyperlauncher.components.ProgressLayoutCompose
+import com.ashmeet.hyperlauncher.components.ProgressLayout
 import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 import com.ashmeet.hyperlauncher.utils.translation.translatedText
@@ -318,9 +318,11 @@ fun PojavLauncherScreen(
                         update = {},
                         modifier = Modifier.fillMaxSize()
                     )
-                }
 
-                ProgressLayoutCompose()
+                    ProgressLayout(
+                        modifier = Modifier.align(Alignment.BottomCenter)
+                    )
+                }
             }
         }
     }
