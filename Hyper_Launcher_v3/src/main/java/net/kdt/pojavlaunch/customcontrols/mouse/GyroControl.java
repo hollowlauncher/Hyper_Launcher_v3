@@ -10,7 +10,7 @@ import android.view.OrientationEventListener;
 import android.view.Surface;
 import android.view.WindowManager;
 
-import com.ashmeet.hyperlauncher.utils.LauncherPreferences;
+import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences;
 
 import net.kdt.pojavlaunch.game.GameView;
 import net.kdt.pojavlaunch.game.platform.input.PlatformGrabListener;

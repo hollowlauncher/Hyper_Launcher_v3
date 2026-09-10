@@ -7,7 +7,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.ashmeet.hyperlauncher.utils.LauncherPreferences;
+import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences;
 import com.ashmeet.hyperlauncher.skin.PlayerSkin;
 import com.ashmeet.hyperlauncher.skin.SkinManager;
 import com.ashmeet.hyperlauncher.skin.SkinManagerKt;

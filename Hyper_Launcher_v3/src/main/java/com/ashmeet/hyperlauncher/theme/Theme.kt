@@ -19,7 +19,7 @@ import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.colorResource
 import net.ashmeet.hyperlauncher.R
-import com.ashmeet.hyperlauncher.utils.LauncherPreferences
+import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences
 
 @Composable
 fun PojavTheme(

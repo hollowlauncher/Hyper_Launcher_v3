@@ -1,10 +1,10 @@
 package net.kdt.pojavlaunch.game;
 
 
-import static com.ashmeet.hyperlauncher.utils.LauncherPreferences.PREF_ENABLE_GYRO;
-import static com.ashmeet.hyperlauncher.utils.LauncherPreferences.PREF_SUSTAINED_PERFORMANCE;
-import static com.ashmeet.hyperlauncher.utils.LauncherPreferences.PREF_USE_ALTERNATE_SURFACE;
-import static com.ashmeet.hyperlauncher.utils.LauncherPreferences.PREF_VIRTUAL_MOUSE_START;
+import static com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences.PREF_ENABLE_GYRO;
+import static com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences.PREF_SUSTAINED_PERFORMANCE;
+import static com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences.PREF_USE_ALTERNATE_SURFACE;
+import static com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences.PREF_VIRTUAL_MOUSE_START;
 import static net.kdt.pojavlaunch.Tools.dialogForceClose;
 import static net.kdt.pojavlaunch.game.platform.Platform.PLATFORM;
 
@@ -40,7 +40,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 
-import com.ashmeet.hyperlauncher.utils.LauncherPreferences;
+import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences;
 import com.ashmeet.hyperlauncher.fragments.dialog.EditControlSideDialog;
 import com.ashmeet.hyperlauncher.fragments.dialog.QuickSettingSideDialog;
 import com.ashmeet.hyperlauncher.helper.LauncherComposeHelper;

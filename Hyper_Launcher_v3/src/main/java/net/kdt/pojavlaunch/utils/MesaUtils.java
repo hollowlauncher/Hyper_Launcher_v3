@@ -4,7 +4,7 @@ import android.content.Context;
 
 import net.kdt.pojavlaunch.Architecture;
 import com.ashmeet.hyperlauncher.plugins.natives.LibraryPlugin;
-import com.ashmeet.hyperlauncher.utils.LauncherPreferences;
+import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences;
 
 import java.util.Map;
 

@@ -4,7 +4,7 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 
-import static com.ashmeet.hyperlauncher.utils.LauncherPreferences.PREF_BUTTONSIZE;
+import static com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences.PREF_BUTTONSIZE;
 
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;

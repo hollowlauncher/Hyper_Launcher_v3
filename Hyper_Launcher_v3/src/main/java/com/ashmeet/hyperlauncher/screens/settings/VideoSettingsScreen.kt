@@ -33,7 +33,7 @@ import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SettingsSl
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SettingsSwitchItem
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SingleChoiceDialog
 import net.ashmeet.hyperlauncher.R
-import com.ashmeet.hyperlauncher.utils.LauncherPreferences
+import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences
 import com.ashmeet.hyperlauncher.utils.RendererCompatUtil
 
 @Composable

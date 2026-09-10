@@ -6,7 +6,7 @@ import androidx.annotation.Nullable;
 
 import net.kdt.pojavlaunch.JVersionList;
 import net.kdt.pojavlaunch.Tools;
-import com.ashmeet.hyperlauncher.utils.LauncherPreferences;
+import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences;
 import net.kdt.pojavlaunch.utils.DownloadUtils;
 
 import java.io.IOException;

@@ -17,7 +17,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import net.ashmeet.hyperlauncher.R
-import com.ashmeet.hyperlauncher.utils.LauncherPreferences
+import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences
 import com.ashmeet.hyperlauncher.screens.layouts.settings.MiscSettingsScreen
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 import net.kdt.pojavlaunch.tasks.DataMigrator

@@ -1,7 +1,7 @@
 package net.kdt.pojavlaunch;
 
-import static com.ashmeet.hyperlauncher.utils.LauncherPreferences.PREF_DYNAMIC_ORIENTATION;
-import static com.ashmeet.hyperlauncher.utils.LauncherPreferences.PREF_FULLSCREEN_LAUNCHER;
+import static com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences.PREF_DYNAMIC_ORIENTATION;
+import static com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences.PREF_FULLSCREEN_LAUNCHER;
 
 import android.content.Context;
 import android.content.pm.ActivityInfo;

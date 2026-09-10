@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
-import com.ashmeet.hyperlauncher.utils.LauncherPreferences
+import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences
 import com.ashmeet.hyperlauncher.fragments.home.about.AboutFragment
 import com.ashmeet.hyperlauncher.screens.layouts.settings.MainSettingsScreen
 import com.ashmeet.hyperlauncher.theme.PojavTheme

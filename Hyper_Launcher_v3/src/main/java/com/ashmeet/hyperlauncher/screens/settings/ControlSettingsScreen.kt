@@ -37,7 +37,7 @@ import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SettingsAc
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SettingsSliderItem
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SettingsSwitchItem
 import net.ashmeet.hyperlauncher.R
-import com.ashmeet.hyperlauncher.utils.LauncherPreferences
+import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences
 
 @Composable
 fun ControlSettingsScreen(

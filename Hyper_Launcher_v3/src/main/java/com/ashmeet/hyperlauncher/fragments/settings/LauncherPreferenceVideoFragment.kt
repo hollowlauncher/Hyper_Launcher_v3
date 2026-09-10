@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import com.ashmeet.hyperlauncher.plugins.natives.LibraryPlugin
 import com.ashmeet.hyperlauncher.screens.layouts.settings.VideoSettingsScreen
 import com.ashmeet.hyperlauncher.theme.PojavTheme
-import com.ashmeet.hyperlauncher.utils.LauncherPreferences
+import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences
 
 class LauncherPreferenceVideoFragment : Fragment(), SharedPreferences.OnSharedPreferenceChangeListener {
 

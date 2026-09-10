@@ -28,7 +28,7 @@ import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.Preference
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SettingsActionItem
 import com.ashmeet.hyperlauncher.utils.translation.translatedText
 import net.ashmeet.hyperlauncher.R
-import com.ashmeet.hyperlauncher.utils.LauncherPreferences
+import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences
 
 @Composable
 fun MainSettingsScreen(

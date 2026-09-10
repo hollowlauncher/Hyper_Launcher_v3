@@ -42,7 +42,7 @@ import git.artdeell.mojoexec.MojoExec;
 
 import static net.kdt.pojavlaunch.game.platform.Platform.PLATFORM;
 
-import com.ashmeet.hyperlauncher.utils.LauncherPreferences;
+import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences;
 
 /**
  * Class dealing with showing minecraft surface and taking inputs to dispatch them to minecraft

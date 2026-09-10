@@ -12,7 +12,7 @@ import android.view.ViewParent;
 
 import androidx.annotation.Nullable;
 
-import com.ashmeet.hyperlauncher.utils.LauncherPreferences;
+import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences;
 
 import net.kdt.pojavlaunch.game.platform.input.PlatformGrabListener;
 import net.kdt.pojavlaunch.game.platform.Platform;

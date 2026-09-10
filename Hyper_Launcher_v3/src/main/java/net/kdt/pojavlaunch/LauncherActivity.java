@@ -28,7 +28,7 @@ import com.ashmeet.hyperlauncher.fragments.instances.InstanceDirectoryFragment;
 import com.ashmeet.hyperlauncher.fragments.settings.LauncherPreferenceFragment;
 import com.ashmeet.hyperlauncher.fragments.home.MainMenuFragment;
 import com.ashmeet.hyperlauncher.helper.LauncherComposeHelper;
-import com.ashmeet.hyperlauncher.utils.LauncherPreferences;
+import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import net.ashmeet.hyperlauncher.BuildConfig;

@@ -30,7 +30,7 @@ import com.ashmeet.hyperlauncher.fragments.modloader.LegacyFabricInstallFragment
 import com.ashmeet.hyperlauncher.fragments.modloader.NeoforgeInstallFragment
 import com.ashmeet.hyperlauncher.fragments.modloader.OptiFineInstallFragment
 import com.ashmeet.hyperlauncher.fragments.modloader.QuiltInstallFragment
-import com.ashmeet.hyperlauncher.utils.LauncherPreferences
+import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.Tools

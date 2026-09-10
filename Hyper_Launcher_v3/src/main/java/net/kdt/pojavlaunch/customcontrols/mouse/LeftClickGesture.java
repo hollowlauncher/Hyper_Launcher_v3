@@ -5,7 +5,7 @@ import static net.kdt.pojavlaunch.CallbackBridge.sendMouseButton;
 import android.os.Handler;
 import android.view.MotionEvent;
 
-import com.ashmeet.hyperlauncher.utils.LauncherPreferences;
+import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences;
 import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.utils.MathUtils;
 

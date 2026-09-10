@@ -1,4 +1,4 @@
-package com.ashmeet.hyperlauncher.utils
+package com.ashmeet.hyperlauncher.screens.settings.preferences
 
 import android.content.Context
 import android.content.SharedPreferences
