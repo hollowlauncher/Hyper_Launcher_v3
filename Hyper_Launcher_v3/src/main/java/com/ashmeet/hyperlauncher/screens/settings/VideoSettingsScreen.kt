@@ -169,8 +169,7 @@ fun VideoSettingsScreen(
                 )
             }
 
-            val hasSustainedPerf = false
-            SettingsCard(position = if (hasSustainedPerf) CardPosition.MIDDLE else CardPosition.BOTTOM, useSurface = true) {
+            SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {
                 SettingsSwitchItem(
                     title = translatedText(stringResource(R.string.preference_force_vsync_title)),
                     summary = translatedText(stringResource(R.string.preference_force_vsync_description)),
@@ -184,21 +183,21 @@ fun VideoSettingsScreen(
                 )
             }
 
-            if (hasSustainedPerf) {
-                SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {
-                    SettingsSwitchItem(
-                        title = translatedText(stringResource(R.string.preference_sustained_performance_title)),
-                        summary = translatedText(stringResource(R.string.preference_sustained_performance_description)),
-                        icon = Icons.Default.Speed,
-                        checked = sustainedPerformance,
-                        onCheckedChange = {
-                            sustainedPerformance = it
-                            LauncherPreferences.prefs.edit { putBoolean("sustainedPerformance", it) }
-                            LauncherPreferences.loadPreferences(context)
-                        }
-                    )
-                }
+
+            SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {
+                SettingsSwitchItem(
+                title = translatedText(stringResource(R.string.preference_sustained_performance_title)),
+                summary = translatedText(stringResource(R.string.preference_sustained_performance_description)),
+                icon = Icons.Default.Speed,
+                checked = sustainedPerformance,
+                onCheckedChange = {
+                sustainedPerformance = it
+                LauncherPreferences.prefs.edit { putBoolean("sustainedPerformance", it) }
+                LauncherPreferences.loadPreferences(context)
+                    }
+                )
             }
+
         }
 
         val isZinkUsed = renderer.contains("zink")

@@ -12,6 +12,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,15 +39,21 @@ fun SettingsCard(
     val bottomRadius = if (position == CardPosition.BOTTOM || position == CardPosition.SINGLE) outerShape else innerShape
 
     val hasBg = LauncherPreferences.PREF_LAUNCHER_BACKGROUND_PATH != null
+    val isMatte = LauncherPreferences.PREF_BLURRED_ELEMENTS_ENABLED
+
     val cardColor = containerColor ?: if (useSurface) {
-        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+        if (isMatte) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
+        else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
     } else {
-        if (hasBg) MaterialTheme.colorScheme.surface.copy(alpha = 0.3f)
+        if (isMatte) MaterialTheme.colorScheme.surface.copy(alpha = 0.3f)
+        else if (hasBg) MaterialTheme.colorScheme.surface.copy(alpha = 0.3f)
         else MaterialTheme.colorScheme.background
     }
 
     Surface(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .then(if (isMatte) Modifier.blur(12.dp) else Modifier),
         shape = RoundedCornerShape(
             topStart = topRadius,
             topEnd = topRadius,
@@ -55,7 +62,11 @@ fun SettingsCard(
         ),
         color = cardColor,
         content = {
-            Column(content = content)
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                content = content
+            )
         }
     )
 }

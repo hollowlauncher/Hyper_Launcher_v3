@@ -308,6 +308,18 @@ object LauncherPreferences {
     var PREF_LAUNCHER_VIDEO_LOOP = true
 
     @JvmField
+    var PREF_BLURRED_ELEMENTS_ENABLED = false
+
+    @JvmField
+    var PREF_VOLUME_KEYS_CONTROL_ENABLED = false
+
+    @JvmField
+    var PREF_VOLUME_UP_KEYBIND = 24
+
+    @JvmField
+    var PREF_VOLUME_DOWN_KEYBIND = 25
+
+    @JvmField
     var PREF_RECENT_LAUNCHER_BACKGROUNDS: MutableList<String> = mutableListOf()
 
     @JvmStatic
@@ -436,6 +448,10 @@ object LauncherPreferences {
         PREF_LAUNCHER_VIDEO_VOLUME = pref.getInt("launcher_video_volume", 50)
         PREF_LAUNCHER_VIDEO_MUTED = pref.getBoolean("launcher_video_muted", true)
         PREF_LAUNCHER_VIDEO_LOOP = pref.getBoolean("launcher_video_loop", true)
+        PREF_BLURRED_ELEMENTS_ENABLED = pref.getBoolean("blurred_elements_enabled", false)
+        PREF_VOLUME_KEYS_CONTROL_ENABLED = pref.getBoolean("volume_keys_control_enabled", false)
+        PREF_VOLUME_UP_KEYBIND = pref.getInt("volume_up_keybind", 24)
+        PREF_VOLUME_DOWN_KEYBIND = pref.getInt("volume_down_keybind", 25)
 
         val recentBgs = pref.getString("recent_launcher_backgrounds", "") ?: ""
         PREF_RECENT_LAUNCHER_BACKGROUNDS = if (recentBgs.isEmpty()) mutableListOf() else recentBgs.split(";").toMutableList()

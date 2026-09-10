@@ -2,9 +2,12 @@ package com.ashmeet.hyperlauncher.screens.launcher
 
 import android.content.SharedPreferences
 import android.graphics.BitmapFactory
+import android.graphics.SurfaceTexture
+import android.media.MediaPlayer
 import android.view.Gravity
+import android.view.Surface
+import android.view.TextureView
 import android.widget.FrameLayout
-import android.widget.VideoView
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -72,6 +75,7 @@ fun PojavLauncherScreen(
     var launcherVideoMuted by remember { mutableStateOf(LauncherPreferences.PREF_LAUNCHER_VIDEO_MUTED) }
     var launcherVideoVolume by remember { mutableFloatStateOf(LauncherPreferences.PREF_LAUNCHER_VIDEO_VOLUME.toFloat()) }
     var launcherVideoLoop by remember { mutableStateOf(LauncherPreferences.PREF_LAUNCHER_VIDEO_LOOP) }
+    var launcherBlurredElementsEnabled by remember { mutableStateOf(LauncherPreferences.PREF_BLURRED_ELEMENTS_ENABLED) }
 
     DisposableEffect(Unit) {
         val listener = TaskCountListener { count ->
@@ -89,6 +93,7 @@ fun PojavLauncherScreen(
                 "launcher_video_muted" -> launcherVideoMuted = LauncherPreferences.prefs.getBoolean("launcher_video_muted", true)
                 "launcher_video_volume" -> launcherVideoVolume = LauncherPreferences.prefs.getInt("launcher_video_volume", 50).toFloat()
                 "launcher_video_loop" -> launcherVideoLoop = LauncherPreferences.prefs.getBoolean("launcher_video_loop", true)
+                "blurred_elements_enabled" -> launcherBlurredElementsEnabled = LauncherPreferences.prefs.getBoolean("blurred_elements_enabled", false)
             }
         }
         ProgressKeeper.addTaskCountListener(listener)
@@ -132,8 +137,30 @@ fun PojavLauncherScreen(
                 AndroidView(
                     factory = { context ->
                         val root = FrameLayout(context)
-                        val videoView = VideoView(context)
-                        videoView.setOnPreparedListener { mp ->
+                        val textureView = TextureView(context)
+                        val mediaPlayer = MediaPlayer()
+
+                        textureView.surfaceTextureListener = object : TextureView.SurfaceTextureListener {
+                            override fun onSurfaceTextureAvailable(st: SurfaceTexture, width: Int, height: Int) {
+                                val surface = Surface(st)
+                                mediaPlayer.setSurface(surface)
+                                try {
+                                    mediaPlayer.setDataSource(launcherBgPath)
+                                    mediaPlayer.prepareAsync()
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
+                            }
+
+                            override fun onSurfaceTextureSizeChanged(st: SurfaceTexture, width: Int, height: Int) {}
+                            override fun onSurfaceTextureDestroyed(st: SurfaceTexture): Boolean {
+                                mediaPlayer.release()
+                                return true
+                            }
+                            override fun onSurfaceTextureUpdated(st: SurfaceTexture) {}
+                        }
+
+                        mediaPlayer.setOnPreparedListener { mp ->
                             mp.isLooping = launcherVideoLoop
                             if (launcherVideoMuted) {
                                 mp.setVolume(0f, 0f)
@@ -149,7 +176,7 @@ fun PojavLauncherScreen(
 
                             if (videoWidth > 0 && videoHeight > 0 && viewWidth > 0 && viewHeight > 0) {
                                 val scale = max(viewWidth / videoWidth, viewHeight / videoHeight)
-                                videoView.layoutParams = FrameLayout.LayoutParams(
+                                textureView.layoutParams = FrameLayout.LayoutParams(
                                     (videoWidth * scale).toInt(),
                                     (videoHeight * scale).toInt(),
                                     Gravity.CENTER
@@ -157,25 +184,30 @@ fun PojavLauncherScreen(
                             }
                             mp.start()
                         }
-                        videoView.tag = launcherBgPath
-                        if (launcherBgPath != null) {
-                            videoView.setVideoPath(launcherBgPath)
-                        }
-                        root.addView(videoView)
+
+                        root.tag = mediaPlayer
+                        root.addView(textureView)
                         root
                     },
                     update = { root ->
-                        val vv = root.getChildAt(0) as? VideoView
-                        if (vv != null && vv.tag != launcherBgPath) {
-                            vv.tag = launcherBgPath
-                            if (launcherBgPath != null) {
-                                vv.setVideoPath(launcherBgPath)
+                        val mp = root.tag as? MediaPlayer
+                        if (mp != null) {
+                            mp.isLooping = launcherVideoLoop
+                            if (launcherVideoMuted) {
+                                mp.setVolume(0f, 0f)
                             } else {
-                                vv.stopPlayback()
+                                val vol = launcherVideoVolume / 100f
+                                mp.setVolume(vol, vol)
                             }
                         }
                     },
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .then(
+                            if (launcherBgBlurEnabled && launcherBgBlur > 0)
+                                Modifier.blur(launcherBgBlur.dp)
+                            else Modifier
+                        )
                 )
             }
 
@@ -201,12 +233,21 @@ fun PojavLauncherScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp)
-                        .background(MaterialTheme.colorScheme.surface)
+                        .then(
+                            if (launcherBlurredElementsEnabled) {
+                                Modifier
+                                    .blur(16.dp)
+                                    .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.4f))
+                            } else {
+                                Modifier.background(if (launcherBgPath != null) Color.Transparent else MaterialTheme.colorScheme.surface)
+                            }
+                        )
                         .zIndex(1f)
                 ) {
                     AccountSpinnerCompose(
                         modifier = Modifier.fillMaxSize(),
-                        hideDivider = taskCount > 0
+                        hideDivider = taskCount > 0,
+                        containerColor = Color.Transparent
                     )
 
                     Row(
@@ -256,7 +297,7 @@ fun PojavLauncherScreen(
                             .fillMaxWidth()
                             .height(2.dp),
                         color = MaterialTheme.colorScheme.primary,
-                        trackColor = MaterialTheme.colorScheme.surface
+                        trackColor = if (launcherBgPath != null) Color.Transparent else MaterialTheme.colorScheme.surface
                     )
                 }
 

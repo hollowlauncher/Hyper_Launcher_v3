@@ -142,6 +142,7 @@ fun AppearanceSettingsScreen(
     var launcherVideoMuted by remember { mutableStateOf(LauncherPreferences.PREF_LAUNCHER_VIDEO_MUTED) }
     var launcherVideoVolume by remember { mutableFloatStateOf(LauncherPreferences.PREF_LAUNCHER_VIDEO_VOLUME.toFloat()) }
     var launcherVideoLoop by remember { mutableStateOf(LauncherPreferences.PREF_LAUNCHER_VIDEO_LOOP) }
+    var launcherBlurredElementsEnabled by remember { mutableStateOf(LauncherPreferences.PREF_BLURRED_ELEMENTS_ENABLED) }
     var recentBackgrounds by remember { mutableStateOf(LauncherPreferences.PREF_RECENT_LAUNCHER_BACKGROUNDS.toList()) }
 
     val context = LocalContext.current
@@ -622,7 +623,7 @@ fun AppearanceSettingsScreen(
             SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
                 SettingsSwitchItem(
                     title = translatedText("Background Blur"),
-                    summary = translatedText("Apply a blur effect to the background image"),
+                    summary = translatedText("Apply a blur effect to the background"),
                     icon = Icons.Rounded.BlurOn,
                     checked = launcherBgBlurEnabled,
                     onCheckedChange = {
@@ -630,7 +631,7 @@ fun AppearanceSettingsScreen(
                         LauncherPreferences.prefs.edit { putBoolean("launcher_background_blur_enabled", it) }
                         LauncherPreferences.PREF_LAUNCHER_BACKGROUND_BLUR_ENABLED = it
                     },
-                    enabled = launcherBgPath != null && launcherBgType == "image"
+                    enabled = launcherBgPath != null
                 )
             }
 
@@ -645,7 +646,21 @@ fun AppearanceSettingsScreen(
                         LauncherPreferences.prefs.edit { putInt("launcher_background_blur", it.toInt()) }
                         LauncherPreferences.PREF_LAUNCHER_BACKGROUND_BLUR = it.toInt()
                     },
-                    enabled = launcherBgPath != null && launcherBgBlurEnabled && launcherBgType == "image"
+                    enabled = launcherBgPath != null && launcherBgBlurEnabled
+                )
+            }
+
+            SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
+                SettingsSwitchItem(
+                    title = translatedText("Blurred Elements"),
+                    summary = translatedText("Apply a blurred matte finish to UI components"),
+                    icon = Icons.Rounded.BlurOn,
+                    checked = launcherBlurredElementsEnabled,
+                    onCheckedChange = {
+                        launcherBlurredElementsEnabled = it
+                        LauncherPreferences.prefs.edit { putBoolean("blurred_elements_enabled", it) }
+                        LauncherPreferences.PREF_BLURRED_ELEMENTS_ENABLED = it
+                    }
                 )
             }
 

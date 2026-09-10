@@ -1,6 +1,7 @@
 package com.ashmeet.hyperlauncher.components
 
 import com.ashmeet.hyperlauncher.utils.translation.translatedText
+import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -36,6 +37,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
@@ -66,7 +68,8 @@ import com.ashmeet.hyperlauncher.theme.PojavTheme
 @Composable
 fun AccountSpinnerCompose(
     modifier: Modifier = Modifier,
-    hideDivider: Boolean = false
+    hideDivider: Boolean = false,
+    containerColor: Color = MaterialTheme.colorScheme.surface
 ) {
     val context = LocalContext.current
     var accounts by remember { mutableStateOf<List<Account>>(emptyList()) }
@@ -210,6 +213,7 @@ fun AccountSpinnerCompose(
                 .show()
         },
         hideDivider = hideDivider,
+        containerColor = containerColor,
         modifier = modifier
     )
 }
@@ -224,14 +228,18 @@ fun AccountSpinnerUI(
     onAccountSelected: (Account) -> Unit,
     onAccountDelete: (Account) -> Unit,
     modifier: Modifier = Modifier,
-    hideDivider: Boolean = false
+    hideDivider: Boolean = false,
+    containerColor: Color = MaterialTheme.colorScheme.surface
 ) {
+    val isMatte = LauncherPreferences.PREF_BLURRED_ELEMENTS_ENABLED
+
     Box(modifier = modifier) {
         Surface(
             modifier = Modifier
                 .fillMaxSize()
+                .then(if (isMatte) Modifier.blur(16.dp) else Modifier)
                 .clickable { onExpandedChange(true) },
-            color = MaterialTheme.colorScheme.surface,
+            color = if (isMatte) containerColor.copy(alpha = 0.4f) else containerColor,
             shape = RoundedCornerShape(0.dp)
         ) {
             Box(modifier = Modifier.fillMaxSize()) {

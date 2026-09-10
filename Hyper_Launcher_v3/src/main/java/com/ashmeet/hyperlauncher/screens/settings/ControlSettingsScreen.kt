@@ -1,11 +1,18 @@
 package com.ashmeet.hyperlauncher.screens.settings
 
+import android.view.KeyEvent
 import com.ashmeet.hyperlauncher.utils.translation.translatedText
 
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.CompareArrows
+import androidx.compose.material.icons.automirrored.rounded.VolumeUp
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.ControlCamera
 import androidx.compose.material.icons.filled.Edit
@@ -18,12 +25,24 @@ import androidx.compose.material.icons.filled.Title
 import androidx.compose.material.icons.filled.TouchApp
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.VideogameAsset
+import androidx.compose.material.icons.rounded.VolumeUp
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.nativeKeyCode
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.stringResource
@@ -65,6 +84,11 @@ fun ControlSettingsScreen(
     var gyroInvertY by remember { mutableStateOf(LauncherPreferences.PREF_GYRO_INVERT_Y) }
     var deadzoneScale by remember { mutableFloatStateOf(LauncherPreferences.PREF_DEADZONE_SCALE * 100f) }
     var keyboardAutoPanning by remember { mutableStateOf(LauncherPreferences.PREF_KEYBOARD_AUTOPANNING) }
+    var volumeKeysControlEnabled by remember { mutableStateOf(LauncherPreferences.PREF_VOLUME_KEYS_CONTROL_ENABLED) }
+    var volumeUpKeybind by remember { mutableStateOf(LauncherPreferences.PREF_VOLUME_UP_KEYBIND) }
+    var volumeDownKeybind by remember { mutableStateOf(LauncherPreferences.PREF_VOLUME_DOWN_KEYBIND) }
+
+    var showKeyPickerFor by remember { mutableStateOf<String?>(null) }
 
     SettingsScreenWrapper(
         title = translatedText(stringResource(R.string.preference_control_title)),
@@ -380,5 +404,99 @@ fun ControlSettingsScreen(
                 }
             )
         }
+
+        PreferenceCategory(title = translatedText("Volume Keys"))
+
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            SettingsCard(position = CardPosition.TOP, useSurface = true) {
+                SettingsSwitchItem(
+                    title = translatedText("Enable Volume Key Controls"),
+                    summary = translatedText("Use volume keys for custom actions in the launcher"),
+                    icon = Icons.AutoMirrored.Rounded.VolumeUp,
+                    checked = volumeKeysControlEnabled,
+                    onCheckedChange = {
+                        volumeKeysControlEnabled = it
+                        LauncherPreferences.prefs.edit { putBoolean("volume_keys_control_enabled", it) }
+                        LauncherPreferences.loadPreferences(context)
+                    }
+                )
+            }
+
+            SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
+                SettingsActionItem(
+                    title = translatedText("Volume Up Keybind"),
+                    summary = translatedText("Current: ${KeyEvent.keyCodeToString(volumeUpKeybind)}"),
+                    icon = Icons.AutoMirrored.Rounded.VolumeUp,
+                    enabled = volumeKeysControlEnabled,
+                    onClick = { showKeyPickerFor = "up" }
+                )
+            }
+
+            SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {
+                SettingsActionItem(
+                    title = translatedText("Volume Down Keybind"),
+                    summary = translatedText("Current: ${KeyEvent.keyCodeToString(volumeDownKeybind)}"),
+                    icon = Icons.AutoMirrored.Rounded.VolumeUp,
+                    enabled = volumeKeysControlEnabled,
+                    onClick = { showKeyPickerFor = "down" }
+                )
+            }
+        }
     }
+
+    if (showKeyPickerFor != null) {
+        KeyPickerDialog(
+            title = if (showKeyPickerFor == "up") translatedText("Volume Up Keybind") else translatedText("Volume Down Keybind"),
+            onKeyPicked = { keyCode ->
+                if (showKeyPickerFor == "up") {
+                    volumeUpKeybind = keyCode
+                    LauncherPreferences.prefs.edit { putInt("volume_up_keybind", keyCode) }
+                } else {
+                    volumeDownKeybind = keyCode
+                    LauncherPreferences.prefs.edit { putInt("volume_down_keybind", keyCode) }
+                }
+                LauncherPreferences.loadPreferences(context)
+            },
+            onDismiss = { showKeyPickerFor = null }
+        )
+    }
+}
+
+@Composable
+fun KeyPickerDialog(
+    title: String,
+    onKeyPicked: (Int) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val focusRequester = remember { FocusRequester() }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = title) },
+        text = {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(100.dp)
+                    .focusRequester(focusRequester)
+                    .focusable()
+                    .onKeyEvent {
+                        onKeyPicked(it.nativeKeyEvent.keyCode)
+                        onDismiss()
+                        true
+                    },
+                contentAlignment = Alignment.Center
+            ) {
+                Text(translatedText("Press a key..."))
+            }
+            LaunchedEffect(Unit) {
+                focusRequester.requestFocus()
+            }
+        },
+        confirmButton = {},
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(android.R.string.cancel))
+            }
+        }
+    )
 }
