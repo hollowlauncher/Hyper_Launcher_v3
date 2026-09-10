@@ -1,18 +1,15 @@
 package com.ashmeet.hyperlauncher.screens.settings
 
 import android.view.KeyEvent
-import com.ashmeet.hyperlauncher.utils.translation.translatedText
-
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.CompareArrows
 import androidx.compose.material.icons.automirrored.rounded.VolumeUp
@@ -28,41 +25,34 @@ import androidx.compose.material.icons.filled.Title
 import androidx.compose.material.icons.filled.TouchApp
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.VideogameAsset
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
 import com.ashmeet.hyperlauncher.screens.settings.layouts.CardPosition
 import com.ashmeet.hyperlauncher.screens.settings.layouts.SettingsCard
 import com.ashmeet.hyperlauncher.screens.settings.layouts.SettingsScreenWrapper
+import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences
 import com.ashmeet.hyperlauncher.screens.settings.preferences.PreferenceCategory
 import com.ashmeet.hyperlauncher.screens.settings.preferences.SettingsActionItem
 import com.ashmeet.hyperlauncher.screens.settings.preferences.SettingsSliderItem
 import com.ashmeet.hyperlauncher.screens.settings.preferences.SettingsSwitchItem
+import com.ashmeet.hyperlauncher.utils.translation.translatedText
 import net.ashmeet.hyperlauncher.R
-import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences
 import net.kdt.pojavlaunch.utils.KeycodeUtils
 
 @Composable
@@ -92,13 +82,13 @@ fun ControlSettingsScreen(
     var deadzoneScale by remember { mutableFloatStateOf(LauncherPreferences.PREF_DEADZONE_SCALE * 100f) }
     var keyboardAutoPanning by remember { mutableStateOf(LauncherPreferences.PREF_KEYBOARD_AUTOPANNING) }
     var volumeKeysControlEnabled by remember { mutableStateOf(LauncherPreferences.PREF_VOLUME_KEYS_CONTROL_ENABLED) }
-    var volumeUpKeybind by remember { mutableStateOf(LauncherPreferences.PREF_VOLUME_UP_KEYBIND) }
-    var volumeDownKeybind by remember { mutableStateOf(LauncherPreferences.PREF_VOLUME_DOWN_KEYBIND) }
+    var volumeUpKeybind by remember { mutableIntStateOf(LauncherPreferences.PREF_VOLUME_UP_KEYBIND) }
+    var volumeDownKeybind by remember { mutableIntStateOf(LauncherPreferences.PREF_VOLUME_DOWN_KEYBIND) }
 
     val keyNames = remember { KeycodeUtils.generateKeyName() }
     fun getKeyName(keycode: Int): String {
         val index = KeycodeUtils.getIndexByValue(keycode)
-        return if (index >= 0 && index < keyNames.size && KeycodeUtils.getValueByIndex(index) == keycode) {
+        return if (index >= 0 && index < keyNames.size && (KeycodeUtils.getValueByIndex(index) == keycode)) {
             keyNames[index]
         } else {
             KeyEvent.keyCodeToString(keycode).replace("KEYCODE_", "")
@@ -488,17 +478,22 @@ fun KeycodePickerDialog(
     onDismiss: () -> Unit
 ) {
     val keyNames = remember { KeycodeUtils.generateKeyName() }
-    
+    val initialIndex = remember {
+        val idx = KeycodeUtils.getIndexByValue(initialValue)
+        if (idx < 0) 0 else idx
+    }
+    val listState = rememberLazyListState(initialFirstVisibleItemIndex = initialIndex)
+
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(text = title) },
         text = {
             Box(modifier = Modifier.height(300.dp)) {
-                LazyColumn {
+                LazyColumn(state = listState) {
                     itemsIndexed(keyNames) { index, name ->
                         val value = KeycodeUtils.getValueByIndex(index)
                         DropdownMenuItem(
-                            text = { 
+                            text = {
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.SpaceBetween
@@ -521,56 +516,6 @@ fun KeycodePickerDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(android.R.string.cancel))
-            }
-        }
-    )
-}
-
-@Composable
-fun KeycodeInputDialog(
-    title: String,
-    initialValue: Int,
-    onKeycodePicked: (Int) -> Unit,
-    onDismiss: () -> Unit
-) {
-    var textValue by remember { mutableStateOf(initialValue.toString()) }
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(text = title) },
-        text = {
-            Column {
-                Text(translatedText("Enter the Android keycode for this button:"))
-                OutlinedTextField(
-                    value = textValue,
-                    onValueChange = { if (it.all { char -> char.isDigit() }) textValue = it },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Text(
-                    text = try {
-                        val code = textValue.toInt()
-                        "Resolved: ${KeyEvent.keyCodeToString(code)}"
-                    } catch (e: Exception) {
-                        "Invalid keycode"
-                    },
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.secondary
-                )
-            }
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    textValue.toIntOrNull()?.let { onKeycodePicked(it) }
-                    onDismiss()
-                }
-            ) {
-                Text(stringResource(android.R.string.ok))
-            }
-        },
-        dismissButton = {
             TextButton(onClick = onDismiss) {
                 Text(stringResource(android.R.string.cancel))
             }
