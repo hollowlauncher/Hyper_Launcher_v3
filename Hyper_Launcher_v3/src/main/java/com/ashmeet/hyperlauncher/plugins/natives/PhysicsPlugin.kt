@@ -2,7 +2,7 @@ package com.ashmeet.hyperlauncher.plugins.natives
 
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.ashmeet.hyperlauncher.plugins.manager.HyperPlugin
+import com.ashmeet.hyperlauncher.plugins.interfaces.HyperPlugin
 import com.ashmeet.hyperlauncher.plugins.manager.HyperPluginManager
 
 class PhysicsPlugin : HyperPlugin {

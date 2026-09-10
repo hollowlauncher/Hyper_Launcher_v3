@@ -3,7 +3,7 @@ package net.kdt.pojavlaunch.utils;
 import android.content.Context;
 
 import net.kdt.pojavlaunch.Architecture;
-import com.ashmeet.hyperlauncher.plugins.manager.LibraryPlugin;
+import com.ashmeet.hyperlauncher.plugins.natives.LibraryPlugin;
 import com.ashmeet.hyperlauncher.utils.LauncherPreferences;
 
 import java.util.Map;

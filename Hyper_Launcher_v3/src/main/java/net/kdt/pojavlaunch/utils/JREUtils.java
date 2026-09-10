@@ -13,7 +13,7 @@ import android.util.*;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.ashmeet.hyperlauncher.utils.LauncherPreferences;
-import com.ashmeet.hyperlauncher.plugins.manager.LibraryPlugin;
+import com.ashmeet.hyperlauncher.plugins.natives.LibraryPlugin;
 
 import java.io.*;
 import java.util.*;

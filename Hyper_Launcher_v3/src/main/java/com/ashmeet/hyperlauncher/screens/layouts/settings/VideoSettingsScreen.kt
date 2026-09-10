@@ -34,7 +34,7 @@ import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SettingsSw
 import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SingleChoiceDialog
 import net.ashmeet.hyperlauncher.R
 import com.ashmeet.hyperlauncher.utils.LauncherPreferences
-import com.ashmeet.hyperlauncher.plugins.renderer.RendererCompatUtil
+import com.ashmeet.hyperlauncher.utils.RendererCompatUtil
 
 @Composable
 fun VideoSettingsScreen(

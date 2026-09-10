@@ -27,7 +27,7 @@ import net.kdt.pojavlaunch.profiles.VersionSelectorDialog
 import com.ashmeet.hyperlauncher.screens.layouts.instances.InstanceEditorScreen
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 import net.kdt.pojavlaunch.utils.CropperUtils
-import com.ashmeet.hyperlauncher.plugins.renderer.RendererCompatUtil
+import com.ashmeet.hyperlauncher.utils.RendererCompatUtil
 import java.io.IOException
 
 class InstanceEditorFragment : Fragment(), CropperUtils.CropperReceiver {

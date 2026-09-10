@@ -1,4 +1,4 @@
-package com.ashmeet.hyperlauncher.plugins.manager
+package com.ashmeet.hyperlauncher.plugins.interfaces
 
 import androidx.appcompat.app.AppCompatActivity
 

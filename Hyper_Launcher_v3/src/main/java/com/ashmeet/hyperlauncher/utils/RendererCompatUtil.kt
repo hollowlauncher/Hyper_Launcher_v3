@@ -1,12 +1,11 @@
-package com.ashmeet.hyperlauncher.plugins.renderer
+package com.ashmeet.hyperlauncher.utils
 
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
+import com.ashmeet.hyperlauncher.plugins.manager.NativePluginManager
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.Tools
-import com.ashmeet.hyperlauncher.plugins.manager.NativePlugin
-import com.ashmeet.hyperlauncher.plugins.manager.NativePluginManager
 import net.kdt.pojavlaunch.utils.GLInfoUtils
 import net.kdt.pojavlaunch.utils.JREUtils
 import java.io.File

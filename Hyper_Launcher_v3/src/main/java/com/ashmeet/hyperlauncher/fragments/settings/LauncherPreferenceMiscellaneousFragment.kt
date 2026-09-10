@@ -22,7 +22,7 @@ import com.ashmeet.hyperlauncher.screens.layouts.settings.MiscSettingsScreen
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 import net.kdt.pojavlaunch.tasks.DataMigrator
 import net.kdt.pojavlaunch.utils.GLInfoUtils
-import com.ashmeet.hyperlauncher.plugins.renderer.RendererCompatUtil
+import com.ashmeet.hyperlauncher.utils.RendererCompatUtil
 
 class LauncherPreferenceMiscellaneousFragment : Fragment(), SharedPreferences.OnSharedPreferenceChangeListener {
 

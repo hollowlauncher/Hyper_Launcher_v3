@@ -2,11 +2,12 @@ package com.ashmeet.hyperlauncher.plugins.manager
 
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.ashmeet.hyperlauncher.plugins.interfaces.NativePlugin
 import com.ashmeet.hyperlauncher.plugins.natives.DhCompatPlugin
 import com.ashmeet.hyperlauncher.plugins.natives.ImGuiPlugin
 import com.ashmeet.hyperlauncher.plugins.natives.PhysicsPlugin
 import com.ashmeet.hyperlauncher.plugins.natives.RapierPlugin
-import com.ashmeet.hyperlauncher.plugins.renderer.FCLRenderer
+import com.ashmeet.hyperlauncher.plugins.natives.FCLRendererPlugin
 import net.kdt.pojavlaunch.Tools
 import java.io.File
 import kotlin.collections.iterator
@@ -19,7 +20,7 @@ object HyperPluginManager {
         RapierPlugin(),
         ImGuiPlugin(),
         DhCompatPlugin(),
-        FCLRenderer()
+        FCLRendererPlugin()
     )
 
     @JvmStatic

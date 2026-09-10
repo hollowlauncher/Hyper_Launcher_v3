@@ -1,4 +1,4 @@
-package com.ashmeet.hyperlauncher.plugins.manager
+package com.ashmeet.hyperlauncher.plugins.natives
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -16,7 +16,6 @@ class LibraryPlugin private constructor(
 ) {
     companion object {
         private const val TAG = "LibraryPlugin"
-
         const val METADATA_FCL_PLUGIN = "FCLNativePlugin"
         const val METADATA_FCL_PLUGIN_ALT = "fclPlugin"
         const val METADATA_FCL_DESCRIPTION = "des"
@@ -26,8 +25,6 @@ class LibraryPlugin private constructor(
         const val METADATA_FCL_POJAV_ENV = "pojavEnv"
         const val METADATA_FCL_MIN_MC_VER = "minMCVer"
         const val METADATA_FCL_MAX_MC_VER = "maxMCVer"
-
-        // Known plugins constants
         const val ID_ANGLE_PLUGIN = "git.mojo.angle"
         const val ID_FFMPEG_PLUGIN = "git.mojo.ffmpeg"
         const val ID_ZINK_PLUGIN = "git.mojo.zink"

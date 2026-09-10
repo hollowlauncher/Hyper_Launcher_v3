@@ -33,7 +33,7 @@ import com.ashmeet.hyperlauncher.screens.layouts.settings.preferences.SettingsSw
 import com.ashmeet.hyperlauncher.utils.translation.Translator
 import com.ashmeet.hyperlauncher.utils.translation.translatedText
 import net.ashmeet.hyperlauncher.R
-import com.ashmeet.hyperlauncher.plugins.manager.LibraryPlugin
+import com.ashmeet.hyperlauncher.plugins.natives.LibraryPlugin
 
 @Composable
 fun DeveloperSettingsScreen(

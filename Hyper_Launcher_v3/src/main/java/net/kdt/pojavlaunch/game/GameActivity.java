@@ -75,7 +75,7 @@ import net.kdt.pojavlaunch.tasks.AsyncAssetManager;
 import net.kdt.pojavlaunch.utils.JREUtils;
 import net.kdt.pojavlaunch.utils.MCOptionUtils;
 import net.kdt.pojavlaunch.authenticator.accounts.Account;
-import com.ashmeet.hyperlauncher.plugins.renderer.RendererCompatUtil;
+import com.ashmeet.hyperlauncher.utils.RendererCompatUtil;
 import net.kdt.pojavlaunch.utils.jre.GameRunner;
 
 import java.io.File;
