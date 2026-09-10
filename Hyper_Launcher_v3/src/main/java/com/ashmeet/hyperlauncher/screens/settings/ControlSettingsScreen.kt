@@ -7,8 +7,12 @@ import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.CompareArrows
 import androidx.compose.material.icons.automirrored.rounded.VolumeUp
@@ -26,6 +30,7 @@ import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.VideogameAsset
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -58,6 +63,7 @@ import com.ashmeet.hyperlauncher.screens.settings.preferences.SettingsSliderItem
 import com.ashmeet.hyperlauncher.screens.settings.preferences.SettingsSwitchItem
 import net.ashmeet.hyperlauncher.R
 import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences
+import net.kdt.pojavlaunch.utils.KeycodeUtils
 
 @Composable
 fun ControlSettingsScreen(
@@ -88,6 +94,16 @@ fun ControlSettingsScreen(
     var volumeKeysControlEnabled by remember { mutableStateOf(LauncherPreferences.PREF_VOLUME_KEYS_CONTROL_ENABLED) }
     var volumeUpKeybind by remember { mutableStateOf(LauncherPreferences.PREF_VOLUME_UP_KEYBIND) }
     var volumeDownKeybind by remember { mutableStateOf(LauncherPreferences.PREF_VOLUME_DOWN_KEYBIND) }
+
+    val keyNames = remember { KeycodeUtils.generateKeyName() }
+    fun getKeyName(keycode: Int): String {
+        val index = KeycodeUtils.getIndexByValue(keycode)
+        return if (index >= 0 && index < keyNames.size && KeycodeUtils.getValueByIndex(index) == keycode) {
+            keyNames[index]
+        } else {
+            KeyEvent.keyCodeToString(keycode).replace("KEYCODE_", "")
+        }
+    }
 
     var showKeyPickerFor by remember { mutableStateOf<String?>(null) }
 
@@ -426,7 +442,7 @@ fun ControlSettingsScreen(
             SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
                 SettingsActionItem(
                     title = translatedText("Volume Up Keybind"),
-                    summary = translatedText("Current Keycode: $volumeUpKeybind (${KeyEvent.keyCodeToString(volumeUpKeybind)})"),
+                    summary = translatedText("Current Key: ${getKeyName(volumeUpKeybind)} ($volumeUpKeybind)"),
                     icon = Icons.AutoMirrored.Rounded.VolumeUp,
                     enabled = volumeKeysControlEnabled,
                     onClick = { showKeyPickerFor = "up" }
@@ -436,7 +452,7 @@ fun ControlSettingsScreen(
             SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {
                 SettingsActionItem(
                     title = translatedText("Volume Down Keybind"),
-                    summary = translatedText("Current Keycode: $volumeDownKeybind (${KeyEvent.keyCodeToString(volumeDownKeybind)})"),
+                    summary = translatedText("Current Key: ${getKeyName(volumeDownKeybind)} ($volumeDownKeybind)"),
                     icon = Icons.AutoMirrored.Rounded.VolumeUp,
                     enabled = volumeKeysControlEnabled,
                     onClick = { showKeyPickerFor = "down" }
@@ -446,7 +462,7 @@ fun ControlSettingsScreen(
     }
 
     if (showKeyPickerFor != null) {
-        KeycodeInputDialog(
+        KeycodePickerDialog(
             title = if (showKeyPickerFor == "up") translatedText("Volume Up Keybind") else translatedText("Volume Down Keybind"),
             initialValue = if (showKeyPickerFor == "up") volumeUpKeybind else volumeDownKeybind,
             onKeycodePicked = { keyCode ->
@@ -462,6 +478,54 @@ fun ControlSettingsScreen(
             onDismiss = { showKeyPickerFor = null }
         )
     }
+}
+
+@Composable
+fun KeycodePickerDialog(
+    title: String,
+    initialValue: Int,
+    onKeycodePicked: (Int) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val keyNames = remember { KeycodeUtils.generateKeyName() }
+    
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = title) },
+        text = {
+            Box(modifier = Modifier.height(300.dp)) {
+                LazyColumn {
+                    itemsIndexed(keyNames) { index, name ->
+                        val value = KeycodeUtils.getValueByIndex(index)
+                        DropdownMenuItem(
+                            text = { 
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text(name)
+                                    Text(
+                                        text = value.toString(),
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.secondary
+                                    )
+                                }
+                            },
+                            onClick = {
+                                onKeycodePicked(value)
+                                onDismiss()
+                            }
+                        )
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(android.R.string.cancel))
+            }
+        }
+    )
 }
 
 @Composable

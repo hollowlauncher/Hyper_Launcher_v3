@@ -8,7 +8,7 @@ import java.util.Arrays;
 
 
 public class KeycodeUtils {
-    private static final int KEYCODE_COUNT = 106;
+    private static final int KEYCODE_COUNT = 108;
     private static final int[] sAndroidKeycodes = new int[KEYCODE_COUNT];
     private static String[] androidKeyNameArray; /* = new String[androidKeycodes.length]; */
     private static int mTmpCount = 0;
@@ -37,6 +37,9 @@ public class KeycodeUtils {
         add(KeyEvent.KEYCODE_DPAD_DOWN);
         add(KeyEvent.KEYCODE_DPAD_LEFT);
         add(KeyEvent.KEYCODE_DPAD_RIGHT); //22
+
+        add(KeyEvent.KEYCODE_VOLUME_UP);
+        add(KeyEvent.KEYCODE_VOLUME_DOWN);
 
         // A-Z keys
         add(KeyEvent.KEYCODE_A); //29
