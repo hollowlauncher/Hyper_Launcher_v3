@@ -1,4 +1,4 @@
-package com.ashmeet.hyperlauncher.screens.layouts.installer.components
+package com.ashmeet.hyperlauncher.components.dialogs
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn

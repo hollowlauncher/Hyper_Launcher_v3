@@ -61,9 +61,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ashmeet.hyperlauncher.components.ProjectItemView
 import com.ashmeet.hyperlauncher.components.ScreenLayout
-import com.ashmeet.hyperlauncher.screens.layouts.installer.components.ProjectDetailsSidebar
-import com.ashmeet.hyperlauncher.screens.layouts.installer.components.SearchFiltersSidebar
-import com.ashmeet.hyperlauncher.screens.layouts.installer.components.VersionList
+import com.ashmeet.hyperlauncher.components.ProjectDetailsSidebar
+import com.ashmeet.hyperlauncher.components.SearchFiltersSidebar
+import com.ashmeet.hyperlauncher.components.VersionList
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 import com.ashmeet.hyperlauncher.utils.installer.ContentInstallerType
 import com.ashmeet.hyperlauncher.utils.installer.ContentSource

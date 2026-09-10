@@ -1,4 +1,4 @@
-package com.ashmeet.hyperlauncher.screens.layouts.installer.components
+package com.ashmeet.hyperlauncher.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
