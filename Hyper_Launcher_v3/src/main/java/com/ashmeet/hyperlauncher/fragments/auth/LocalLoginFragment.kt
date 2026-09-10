@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import com.ashmeet.hyperlauncher.fragments.home.MainMenuFragment
-import com.ashmeet.hyperlauncher.screens.layouts.auth.methods.LocalLoginScreen
+import com.ashmeet.hyperlauncher.screens.auth.methods.LocalLoginScreen
 import com.ashmeet.hyperlauncher.skin.SkinManager
 import com.ashmeet.hyperlauncher.skin.androidSkinAnalyzerFacade
 import com.ashmeet.hyperlauncher.theme.PojavTheme

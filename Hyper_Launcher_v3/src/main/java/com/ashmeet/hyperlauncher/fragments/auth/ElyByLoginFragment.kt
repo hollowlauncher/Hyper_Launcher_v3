@@ -9,7 +9,7 @@ import android.widget.Toast
 import android.webkit.WebView
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
-import com.ashmeet.hyperlauncher.screens.layouts.auth.methods.MicrosoftLoginScreen
+import com.ashmeet.hyperlauncher.screens.auth.methods.MicrosoftLoginScreen
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.Tools
@@ -32,7 +32,7 @@ class ElyByLoginFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 PojavTheme {
-                    MicrosoftLoginScreen(
+                    _root_ide_package_.com.ashmeet.hyperlauncher.screens.auth.methods.MicrosoftLoginScreen(
                         authUrl = mAuthUrl,
                         trackedUrl = mTrackedUrl,
                         onCompletion = { fullUrl -> handleCompletion(fullUrl) },

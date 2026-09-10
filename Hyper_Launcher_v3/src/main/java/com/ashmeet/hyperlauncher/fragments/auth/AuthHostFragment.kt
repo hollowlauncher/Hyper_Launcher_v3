@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
-import com.ashmeet.hyperlauncher.screens.layouts.auth.AuthLayout
+import com.ashmeet.hyperlauncher.screens.auth.AuthLayout
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 import net.ashmeet.hyperlauncher.R
 
@@ -35,14 +35,19 @@ class AuthHostFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 PojavTheme {
-                    AuthLayout(
+                    _root_ide_package_.com.ashmeet.hyperlauncher.screens.auth.AuthLayout(
                         title = translatedText("Login"),
                         onBack = { requireActivity().onBackPressedDispatcher.onBackPressed() },
                         onFragmentViewCreated = {
                             val fm = childFragmentManager
                             if (fm.findFragmentById(R.id.container_fragment_auth) == null) {
                                 fm.beginTransaction()
-                                    .replace(R.id.container_fragment_auth, SelectAuthFragment::class.java, null, SelectAuthFragment.TAG)
+                                    .replace(
+                                        R.id.container_fragment_auth,
+                                        SelectAuthFragment::class.java,
+                                        null,
+                                        SelectAuthFragment.TAG
+                                    )
                                     .commitAllowingStateLoss()
                             }
                         }

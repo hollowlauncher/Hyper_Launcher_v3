@@ -18,7 +18,7 @@ import androidx.appcompat.app.AlertDialog;
 
 
 import com.ashmeet.hyperlauncher.utils.LauncherPreferences;
-import com.ashmeet.hyperlauncher.screens.activity.game.LoggerView;
+import com.ashmeet.hyperlauncher.screens.layouts.game.LoggerView;
 
 import net.ashmeet.hyperlauncher.R;
 import net.kdt.pojavlaunch.BaseActivity;
