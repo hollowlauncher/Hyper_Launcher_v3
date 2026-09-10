@@ -100,11 +100,6 @@ object RendererCompatUtil {
         System.gc()
     }
 
-    /**
-     * Open the render library in accordance to the settings.
-     * It will fall back if it fails to load the library.
-     * @return The name of the loaded library
-     */
     @JvmStatic
     fun loadGraphicsLibrary(renderer: String): String? {
         val renderLibrary: String
