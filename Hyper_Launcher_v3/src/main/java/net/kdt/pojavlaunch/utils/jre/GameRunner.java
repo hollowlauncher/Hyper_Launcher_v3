@@ -182,7 +182,7 @@ public class GameRunner {
         JVersionList.Version versionInfo = Tools.getVersionInfo(versionId);
 
         // Switch renderer to GL4ES when running a compat context version on LTW or MobileGlues
-        boolean isModernWrapper = rendererName.equals("opengles3_ltw") || rendererName.equals("mobileglues");
+        boolean isModernWrapper = rendererName.equals("opengles3_ltw") || rendererName.equals("mobileglues") || rendererName.contains(":");
         if(isCompatContext(versionInfo) && !hasAngelica(gamedir) && isModernWrapper) {
             instance.renderer = rendererName = "opengles2";
             instance.write();
@@ -202,7 +202,7 @@ public class GameRunner {
         }
         RendererCompatUtil.releaseRenderersCache();
 
-        isModernWrapper = rendererName.equals("opengles3_ltw") || rendererName.equals("mobileglues");
+        isModernWrapper = rendererName.equals("opengles3_ltw") || rendererName.equals("mobileglues") || rendererName.contains(":");
 
         if(isModernWrapper && checkRenderDistance(versionInfo, gamedir)) {
             if(showDialog(activity, R.string.ltw_render_distance_warning_msg)) return;
@@ -316,11 +316,11 @@ public class GameRunner {
         JREUtils.setEnviroimentForGame(activity, rendererName);
         JREUtils.chdir(instance.getGameDirectory().getAbsolutePath());
 
-        String rendererLibrary = JREUtils.loadGraphicsLibrary(rendererName);
+        String rendererLibrary = RendererCompatUtil.loadGraphicsLibrary(rendererName);
         if(rendererLibrary == null) {
             Log.i("GameRunner", "Falling back to GL4ES 1.1.4");
             rendererName = "opengles2";
-            rendererLibrary = JREUtils.loadGraphicsLibrary(rendererName);
+            rendererLibrary = RendererCompatUtil.loadGraphicsLibrary(rendererName);
         }
         if(rendererLibrary == null) {
             if(showDialog(activity, R.string.gr_err_renderer_load_Failed)) return;

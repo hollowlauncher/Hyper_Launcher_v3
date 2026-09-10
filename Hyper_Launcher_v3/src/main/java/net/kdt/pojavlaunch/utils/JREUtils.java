@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences;
 import com.ashmeet.hyperlauncher.plugins.natives.LibraryPlugin;
+import com.ashmeet.hyperlauncher.plugins.manager.NativePluginManager;
 
 import java.io.*;
 import java.util.*;
@@ -141,7 +142,13 @@ public class JREUtils {
         // Init mesa renderers
         MesaUtils.initEnvironment(context, renderer, envMap);
 
-        setRendererLibraryPath(Tools.NATIVE_LIB_DIR, MesaUtils.getCustomZinkLibraryPath());
+        String pluginPaths = NativePluginManager.getRuntimeLibraryPath();
+        String mainLibPath = Tools.NATIVE_LIB_DIR;
+        if (!pluginPaths.isEmpty()) {
+            mainLibPath = pluginPaths + ":" + mainLibPath;
+        }
+
+        setRendererLibraryPath(mainLibPath, MesaUtils.getCustomZinkLibraryPath());
 
         if(LauncherPreferences.PREF_BIG_CORE_AFFINITY) envMap.put("POJAV_BIG_CORE_AFFINITY", "1");
         if(LauncherPreferences.PREF_ALSOFT_FORCE_OPENSL) envMap.put("ALSOFT_DRIVERS", "opensl");
@@ -230,55 +237,6 @@ public class JREUtils {
             }
         }
         return parsedArguments;
-    }
-
-    /**
-     * Open the render library in accordance to the settings.
-     * It will fallback if it fails to load the library.
-     * @return The name of the loaded library
-     */
-    public static String loadGraphicsLibrary(String renderer){
-        String renderLibrary;
-        boolean useGles;
-        boolean bypassNamespace = false;
-        boolean preloadVk = true;
-        int glesVersion;
-        switch (renderer){
-            case "freedreno_kgsl":
-                preloadVk = false;
-            case "vulkan_zink":
-                renderLibrary = MesaUtils.getPreferredEGL();
-                useGles = false;
-                bypassNamespace = true; // Mesa is linked to a bunch of libraries not available in the pojavexec namespace
-                glesVersion = 3;
-                if(preloadVk) MojoExec.preloadVulkan(); // Zink requires Vulkan library to be preloaded
-                break;
-            case "opengles3_ltw" :
-                renderLibrary = "libltw.so";
-                useGles = true;
-                glesVersion = 3;
-                break;
-            case "mobileglues" :
-                renderLibrary = "libmobileglues.so";
-                useGles = true;
-                glesVersion = 3;
-                break;
-            case "opengles2":
-            case "opengles2_5":
-            case "opengles3":
-            default:
-                renderLibrary = "libgl4es_114.so";
-                useGles = true;
-                glesVersion = Integer.parseInt((String) ExtraCore.getValue(ExtraConstants.OPEN_GL_VERSION));
-                break;
-        }
-
-        if (!MojoExec.prepareEgl(renderLibrary, bypassNamespace, useGles, glesVersion)) {
-            Log.e("RENDER_LIBRARY","Failed to load renderer " + renderLibrary );
-            return null;
-        }
-        MesaUtils.destroyZink(); // Not needed anymore
-        return renderLibrary;
     }
 
     public static int getDetectedVersion() {

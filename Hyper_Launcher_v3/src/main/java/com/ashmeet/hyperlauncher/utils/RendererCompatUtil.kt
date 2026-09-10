@@ -3,11 +3,16 @@ package com.ashmeet.hyperlauncher.utils
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
+import android.util.Log
 import com.ashmeet.hyperlauncher.plugins.manager.NativePluginManager
+import git.artdeell.mojoexec.MojoExec
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.Tools
+import net.kdt.pojavlaunch.extra.ExtraConstants
+import net.kdt.pojavlaunch.extra.ExtraCore
 import net.kdt.pojavlaunch.utils.GLInfoUtils
 import net.kdt.pojavlaunch.utils.JREUtils
+import net.kdt.pojavlaunch.utils.MesaUtils
 import java.io.File
 import java.util.ArrayList
 
@@ -93,6 +98,69 @@ object RendererCompatUtil {
     fun releaseRenderersCache() {
         sCompatibleRenderers = null
         System.gc()
+    }
+
+    /**
+     * Open the render library in accordance to the settings.
+     * It will fall back if it fails to load the library.
+     * @return The name of the loaded library
+     */
+    @JvmStatic
+    fun loadGraphicsLibrary(renderer: String): String? {
+        val renderLibrary: String
+        val useGles: Boolean
+        var bypassNamespace = false
+        var preloadVk = true
+        val glesVersion: Int
+
+        if (renderer.contains(":")) {
+            val parts = renderer.split(":")
+            renderLibrary = when {
+                parts.size >= 3 -> parts[2]
+                parts.size == 2 -> parts[1]
+                else -> "libgl4es_114.so"
+            }
+            useGles = true
+            glesVersion = 3
+        } else {
+            when (renderer) {
+                "freedreno_kgsl", "vulkan_zink" -> {
+                    if (renderer == "freedreno_kgsl") preloadVk = false
+                    renderLibrary = MesaUtils.getPreferredEGL()
+                    useGles = false
+                    bypassNamespace = true
+                    glesVersion = 3
+                    if (preloadVk) MojoExec.preloadVulkan() // Zink requires Vulkan library to be preloaded
+                }
+                "opengles3_ltw" -> {
+                    renderLibrary = "libltw.so"
+                    useGles = true
+                    glesVersion = 3
+                }
+                "mobileglues" -> {
+                    renderLibrary = "libmobileglues.so"
+                    useGles = true
+                    glesVersion = 3
+                }
+                "opengles2", "opengles2_5", "opengles3" -> {
+                    renderLibrary = "libgl4es_114.so"
+                    useGles = true
+                    glesVersion = (ExtraCore.getValue(ExtraConstants.OPEN_GL_VERSION) as String).toInt()
+                }
+                else -> {
+                    renderLibrary = "libgl4es_114.so"
+                    useGles = true
+                    glesVersion = (ExtraCore.getValue(ExtraConstants.OPEN_GL_VERSION) as String).toInt()
+                }
+            }
+        }
+
+        if (!MojoExec.prepareEgl(renderLibrary, bypassNamespace, useGles, glesVersion)) {
+            Log.e("RENDER_LIBRARY", "Failed to load renderer $renderLibrary")
+            return null
+        }
+        MesaUtils.destroyZink() // Not needed anymore
+        return renderLibrary
     }
 
     class RenderersList(@JvmField val rendererIds: List<String>, @JvmField val rendererDisplayNames: Array<String>)
