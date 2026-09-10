@@ -8,7 +8,7 @@ import java.util.zip.GZIPInputStream
 /**
  * Minimal NBT reader for level.dat
  */
-object NBT {
+object NBTUtils {
     const val TAG_END = 0
     const val TAG_BYTE = 1
     const val TAG_SHORT = 2

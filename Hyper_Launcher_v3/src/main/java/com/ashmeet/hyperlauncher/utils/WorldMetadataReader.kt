@@ -20,7 +20,7 @@ object WorldMetadataReader {
         val metadata = WorldMetadata()
         try {
             FileInputStream(levelDat).use { isStream ->
-                val root = NBT.read(isStream)
+                val root = NBTUtils.read(isStream)
                 if (root != null) {
                     val data = root["Data"]
                     if (data != null) {
