@@ -23,7 +23,7 @@ import net.kdt.pojavlaunch.game.GameActivity;
 import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.customcontrols.ControlData;
 import net.kdt.pojavlaunch.customcontrols.ControlLayout;
-import net.kdt.pojavlaunch.customcontrols.handleview.EditControlSideDialog;
+import com.ashmeet.hyperlauncher.fragments.dialog.EditControlSideDialog;
 
 
 import net.kdt.pojavlaunch.CallbackBridge;
@@ -120,7 +120,7 @@ public class ControlButton extends TextView implements ControlInterface {
     }
 
     public void loadEditValues(EditControlSideDialog editControlPopup){
-        editControlPopup.loadValues(getProperties());
+        editControlPopup.setCurrentlyEditedButton(this);
     }
 
     /** Add another instance of the ControlButton to the parent layout */

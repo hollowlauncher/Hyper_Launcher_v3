@@ -20,7 +20,7 @@ import net.kdt.pojavlaunch.customcontrols.ControlData;
 import net.kdt.pojavlaunch.customcontrols.ControlJoystickData;
 import net.kdt.pojavlaunch.customcontrols.ControlLayout;
 import net.kdt.pojavlaunch.customcontrols.gamepad.GamepadJoystick;
-import net.kdt.pojavlaunch.customcontrols.handleview.EditControlSideDialog;
+import com.ashmeet.hyperlauncher.fragments.dialog.EditControlSideDialog;
 
 import net.kdt.pojavlaunch.CallbackBridge;
 
@@ -127,7 +127,7 @@ public class ControlJoystick extends JoystickView implements ControlInterface {
 
     @Override
     public void loadEditValues(EditControlSideDialog editControlPopup) {
-        editControlPopup.loadJoystickValues(mControlData);
+        editControlPopup.setCurrentlyEditedButton(this);
     }
 
     private int getDirectionInt(int angle, int intensity) {

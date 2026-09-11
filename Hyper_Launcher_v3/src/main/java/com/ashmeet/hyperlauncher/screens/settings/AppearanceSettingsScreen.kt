@@ -1,12 +1,17 @@
 package com.ashmeet.hyperlauncher.screens.settings
 
 import android.graphics.BitmapFactory
-import android.view.ViewGroup
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ViewSidebar
 import androidx.compose.material.icons.automirrored.rounded.VolumeOff
@@ -35,20 +40,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
-import androidx.compose.ui.graphics.painter.BitmapPainter
-import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences
+import com.ashmeet.hyperlauncher.fragments.dialog.ColorSelectorFragment
+import com.ashmeet.hyperlauncher.fragments.dialog.SideDialogManager
 import com.ashmeet.hyperlauncher.screens.settings.layouts.CardPosition
 import com.ashmeet.hyperlauncher.screens.settings.layouts.SettingsCard
 import com.ashmeet.hyperlauncher.screens.settings.layouts.SettingsScreenWrapper
 import com.ashmeet.hyperlauncher.screens.settings.preferences.CursorPreferenceItem
+import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences
 import com.ashmeet.hyperlauncher.screens.settings.preferences.PointerHotspotPickerDialog
 import com.ashmeet.hyperlauncher.screens.settings.preferences.PreferenceCategory
 import com.ashmeet.hyperlauncher.screens.settings.preferences.SettingsActionItem
@@ -60,7 +65,6 @@ import com.ashmeet.hyperlauncher.utils.translation.Translator
 import com.ashmeet.hyperlauncher.utils.translation.translatedText
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.Tools
-import com.ashmeet.hyperlauncher.fragments.dialog.ColorSelectorFragment
 import java.io.File
 import java.io.FileOutputStream
 
@@ -69,18 +73,6 @@ import java.io.FileOutputStream
 fun AppearanceSettingsScreen(
     onBack: () -> Unit
 ) {
-    val view = LocalView.current
-    val parent = remember(view) {
-        var p = view.parent
-        while (p != null) {
-            if (p is ViewGroup && p !is androidx.compose.ui.platform.AbstractComposeView) {
-                return@remember p
-            }
-            p = p.parent
-        }
-        null
-    }
-
     var screenTransition by remember { mutableStateOf(LauncherPreferences.PREF_SCREEN_TRANSITION) }
     var appTheme by remember { mutableStateOf(LauncherPreferences.PREF_THEME) }
     var appLanguage by remember { mutableStateOf(LauncherPreferences.PREF_LANGUAGE) }
@@ -313,16 +305,14 @@ fun AppearanceSettingsScreen(
                         summary = translatedText("Choose a custom color for the launcher"),
                         icon = Icons.Rounded.ColorLens,
                         onClick = {
-                            if (parent != null) {
-                                val colorSelector = ColorSelectorFragment(context, parent) { color ->
-                                    themeColor = color
-                                    LauncherPreferences.prefs.edit { putInt("app_theme_color", color) }
-                                    LauncherPreferences.PREF_THEME_COLOR = color
-                                    LauncherPreferences.loadPreferences(context)
-                                }
-                                colorSelector.setAlphaEnabled(false)
-                                colorSelector.show(true, themeColor)
+                            val colorSelector = ColorSelectorFragment { color ->
+                                themeColor = color
+                                LauncherPreferences.prefs.edit { putInt("app_theme_color", color) }
+                                LauncherPreferences.PREF_THEME_COLOR = color
+                                LauncherPreferences.loadPreferences(context)
                             }
+                            colorSelector.setAlphaEnabled(false)
+                            SideDialogManager.show(colorSelector, true)
                         }
                     )
                 }
@@ -776,98 +766,99 @@ fun AppearanceSettingsScreen(
             }
         }
 
-    }
+        if (showThemeDialog) {
+            SingleChoiceDialog(
+                title = translatedText(stringResource(R.string.preference_app_theme_title)),
+                options = themeOptionNames,
+                optionValues = themeOptions,
+                selectedValue = appTheme,
+                onValueChange = { newValue ->
+                    appTheme = newValue
+                    LauncherPreferences.prefs.edit { putString("app_theme", newValue) }
+                    LauncherPreferences.loadPreferences(context)
+                },
+                onDismiss = { showThemeDialog = false }
+            )
+        }
 
-    if (showThemeDialog) {
-        SingleChoiceDialog(
-            title = translatedText(stringResource(R.string.preference_app_theme_title)),
-            options = themeOptionNames,
-            optionValues = themeOptions,
-            selectedValue = appTheme,
-            onValueChange = { newValue ->
-                appTheme = newValue
-                LauncherPreferences.prefs.edit { putString("app_theme", newValue) }
-                LauncherPreferences.loadPreferences(context)
-            },
-            onDismiss = { showThemeDialog = false }
-        )
-    }
+        if (showLanguageDialog) {
+            SingleChoiceDialog(
+                title = translatedText(stringResource(R.string.preference_language_title)),
+                options = languageOptionNames,
+                optionValues = languageOptions,
+                selectedValue = appLanguage,
+                onValueChange = { newValue ->
+                    appLanguage = newValue
+                    LauncherPreferences.prefs.edit { putString("app_language", newValue) }
+                    LauncherPreferences.loadPreferences(context)
+                    Translator.prefetchTranslations(context)
+                },
+                onDismiss = { showLanguageDialog = false }
+            )
+        }
 
-    if (showLanguageDialog) {
-        SingleChoiceDialog(
-            title = translatedText(stringResource(R.string.preference_language_title)),
-            options = languageOptionNames,
-            optionValues = languageOptions,
-            selectedValue = appLanguage,
-            onValueChange = { newValue ->
-                appLanguage = newValue
-                LauncherPreferences.prefs.edit { putString("app_language", newValue) }
-                LauncherPreferences.loadPreferences(context)
-                Translator.prefetchTranslations(context)
-            },
-            onDismiss = { showLanguageDialog = false }
-        )
-    }
+        if (showTransitionDialog) {
+            SingleChoiceDialog(
+                title = translatedText(stringResource(R.string.preference_screen_transition_title)),
+                options = transitionOptionNames,
+                optionValues = transitionOptions,
+                selectedValue = screenTransition,
+                onValueChange = { newValue ->
+                    screenTransition = newValue
+                    LauncherPreferences.prefs.edit { putString("screen_transition", newValue) }
+                    LauncherPreferences.loadPreferences(context)
+                },
+                onDismiss = { showTransitionDialog = false }
+            )
+        }
 
-    if (showTransitionDialog) {
-        SingleChoiceDialog(
-            title = translatedText(stringResource(R.string.preference_screen_transition_title)),
-            options = transitionOptionNames,
-            optionValues = transitionOptions,
-            selectedValue = screenTransition,
-            onValueChange = { newValue ->
-                screenTransition = newValue
-                LauncherPreferences.prefs.edit { putString("screen_transition", newValue) }
-                LauncherPreferences.loadPreferences(context)
-            },
-            onDismiss = { showTransitionDialog = false }
-        )
-    }
+        if (showHotspotDialog || editingCursorShape != -1) {
+            val shape = editingCursorShape
+            val isGeneral = shape == -1
 
-    if (showHotspotDialog || editingCursorShape != -1) {
-        val shape = editingCursorShape
-        val isGeneral = shape == -1
-
-        PointerHotspotPickerDialog(
-            title = translatedText("Adjust Hotspot"),
-            imagePath = if (isGeneral) pointerIconPath else pointerPaths[shape],
-            initialX = if (isGeneral) pointerHotspotX else pointerHotspots[shape]?.first ?: -1f,
-            initialY = if (isGeneral) pointerHotspotY else pointerHotspots[shape]?.second ?: -1f,
-            onConfirm = { x, y ->
-                if (isGeneral) {
-                    pointerHotspotX = x
-                    pointerHotspotY = y
-                    LauncherPreferences.prefs.edit {
-                        putInt("pointer_hotspot_x", x.toInt())
-                        putInt("pointer_hotspot_y", y.toInt())
+            PointerHotspotPickerDialog(
+                title = translatedText("Adjust Hotspot"),
+                imagePath = if (isGeneral) pointerIconPath else pointerPaths[shape],
+                initialX = if (isGeneral) pointerHotspotX else pointerHotspots[shape]?.first ?: -1f,
+                initialY = if (isGeneral) pointerHotspotY else pointerHotspots[shape]?.second ?: -1f,
+                onConfirm = { x, y ->
+                    if (isGeneral) {
+                        pointerHotspotX = x
+                        pointerHotspotY = y
+                        LauncherPreferences.prefs.edit {
+                            putInt("pointer_hotspot_x", x.toInt())
+                            putInt("pointer_hotspot_y", y.toInt())
+                        }
+                        LauncherPreferences.PREF_POINTER_HOTSPOT_X = x.toInt()
+                        LauncherPreferences.PREF_POINTER_HOTSPOT_Y = y.toInt()
+                        showHotspotDialog = false
+                    } else {
+                        val suffix = cursorInfos.find { it.shapeId == shape }?.suffix ?: ""
+                        LauncherPreferences.prefs.edit {
+                            putInt("pointer_hotspot_x_$suffix", x.toInt())
+                            putInt("pointer_hotspot_y_$suffix", y.toInt())
+                        }
+                        when (shape) {
+                            0 -> { LauncherPreferences.PREF_POINTER_HOTSPOT_X_ARROW = x.toInt(); LauncherPreferences.PREF_POINTER_HOTSPOT_Y_ARROW = y.toInt() }
+                            1 -> { LauncherPreferences.PREF_POINTER_HOTSPOT_X_IBEAM = x.toInt(); LauncherPreferences.PREF_POINTER_HOTSPOT_Y_IBEAM = y.toInt() }
+                            2 -> { LauncherPreferences.PREF_POINTER_HOTSPOT_X_CROSSHAIR = x.toInt(); LauncherPreferences.PREF_POINTER_HOTSPOT_Y_CROSSHAIR = y.toInt() }
+                            3 -> { LauncherPreferences.PREF_POINTER_HOTSPOT_X_HAND = x.toInt(); LauncherPreferences.PREF_POINTER_HOTSPOT_Y_HAND = y.toInt() }
+                            4 -> { LauncherPreferences.PREF_POINTER_HOTSPOT_X_HRESIZE = x.toInt(); LauncherPreferences.PREF_POINTER_HOTSPOT_Y_HRESIZE = y.toInt() }
+                            5 -> { LauncherPreferences.PREF_POINTER_HOTSPOT_X_VRESIZE = x.toInt(); LauncherPreferences.PREF_POINTER_HOTSPOT_Y_VRESIZE = y.toInt() }
+                            6 -> { LauncherPreferences.PREF_POINTER_HOTSPOT_X_ALL_RESIZE = x.toInt(); LauncherPreferences.PREF_POINTER_HOTSPOT_Y_ALL_RESIZE = y.toInt() }
+                            7 -> { LauncherPreferences.PREF_POINTER_HOTSPOT_X_NOT_ALLOWED = x.toInt(); LauncherPreferences.PREF_POINTER_HOTSPOT_Y_NOT_ALLOWED = y.toInt() }
+                        }
+                        pointerHotspots[shape] = x to y
+                        editingCursorShape = -1
                     }
-                    LauncherPreferences.PREF_POINTER_HOTSPOT_X = x.toInt()
-                    LauncherPreferences.PREF_POINTER_HOTSPOT_Y = y.toInt()
+                },
+                onDismiss = {
                     showHotspotDialog = false
-                } else {
-                    val suffix = cursorInfos.find { it.shapeId == shape }?.suffix ?: ""
-                    LauncherPreferences.prefs.edit {
-                        putInt("pointer_hotspot_x_$suffix", x.toInt())
-                        putInt("pointer_hotspot_y_$suffix", y.toInt())
-                    }
-                    when (shape) {
-                        0 -> { LauncherPreferences.PREF_POINTER_HOTSPOT_X_ARROW = x.toInt(); LauncherPreferences.PREF_POINTER_HOTSPOT_Y_ARROW = y.toInt() }
-                        1 -> { LauncherPreferences.PREF_POINTER_HOTSPOT_X_IBEAM = x.toInt(); LauncherPreferences.PREF_POINTER_HOTSPOT_Y_IBEAM = y.toInt() }
-                        2 -> { LauncherPreferences.PREF_POINTER_HOTSPOT_X_CROSSHAIR = x.toInt(); LauncherPreferences.PREF_POINTER_HOTSPOT_Y_CROSSHAIR = y.toInt() }
-                        3 -> { LauncherPreferences.PREF_POINTER_HOTSPOT_X_HAND = x.toInt(); LauncherPreferences.PREF_POINTER_HOTSPOT_Y_HAND = y.toInt() }
-                        4 -> { LauncherPreferences.PREF_POINTER_HOTSPOT_X_HRESIZE = x.toInt(); LauncherPreferences.PREF_POINTER_HOTSPOT_Y_HRESIZE = y.toInt() }
-                        5 -> { LauncherPreferences.PREF_POINTER_HOTSPOT_X_VRESIZE = x.toInt(); LauncherPreferences.PREF_POINTER_HOTSPOT_Y_VRESIZE = y.toInt() }
-                        6 -> { LauncherPreferences.PREF_POINTER_HOTSPOT_X_ALL_RESIZE = x.toInt(); LauncherPreferences.PREF_POINTER_HOTSPOT_Y_ALL_RESIZE = y.toInt() }
-                        7 -> { LauncherPreferences.PREF_POINTER_HOTSPOT_X_NOT_ALLOWED = x.toInt(); LauncherPreferences.PREF_POINTER_HOTSPOT_Y_NOT_ALLOWED = y.toInt() }
-                    }
-                    pointerHotspots[shape] = x to y
                     editingCursorShape = -1
                 }
-            },
-            onDismiss = {
-                showHotspotDialog = false
-                editingCursorShape = -1
-            }
-        )
+            )
+        }
+
+        SideDialogManager.activeDialog?.Content()
     }
 }

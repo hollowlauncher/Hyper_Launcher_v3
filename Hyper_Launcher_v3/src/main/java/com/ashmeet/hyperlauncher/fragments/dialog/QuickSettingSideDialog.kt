@@ -2,9 +2,7 @@ package com.ashmeet.hyperlauncher.fragments.dialog
 
 import com.ashmeet.hyperlauncher.utils.translation.translatedText
 
-import android.content.Context
 import android.content.SharedPreferences
-import android.view.ViewGroup
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -18,7 +16,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -27,17 +24,14 @@ import com.ashmeet.hyperlauncher.screens.settings.layouts.CardPosition
 import com.ashmeet.hyperlauncher.screens.settings.layouts.SettingsCard
 import com.ashmeet.hyperlauncher.screens.settings.preferences.SettingsSliderItem
 import com.ashmeet.hyperlauncher.screens.settings.preferences.SettingsSwitchItem
-import com.ashmeet.hyperlauncher.theme.PojavTheme
-import com.kdt.SideDialogView
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.Tools
 
 /**
- * Side dialog for quick settings that you can change in game
- * The implementation has to take action on some preference changes
+ * Side dialog for quick settings that you can change in game.
+ * Rewritten in pure Compose.
  */
-abstract class QuickSettingSideDialog(context: Context, parent: ViewGroup) :
-    SideDialogView(context, parent, R.layout.dialog_compose) {
+abstract class QuickSettingSideDialog : SideDialogView() {
 
     private var mEditor: SharedPreferences.Editor? = null
 
@@ -54,10 +48,14 @@ abstract class QuickSettingSideDialog(context: Context, parent: ViewGroup) :
 
     init {
         setTitle(R.string.quick_setting_title)
-        setupCancelButton()
+        setStartButtonListener(android.R.string.cancel) { cancel() }
+        setEndButtonListener(android.R.string.ok) {
+            mEditor?.apply()
+            disappear(true)
+        }
     }
 
-    override fun onInflate() {
+    override fun onAppear() {
         mEditor = LauncherPreferences.prefs.edit()
 
         mOriginalGyroEnabled = LauncherPreferences.PREF_ENABLE_GYRO
@@ -70,35 +68,25 @@ abstract class QuickSettingSideDialog(context: Context, parent: ViewGroup) :
         mOriginalGestureDelay = LauncherPreferences.PREF_LONGPRESS_TRIGGER
         mOriginalResolution = LauncherPreferences.PREF_SCALE_FACTOR
         mOriginalButtonTransparency = LauncherPreferences.PREF_BUTTON_TRANSPARENCY
-
-        val composeView = mDialogContent.findViewById<ComposeView>(R.id.compose_view)
-        composeView.setContent {
-            PojavTheme {
-                Surface(
-                    color = Color.Transparent,
-                    contentColor = MaterialTheme.colorScheme.onSurface
-                ) {
-                    QuickSettingContent(
-                        onResolutionChanged = { onResolutionChanged() },
-                        onGyroStateChanged = { onGyroStateChanged() },
-                        onButtonTransparencyChanged = { onButtonTransparencyChanged() }
-                    ) { key, value ->
-                        when (value) {
-                            is Boolean -> mEditor?.putBoolean(key, value)
-                            is Int -> mEditor?.putInt(key, value)
-                            is Float -> mEditor?.putFloat(key, value)
-                        }
-                    }
-                }
-            }
-        }
     }
 
-    private fun setupCancelButton() {
-        setStartButtonListener(android.R.string.cancel) { cancel() }
-        setEndButtonListener(android.R.string.ok) {
-            mEditor?.apply()
-            disappear(true)
+    @Composable
+    override fun DialogContent() {
+        Surface(
+            color = Color.Transparent,
+            contentColor = MaterialTheme.colorScheme.onSurface
+        ) {
+            QuickSettingContent(
+                onResolutionChanged = { onResolutionChanged() },
+                onGyroStateChanged = { onGyroStateChanged() },
+                onButtonTransparencyChanged = { onButtonTransparencyChanged() }
+            ) { key, value ->
+                when (value) {
+                    is Boolean -> mEditor?.putBoolean(key, value)
+                    is Int -> mEditor?.putInt(key, value)
+                    is Float -> mEditor?.putFloat(key, value)
+                }
+            }
         }
     }
 

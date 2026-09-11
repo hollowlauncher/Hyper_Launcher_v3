@@ -4,12 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.stringResource
 import androidx.fragment.app.DialogFragment
+import com.ashmeet.hyperlauncher.components.dialogs.SimpleAlertDialog
 import com.ashmeet.hyperlauncher.utils.translation.translatedText
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 import net.ashmeet.hyperlauncher.R
@@ -32,29 +30,22 @@ class DeleteConfirmDialogFragment : DialogFragment() {
                     if (mInstance == null) {
                         dismiss()
                     } else {
-                        AlertDialog(
-                            onDismissRequest = { dismiss() },
-                            title = { Text(text = translatedText(stringResource(R.string.instance_delete))) },
-                            text = { Text(text = translatedText(stringResource(R.string.instance_delete_confirmation))) },
-                            confirmButton = {
-                                TextButton(onClick = {
-                                    InstanceIconProvider.dropIcon(mInstance)
-                                    Tools.removeCurrentFragment(requireActivity())
-                                    try {
-                                        Instances.removeInstance(mInstance)
-                                    } catch (e: IOException) {
-                                        Tools.showErrorRemote(e)
-                                    }
-                                    dismiss()
-                                }) {
-                                    Text(text = translatedText(stringResource(R.string.global_delete)))
+                        SimpleAlertDialog(
+                            title = translatedText(stringResource(R.string.instance_delete)),
+                            text = translatedText(stringResource(R.string.instance_delete_confirmation)),
+                            confirmText = translatedText(stringResource(R.string.global_delete)),
+                            dismissText = translatedText(stringResource(R.string.global_no)),
+                            onConfirm = {
+                                InstanceIconProvider.dropIcon(mInstance)
+                                Tools.removeCurrentFragment(requireActivity())
+                                try {
+                                    Instances.removeInstance(mInstance)
+                                } catch (e: IOException) {
+                                    Tools.showErrorRemote(e)
                                 }
+                                dismiss()
                             },
-                            dismissButton = {
-                                TextButton(onClick = { dismiss() }) {
-                                    Text(text = translatedText(stringResource(R.string.global_no)))
-                                }
-                            }
+                            onDismiss = { dismiss() }
                         )
                     }
                 }

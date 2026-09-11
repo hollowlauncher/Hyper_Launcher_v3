@@ -20,6 +20,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.viewinterop.AndroidView
 import com.ashmeet.hyperlauncher.components.SideNavigationRail
+import com.ashmeet.hyperlauncher.fragments.dialog.SideDialogManager
 import com.ashmeet.hyperlauncher.screens.game.GameBasemainScreen
 import com.ashmeet.hyperlauncher.screens.game.LoggerView
 import com.ashmeet.hyperlauncher.screens.controls.ControlsEditorScreen
@@ -137,6 +138,8 @@ object GameComposeHelper {
                                                 }
                                         )
                                     }
+
+                                    SideDialogManager.activeDialog?.Content()
                                 }
                             }
                         }
@@ -214,6 +217,8 @@ object GameComposeHelper {
                                                 }
                                         )
                                     }
+
+                                    SideDialogManager.activeDialog?.Content()
                                 }
                             }
                         }

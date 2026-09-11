@@ -2,11 +2,9 @@ package com.ashmeet.hyperlauncher.fragments.dialog
 
 import com.ashmeet.hyperlauncher.utils.translation.translatedText
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.view.View
-import android.view.ViewGroup
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,7 +31,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.graphics.Color as ComposeColor
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -42,8 +40,6 @@ import com.ashmeet.hyperlauncher.screens.settings.layouts.SettingsCard
 import com.ashmeet.hyperlauncher.screens.settings.preferences.SettingsActionItem
 import com.ashmeet.hyperlauncher.screens.settings.preferences.SettingsSliderItem
 import com.ashmeet.hyperlauncher.screens.settings.preferences.SettingsSwitchItem
-import com.ashmeet.hyperlauncher.theme.PojavTheme
-import com.kdt.SideDialogView
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.CustomControlsActivity
 import net.kdt.pojavlaunch.Tools
@@ -55,10 +51,8 @@ import net.kdt.pojavlaunch.customcontrols.buttons.ControlInterface
 import net.kdt.pojavlaunch.utils.CropperUtils
 import net.kdt.pojavlaunch.utils.KeycodeUtils
 import kotlin.math.abs
-import androidx.compose.ui.graphics.Color as ComposeColor
 
-class EditControlSideDialog(context: Context, parent: ViewGroup) :
-    SideDialogView(context, parent, R.layout.dialog_compose) {
+class EditControlSideDialog : SideDialogView() {
 
     private var mCurrentlyEditedButton by mutableStateOf<ControlInterface?>(null)
     private var colorSelectorColor by mutableIntStateOf(Color.WHITE)
@@ -68,47 +62,39 @@ class EditControlSideDialog(context: Context, parent: ViewGroup) :
 
     init {
         setTitle(R.string.mcl_option_customcontrol)
-        setupButtons()
+        setEndButtonListener(android.R.string.ok) { disappear(true) }
     }
 
-    override fun onInflate() {
-        val composeView = mDialogContent.findViewById<ComposeView>(R.id.compose_view)
-        composeView.setContent {
-            PojavTheme {
-                Surface(
-                    color = ComposeColor.Transparent,
-                    contentColor = MaterialTheme.colorScheme.onSurface
-                ) {
-                    if (isColorSelectorVisible) {
-                        ColorSelectorContent(
-                            initialColor = colorSelectorColor,
-                            alphaEnabled = isAlphaEnabled,
-                            onColorChanged = {
-                                colorSelectorColor = it
-                                onColorSelected?.invoke(it)
-                            },
-                            onClose = { isColorSelectorVisible = false }
-                        )
-                    } else {
-                        mCurrentlyEditedButton?.let { button ->
-                            EditControlContent(
-                                button = button,
-                                onShowColorPicker = { color, alpha, onSelected ->
-                                    colorSelectorColor = color
-                                    isAlphaEnabled = alpha
-                                    onColorSelected = onSelected
-                                    isColorSelectorVisible = true
-                                }
-                            )
+    @Composable
+    override fun DialogContent() {
+        Surface(
+            color = ComposeColor.Transparent,
+            contentColor = MaterialTheme.colorScheme.onSurface
+        ) {
+            if (isColorSelectorVisible) {
+                ColorSelectorContent(
+                    initialColor = colorSelectorColor,
+                    alphaEnabled = isAlphaEnabled,
+                    onColorChanged = {
+                        colorSelectorColor = it
+                        onColorSelected?.invoke(it)
+                    },
+                    onClose = { isColorSelectorVisible = false }
+                )
+            } else {
+                mCurrentlyEditedButton?.let { button ->
+                    EditControlContent(
+                        button = button,
+                        onShowColorPicker = { color, alpha, onSelected ->
+                            colorSelectorColor = color
+                            isAlphaEnabled = alpha
+                            onColorSelected = onSelected
+                            isColorSelectorVisible = true
                         }
-                    }
+                    )
                 }
             }
         }
-    }
-
-    private fun setupButtons() {
-        setEndButtonListener(android.R.string.ok) { disappear(true) }
     }
 
     fun setCurrentlyEditedButton(button: ControlInterface) {

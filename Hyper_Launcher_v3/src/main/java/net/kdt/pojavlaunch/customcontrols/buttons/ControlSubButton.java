@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import net.kdt.pojavlaunch.customcontrols.ControlData;
 import net.kdt.pojavlaunch.customcontrols.ControlDrawerData;
 import net.kdt.pojavlaunch.customcontrols.ControlLayout;
-import net.kdt.pojavlaunch.customcontrols.handleview.EditControlSideDialog;
+import com.ashmeet.hyperlauncher.fragments.dialog.EditControlSideDialog;
 
 @SuppressLint("ViewConstructor")
 public class ControlSubButton extends ControlButton {
@@ -91,6 +91,6 @@ public class ControlSubButton extends ControlButton {
 
     @Override
     public void loadEditValues(EditControlSideDialog editControlPopup) {
-        editControlPopup.loadSubButtonValues(getProperties(), parentDrawer.drawerData.orientation);
+        editControlPopup.setCurrentlyEditedButton(this);
     }
 }

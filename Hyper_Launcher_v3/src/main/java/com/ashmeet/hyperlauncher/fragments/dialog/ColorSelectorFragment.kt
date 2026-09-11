@@ -1,32 +1,26 @@
 package com.ashmeet.hyperlauncher.fragments.dialog
 
-import android.content.Context
 import android.graphics.Color
-import android.view.ViewGroup
-import androidx.compose.ui.platform.ComposeView
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.ashmeet.hyperlauncher.components.ColorSelectorContent
 import com.ashmeet.hyperlauncher.components.colorselector.ColorSelectionListener
-import com.ashmeet.hyperlauncher.theme.PojavTheme
-import com.kdt.SideDialogView
-import net.ashmeet.hyperlauncher.R
 
-class ColorSelectorFragment(context: Context, parent: ViewGroup, private var colorSelectionListener: ColorSelectionListener?) :
-    SideDialogView(context, parent, R.layout.dialog_compose) {
+/**
+ * Side dialog for color selection, rewritten in pure Compose.
+ */
+class ColorSelectorFragment(private var colorSelectionListener: ColorSelectionListener?) :
+    SideDialogView() {
 
-    private var selectedColor: Int = Color.RED
-    private var initialColor: Int = Color.RED
-    private var alphaEnabled: Boolean = true
+    private var selectedColor by mutableStateOf(Color.RED)
+    private var initialColor by mutableIntStateOf(Color.RED)
+
+    private var mAlphaEnabled by mutableStateOf(true)
 
     init {
-        setupButtons()
-    }
-
-    override fun onInflate() {
-        setupButtons()
-        updateComposeContent()
-    }
-
-    private fun setupButtons() {
         setStartButtonListener(android.R.string.cancel) {
             colorSelectionListener?.onColorSelected(initialColor)
             disappear(true)
@@ -36,39 +30,27 @@ class ColorSelectorFragment(context: Context, parent: ViewGroup, private var col
         }
     }
 
-    private fun updateComposeContent() {
-        val composeView = mDialogContent?.findViewById<ComposeView>(R.id.compose_view) ?: return
-        composeView.setContent {
-            PojavTheme {
-                ColorSelectorContent(
-                    initialColor = selectedColor,
-                    alphaEnabled = alphaEnabled,
-                    onColorChanged = { color ->
-                        selectedColor = color
-                        colorSelectionListener?.onColorSelected(color)
-                    },
-                    onClose = { disappear(true) }
-                )
-            }
-        }
+    @Composable
+    override fun DialogContent() {
+        ColorSelectorContent(
+            initialColor = selectedColor,
+            alphaEnabled = mAlphaEnabled,
+            onColorChanged = { color ->
+                selectedColor = color
+                colorSelectionListener?.onColorSelected(color)
+            },
+            onClose = { disappear(true) }
+        )
     }
 
     fun show(fromRight: Boolean, previousColor: Int = Color.RED) {
         initialColor = previousColor
         selectedColor = previousColor
         appear(fromRight)
-        updateComposeContent()
     }
 
     fun setAlphaEnabled(enabled: Boolean) {
-        alphaEnabled = enabled
-        updateComposeContent()
+        mAlphaEnabled = enabled
     }
 
-    fun setColorSelectionListener(listener: ColorSelectionListener?) {
-        colorSelectionListener = listener
-    }
-
-    companion object {
-    }
 }

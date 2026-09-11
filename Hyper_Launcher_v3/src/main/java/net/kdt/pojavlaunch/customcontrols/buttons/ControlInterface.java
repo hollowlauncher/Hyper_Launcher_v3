@@ -24,7 +24,7 @@ import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.customcontrols.ControlData;
 import net.kdt.pojavlaunch.customcontrols.ControlLayout;
 import net.kdt.pojavlaunch.customcontrols.LayoutBitmaps;
-import net.kdt.pojavlaunch.customcontrols.handleview.EditControlSideDialog;
+import com.ashmeet.hyperlauncher.fragments.dialog.EditControlSideDialog;
 import net.kdt.pojavlaunch.game.platform.input.PlatformGrabListener;
 import net.kdt.pojavlaunch.game.platform.Platform;
 

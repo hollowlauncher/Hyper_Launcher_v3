@@ -9,7 +9,7 @@ import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.customcontrols.ControlData;
 import net.kdt.pojavlaunch.customcontrols.ControlDrawerData;
 import net.kdt.pojavlaunch.customcontrols.ControlLayout;
-import net.kdt.pojavlaunch.customcontrols.handleview.EditControlSideDialog;
+import com.ashmeet.hyperlauncher.fragments.dialog.EditControlSideDialog;
 
 import java.util.ArrayList;
 
@@ -184,7 +184,7 @@ public class ControlDrawer extends ControlButton {
 
     @Override
     public void loadEditValues(EditControlSideDialog editControlPopup) {
-        editControlPopup.loadValues(drawerData);
+        editControlPopup.setCurrentlyEditedButton(this);
     }
 
     @Override

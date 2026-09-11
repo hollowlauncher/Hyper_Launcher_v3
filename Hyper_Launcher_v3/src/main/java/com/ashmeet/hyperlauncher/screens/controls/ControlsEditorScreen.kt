@@ -27,6 +27,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.ashmeet.hyperlauncher.components.ActionRow
 import com.ashmeet.hyperlauncher.fragments.dialog.EditControlSideDialog
 import com.ashmeet.hyperlauncher.utils.translation.translatedText
+import com.ashmeet.hyperlauncher.fragments.dialog.SideDialogManager
 import kotlinx.coroutines.launch
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.customcontrols.ControlData
@@ -47,7 +48,7 @@ fun ControlsEditorScreen(
     var showDeleteConfirm by remember { mutableStateOf(false) }
 
     val editDialog = remember(controlLayout) {
-        EditControlSideDialog(context, controlLayout)
+        EditControlSideDialog()
     }
 
     LaunchedEffect(controlLayout) {
@@ -55,7 +56,7 @@ fun ControlsEditorScreen(
             override fun onEditControl(button: ControlInterface) {
                 followedButton = button
                 editDialog.setCurrentlyEditedButton(button)
-                editDialog.adaptPanelPosition()
+                SideDialogManager.show(editDialog, button.controlView.x + button.controlView.width / 2f < controlLayout.width / 2f)
             }
 
             override fun onDisappearLayer(): Boolean {

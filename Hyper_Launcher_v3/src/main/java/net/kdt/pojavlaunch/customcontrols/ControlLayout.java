@@ -38,7 +38,8 @@ import net.kdt.pojavlaunch.customcontrols.buttons.ControlJoystick;
 import net.kdt.pojavlaunch.customcontrols.buttons.ControlSubButton;
 import net.kdt.pojavlaunch.customcontrols.handleview.ActionRow;
 import net.kdt.pojavlaunch.customcontrols.handleview.ControlHandleView;
-import net.kdt.pojavlaunch.customcontrols.handleview.EditControlSideDialog;
+import com.ashmeet.hyperlauncher.fragments.dialog.SideDialogManager;
+import com.ashmeet.hyperlauncher.fragments.dialog.EditControlSideDialog;
 import net.kdt.pojavlaunch.game.platform.Platform;
 
 
@@ -319,7 +320,6 @@ public class ControlLayout extends FrameLayout {
     public void onViewRemoved(View child) {
         super.onViewRemoved(child);
         if(child instanceof ControlInterface && mControlDialog != null){
-			mControlDialog.disappearColor();
             mControlDialog.disappear(false);
         }
     }
@@ -341,30 +341,19 @@ public class ControlLayout extends FrameLayout {
 		}
 
 		if(mControlDialog == null){
-			// When the panel is null, it needs to inflate first.
-			// So inflate it, then process it on the next frame
-			mControlDialog = new EditControlSideDialog(getContext(), this);
-			post(() -> editControlButton(button));
-			return;
+			mControlDialog = new EditControlSideDialog();
 		}
 
-		mControlDialog.internalChanges = true;
 		mControlDialog.setCurrentlyEditedButton(button);
 
-		mControlDialog.appear(button.getControlView().getX() + button.getControlView().getWidth()/2f < getWidth()/2f);
+		SideDialogManager.show(mControlDialog, button.getControlView().getX() + button.getControlView().getWidth()/2f < getWidth()/2f);
 		button.loadEditValues(mControlDialog);
-
-		mControlDialog.internalChanges = false;
-
-		mControlDialog.disappearColor();
 
 		if(mHandleView == null){
 			mHandleView = new ControlHandleView(getContext());
 			addView(mHandleView);
 		}
 		mHandleView.setControlButton(button);
-
-		//mHandleView.show();
 	}
 
 	/** Swap the panel if the button position requires it */
@@ -472,7 +461,6 @@ public class ControlLayout extends FrameLayout {
 		// When the input window cannot be hidden, it returns false
 		imm.hideSoftInputFromWindow(getWindowToken(), 0);
 		if(mControlDialog != null) {
-			mControlDialog.disappearColor();
 			mControlDialog.disappear(true);
 		}
 

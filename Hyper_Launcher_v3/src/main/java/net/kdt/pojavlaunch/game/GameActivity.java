@@ -46,6 +46,7 @@ import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreference
 import com.ashmeet.hyperlauncher.fragments.dialog.EditControlSideDialog;
 import com.ashmeet.hyperlauncher.fragments.dialog.QuickSettingSideDialog;
 import com.ashmeet.hyperlauncher.helper.LauncherComposeHelper;
+import com.ashmeet.hyperlauncher.fragments.dialog.SideDialogManager;
 import com.ashmeet.hyperlauncher.screens.game.LoggerView;
 
 import net.ashmeet.hyperlauncher.R;
@@ -235,10 +236,10 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
             @Override
             public void onEditControl(ControlInterface button) {
                 if (mEditControlSideDialog == null) {
-                    mEditControlSideDialog = new EditControlSideDialog(GameActivity.this, (ViewGroup) mMainComposeView.getParent());
+                    mEditControlSideDialog = new EditControlSideDialog();
                 }
                 mEditControlSideDialog.setCurrentlyEditedButton(button);
-                mEditControlSideDialog.adaptPanelPosition();
+                SideDialogManager.show(mEditControlSideDialog, button.getControlView().getX() + button.getControlView().getWidth()/2f < mControlLayout.getWidth()/2f);
             }
 
             @Override
@@ -516,7 +517,7 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
 
     private void openQuickSettings() {
         if(mQuickSettingSideDialog == null) {
-            mQuickSettingSideDialog = new QuickSettingSideDialog(this, (ViewGroup) mMainComposeView.getParent()) {
+            mQuickSettingSideDialog = new QuickSettingSideDialog() {
                 @Override
                 public void onResolutionChanged() {
                     launcherGLView.refreshSize();
@@ -526,7 +527,7 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
                 @Override
                 public void onGyroStateChanged() {
                     mGyroControl.updateOrientation();
-                    if (PREF_ENABLE_GYRO) {
+                    if (LauncherPreferences.PREF_ENABLE_GYRO) {
                         mGyroControl.enable();
                     } else {
                         mGyroControl.disable();
@@ -539,7 +540,7 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
                 }
             };
         }
-        mQuickSettingSideDialog.appear(true);
+        SideDialogManager.show(mQuickSettingSideDialog, true);
     }
 
     public static void toggleMouse(Context ctx) {
