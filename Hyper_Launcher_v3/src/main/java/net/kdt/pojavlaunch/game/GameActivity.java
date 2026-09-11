@@ -37,7 +37,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 
 
 import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences;
@@ -113,6 +115,7 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
     public static int mForcedPanningHeight = 0;
     public static int mImeHeight = 0;
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -162,7 +165,11 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
                 if(androidCompat) {
                     // AndroidX keeps SystemUI visible for some reason after IME session
                     view.postDelayed(() -> {
-                        view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN);
+                        WindowInsetsControllerCompat controller = WindowCompat.getInsetsController(getWindow(), view);
+                        if (controller != null) {
+                            controller.setSystemBarsBehavior(WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+                            controller.hide(WindowInsetsCompat.Type.systemBars());
+                        }
                     }, 150);
                 }
                 return insets;
@@ -171,7 +178,7 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
                 return insets;
             mImeHeight = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom;
             int translationY;
-            // Autopanning (if keyboardPan wasn't clicked)
+            // Auto-panning (if keyboardPan wasn't clicked)
             if(mForcedPanningHeight == 0) {
                 translationY = Tools.getTranslationFromCursorY(
                         (int)(Platform.cursorY * launcherGLView.getCursorRatioY() + 100),
@@ -198,6 +205,7 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
         bindService(gameServiceIntent, this, 0);
     }
 
+    @SuppressWarnings("deprecation")
     protected void initLayout() {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         bindValues();
@@ -218,9 +226,7 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
                 loggerView,
                 launcherGLView,
                 true, // hostViews = true
-                isOpen -> {
-                    return kotlin.Unit.INSTANCE;
-                },
+                isOpen -> kotlin.Unit.INSTANCE,
                 controller -> { mDrawerController = controller; return kotlin.Unit.INSTANCE; },
                 action -> { onAction(action); return kotlin.Unit.INSTANCE; }
         );
@@ -252,7 +258,12 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
 
             Bundle extras = Objects.requireNonNull(getIntent().getExtras());
             String version = extras.getString(INTENT_LAUNCH_VERSION);
-            File[] classpath = (File[]) extras.getSerializable(INTENT_LAUNCH_CLASSPATH);
+            File[] classpath;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                classpath = extras.getSerializable(INTENT_LAUNCH_CLASSPATH, File[].class);
+            } else {
+                classpath = (File[]) extras.getSerializable(INTENT_LAUNCH_CLASSPATH);
+            }
 
             setTitle("HyperLauncher (" + version + ")");
 
