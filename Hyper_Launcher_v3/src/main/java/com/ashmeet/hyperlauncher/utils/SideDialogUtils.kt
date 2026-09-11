@@ -1,13 +1,14 @@
-package com.ashmeet.hyperlauncher.fragments.dialog
+package com.ashmeet.hyperlauncher.utils
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.ashmeet.hyperlauncher.fragments.dialog.SideDialogView
 
 /**
  * Manages the active side dialog in the Compose UI tree.
  */
-object SideDialogManager {
+object SideDialogUtils {
     var activeDialog by mutableStateOf<SideDialogView?>(null)
         @JvmStatic get
         @JvmStatic set

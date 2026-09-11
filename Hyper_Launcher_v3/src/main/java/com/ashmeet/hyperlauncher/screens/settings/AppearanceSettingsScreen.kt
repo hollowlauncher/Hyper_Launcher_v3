@@ -48,7 +48,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
 import com.ashmeet.hyperlauncher.fragments.dialog.ColorSelectorFragment
-import com.ashmeet.hyperlauncher.fragments.dialog.SideDialogManager
+import com.ashmeet.hyperlauncher.utils.SideDialogUtils
 import com.ashmeet.hyperlauncher.screens.settings.layouts.CardPosition
 import com.ashmeet.hyperlauncher.screens.settings.layouts.SettingsCard
 import com.ashmeet.hyperlauncher.screens.settings.layouts.SettingsScreenWrapper
@@ -312,7 +312,7 @@ fun AppearanceSettingsScreen(
                                 LauncherPreferences.loadPreferences(context)
                             }
                             colorSelector.setAlphaEnabled(false)
-                            SideDialogManager.show(colorSelector, true)
+                            SideDialogUtils.show(colorSelector, true)
                         }
                     )
                 }
@@ -859,6 +859,6 @@ fun AppearanceSettingsScreen(
             )
         }
 
-        SideDialogManager.activeDialog?.Content()
+        SideDialogUtils.activeDialog?.Content()
     }
 }

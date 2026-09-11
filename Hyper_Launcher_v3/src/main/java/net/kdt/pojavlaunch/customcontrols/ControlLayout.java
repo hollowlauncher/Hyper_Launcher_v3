@@ -38,7 +38,7 @@ import net.kdt.pojavlaunch.customcontrols.buttons.ControlJoystick;
 import net.kdt.pojavlaunch.customcontrols.buttons.ControlSubButton;
 import net.kdt.pojavlaunch.customcontrols.handleview.ActionRow;
 import net.kdt.pojavlaunch.customcontrols.handleview.ControlHandleView;
-import com.ashmeet.hyperlauncher.fragments.dialog.SideDialogManager;
+import com.ashmeet.hyperlauncher.utils.SideDialogUtils;
 import com.ashmeet.hyperlauncher.fragments.dialog.EditControlSideDialog;
 import net.kdt.pojavlaunch.game.platform.Platform;
 
@@ -346,7 +346,7 @@ public class ControlLayout extends FrameLayout {
 
 		mControlDialog.setCurrentlyEditedButton(button);
 
-		SideDialogManager.show(mControlDialog, button.getControlView().getX() + button.getControlView().getWidth()/2f < getWidth()/2f);
+		SideDialogUtils.show(mControlDialog, button.getControlView().getX() + button.getControlView().getWidth()/2f < getWidth()/2f);
 		button.loadEditValues(mControlDialog);
 
 		if(mHandleView == null){

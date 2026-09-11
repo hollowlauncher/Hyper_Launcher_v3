@@ -46,7 +46,7 @@ import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreference
 import com.ashmeet.hyperlauncher.fragments.dialog.EditControlSideDialog;
 import com.ashmeet.hyperlauncher.fragments.dialog.QuickSettingSideDialog;
 import com.ashmeet.hyperlauncher.helper.LauncherComposeHelper;
-import com.ashmeet.hyperlauncher.fragments.dialog.SideDialogManager;
+import com.ashmeet.hyperlauncher.utils.SideDialogUtils;
 import com.ashmeet.hyperlauncher.screens.game.LoggerView;
 
 import net.ashmeet.hyperlauncher.R;
@@ -239,7 +239,7 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
                     mEditControlSideDialog = new EditControlSideDialog();
                 }
                 mEditControlSideDialog.setCurrentlyEditedButton(button);
-                SideDialogManager.show(mEditControlSideDialog, button.getControlView().getX() + button.getControlView().getWidth()/2f < mControlLayout.getWidth()/2f);
+                SideDialogUtils.show(mEditControlSideDialog, button.getControlView().getX() + button.getControlView().getWidth()/2f < mControlLayout.getWidth()/2f);
             }
 
             @Override
@@ -540,7 +540,7 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
                 }
             };
         }
-        SideDialogManager.show(mQuickSettingSideDialog, true);
+        SideDialogUtils.show(mQuickSettingSideDialog, true);
     }
 
     public static void toggleMouse(Context ctx) {

@@ -27,7 +27,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.ashmeet.hyperlauncher.components.ActionRow
 import com.ashmeet.hyperlauncher.fragments.dialog.EditControlSideDialog
 import com.ashmeet.hyperlauncher.utils.translation.translatedText
-import com.ashmeet.hyperlauncher.fragments.dialog.SideDialogManager
+import com.ashmeet.hyperlauncher.utils.SideDialogUtils
 import kotlinx.coroutines.launch
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.customcontrols.ControlData
@@ -56,7 +56,7 @@ fun ControlsEditorScreen(
             override fun onEditControl(button: ControlInterface) {
                 followedButton = button
                 editDialog.setCurrentlyEditedButton(button)
-                SideDialogManager.show(editDialog, button.controlView.x + button.controlView.width / 2f < controlLayout.width / 2f)
+                SideDialogUtils.show(editDialog, button.controlView.x + button.controlView.width / 2f < controlLayout.width / 2f)
             }
 
             override fun onDisappearLayer(): Boolean {
