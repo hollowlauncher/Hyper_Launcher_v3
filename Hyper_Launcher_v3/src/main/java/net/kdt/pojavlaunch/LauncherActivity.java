@@ -50,6 +50,10 @@ import net.kdt.pojavlaunch.tasks.AsyncVersionList;
 import net.kdt.pojavlaunch.tasks.MoJsonDownloader;
 import net.kdt.pojavlaunch.tasks.MoJsonExtras;
 import net.kdt.pojavlaunch.utils.NotificationUtils;
+import com.ashmeet.hyperlauncher.utils.ShortcutUtils;
+
+import java.io.IOException;
+import java.util.List;
 
 public class LauncherActivity extends BaseActivity implements PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
     public static final String SETTING_FRAGMENT_TAG = "SETTINGS_FRAGMENT";
@@ -241,6 +245,36 @@ public class LauncherActivity extends BaseActivity implements PreferenceFragment
         ExtraCore.addExtraListener(ExtraConstants.LAUNCH_GAME, mLaunchGameListener);
 
         new AsyncVersionList().getVersionList(versions -> ExtraCore.setValue(ExtraConstants.RELEASE_TABLE, versions));
+
+        handleIntent(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent) {
+        if (intent == null) return;
+        String instanceName = intent.getStringExtra(ShortcutUtils.EXTRA_INSTANCE_NAME);
+        if (instanceName != null) {
+            PojavApplication.sExecutorService.execute(() -> {
+                try {
+                    List<Instance> instances = Instances.loadAllInstances();
+                    for (Instance instance : instances) {
+                        if (instance.mInstanceRoot.getName().equals(instanceName)) {
+                            Instances.setSelectedInstance(instance);
+                            Tools.runOnUiThread(() -> ExtraCore.setValue(ExtraConstants.LAUNCH_GAME, true));
+                            break;
+                        }
+                    }
+                } catch (IOException e) {
+                    Log.e("LauncherActivity", "Failed to load instances for shortcut", e);
+                }
+            });
+        }
     }
 
     @Override

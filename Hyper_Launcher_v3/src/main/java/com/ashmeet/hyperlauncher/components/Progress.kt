@@ -183,7 +183,7 @@ fun TaskItem(task: TaskProgressState) {
             color = MaterialTheme.colorScheme.onSurface,
             fontSize = 12.sp
         )
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(2.dp))
         TaskProgressIndicator(task)
     }
 }
@@ -202,7 +202,7 @@ fun TaskProgressIndicator(task: TaskProgressState) {
             progress = { animatedProgress },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(8.dp)
+                .height(2.dp)
                 .clip(CircleShape),
             color = MaterialTheme.colorScheme.primary,
             trackColor = MaterialTheme.colorScheme.surfaceVariant,
@@ -211,7 +211,7 @@ fun TaskProgressIndicator(task: TaskProgressState) {
         LinearProgressIndicator(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(8.dp)
+                .height(2.dp)
                 .clip(CircleShape),
             color = MaterialTheme.colorScheme.primary,
             trackColor = MaterialTheme.colorScheme.surfaceVariant,

@@ -5,7 +5,6 @@ import android.view.ViewGroup
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -26,8 +25,6 @@ import androidx.compose.material.icons.rounded.RadioButtonUnchecked
 import androidx.compose.material.icons.rounded.Repeat
 import androidx.compose.material.icons.rounded.Restore
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
-import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -143,7 +140,6 @@ fun AppearanceSettingsScreen(
     var launcherVideoVolume by remember { mutableFloatStateOf(LauncherPreferences.PREF_LAUNCHER_VIDEO_VOLUME.toFloat()) }
     var launcherVideoLoop by remember { mutableStateOf(LauncherPreferences.PREF_LAUNCHER_VIDEO_LOOP) }
     var launcherBlurredElementsEnabled by remember { mutableStateOf(LauncherPreferences.PREF_BLURRED_ELEMENTS_ENABLED) }
-    var recentBackgrounds by remember { mutableStateOf(LauncherPreferences.PREF_RECENT_LAUNCHER_BACKGROUNDS.toList()) }
 
     val context = LocalContext.current
 
@@ -476,59 +472,7 @@ fun AppearanceSettingsScreen(
             }
 
             PreferenceCategory(title = translatedText("Launcher Background"))
-            if (recentBackgrounds.isNotEmpty()) {
-                val carouselState = rememberCarouselState { recentBackgrounds.size }
-                SettingsCard(position = CardPosition.TOP, useSurface = true) {
-                    HorizontalMultiBrowseCarousel(
-                        state = carouselState,
-                        preferredItemWidth = 180.dp,
-                        itemSpacing = 8.dp,
-                        contentPadding = PaddingValues(16.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(120.dp)
-                    ) { index ->
-                        val path = recentBackgrounds[index]
-                        val bitmap = remember(path) {
-                            try {
-                                BitmapFactory.decodeFile(path)
-                            } catch (_: Exception) {
-                                null
-                            }
-                        }
-                        if (bitmap != null) {
-                            Image(
-                                bitmap = bitmap.asImageBitmap(),
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .clip(RoundedCornerShape(12.dp))
-                                    .clickable {
-                                        launcherBgPath = path
-                                        launcherBgType = "image"
-                                        LauncherPreferences.prefs.edit {
-                                            putString("launcher_background_path", path)
-                                            putString("launcher_background_type", "image")
-                                        }
-                                        LauncherPreferences.PREF_LAUNCHER_BACKGROUND_PATH = path
-                                        LauncherPreferences.PREF_LAUNCHER_BACKGROUND_TYPE = "image"
-
-                                        // Update recent order
-                                        val updatedRecent = LauncherPreferences.PREF_RECENT_LAUNCHER_BACKGROUNDS.toMutableList()
-                                        updatedRecent.remove(path)
-                                        updatedRecent.add(0, path)
-                                        LauncherPreferences.PREF_RECENT_LAUNCHER_BACKGROUNDS = updatedRecent
-                                        LauncherPreferences.prefs.edit { putString("recent_launcher_backgrounds", updatedRecent.joinToString(";")) }
-                                        recentBackgrounds = updatedRecent.toList()
-                                    },
-                                contentScale = ContentScale.Crop
-                            )
-                        }
-                    }
-                }
-            }
-
-            SettingsCard(position = if (recentBackgrounds.isNotEmpty()) CardPosition.MIDDLE else CardPosition.TOP, useSurface = true) {
+            SettingsCard(position = CardPosition.TOP, useSurface = true) {
                 val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
                     if (uri != null) {
                         val type = context.contentResolver.getType(uri)
@@ -551,17 +495,6 @@ fun AppearanceSettingsScreen(
                             LauncherPreferences.PREF_LAUNCHER_BACKGROUND_TYPE = bgType
                             launcherBgPath = path
                             launcherBgType = bgType
-
-                            if (!isVideo) {
-                                // Update recent backgrounds (only for images)
-                                val updatedRecent = LauncherPreferences.PREF_RECENT_LAUNCHER_BACKGROUNDS.toMutableList()
-                                updatedRecent.remove(path)
-                                updatedRecent.add(0, path)
-                                if (updatedRecent.size > 5) updatedRecent.removeAt(5)
-                                LauncherPreferences.PREF_RECENT_LAUNCHER_BACKGROUNDS = updatedRecent
-                                LauncherPreferences.prefs.edit { putString("recent_launcher_backgrounds", updatedRecent.joinToString(";")) }
-                                recentBackgrounds = updatedRecent.toList()
-                            }
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }

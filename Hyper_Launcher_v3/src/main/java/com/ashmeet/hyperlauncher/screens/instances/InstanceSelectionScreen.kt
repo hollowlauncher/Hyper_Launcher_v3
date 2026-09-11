@@ -58,7 +58,8 @@ fun InstanceSelectionScreen(
     onImportModpack: () -> Unit,
     onEditInstance: (DisplayInstance) -> Unit,
     onRenameInstance: (DisplayInstance, onRefresh: () -> Unit) -> Unit,
-    onDeleteInstance: (DisplayInstance, onRefresh: () -> Unit) -> Unit
+    onDeleteInstance: (DisplayInstance, onRefresh: () -> Unit) -> Unit,
+    onAddShortcut: (DisplayInstance) -> Unit
 ) {
     var instances by remember { mutableStateOf<List<DisplayInstance>>(emptyList()) }
     var selectedIndex by remember { mutableIntStateOf(-1) }
@@ -95,6 +96,7 @@ fun InstanceSelectionScreen(
         onEditInstance = onEditInstance,
         onRenameInstance = { instance -> onRenameInstance(instance) { refreshKey++ } },
         onDeleteInstance = { instance -> onDeleteInstance(instance) { refreshKey++ } },
+        onAddShortcut = onAddShortcut,
         onSelectInstance = { instance, index ->
             Instances.setSelectedInstance(instance)
             selectedIndex = index
@@ -114,6 +116,7 @@ private fun InstanceSelectionContent(
     onEditInstance: (DisplayInstance) -> Unit,
     onRenameInstance: (DisplayInstance) -> Unit,
     onDeleteInstance: (DisplayInstance) -> Unit,
+    onAddShortcut: (DisplayInstance) -> Unit,
     onSelectInstance: (DisplayInstance, Int) -> Unit
 ) {
     var selectedTab by remember { mutableIntStateOf(0) }
@@ -225,7 +228,8 @@ private fun InstanceSelectionContent(
                         },
                         onEdit = { onEditInstance(instance) },
                         onRename = { onRenameInstance(instance) },
-                        onDelete = { onDeleteInstance(instance) }
+                        onDelete = { onDeleteInstance(instance) },
+                        onAddShortcut = { onAddShortcut(instance) }
                     )
                 }
             }
@@ -266,6 +270,7 @@ fun InstanceSelectionScreenPreview() {
             onEditInstance = {},
             onRenameInstance = {},
             onDeleteInstance = {},
+            onAddShortcut = {},
             onSelectInstance = { _, _ -> }
         )
     }

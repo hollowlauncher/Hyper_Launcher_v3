@@ -43,6 +43,35 @@ object NativePluginManager {
         })
 
         discoverFCLPlugins(context)
+        discoverPojavPlugins(context)
+    }
+
+    @JvmStatic
+    fun discoverPojavPlugins(context: Context) {
+        val allPlugins = LibraryPlugin.discoverAllPlugins(context)
+        val pm = context.packageManager
+        for (plugin in allPlugins) {
+            val metaData = plugin.getMetaData()
+            if (!metaData.containsKey(LibraryPlugin.METADATA_POJAV_PLUGIN_TYPE)) continue
+            
+            val type = metaData.getString(LibraryPlugin.METADATA_POJAV_PLUGIN_TYPE)
+            if (type != "native-bundle") continue
+
+            val libDir = plugin.libraryPath
+            val appLabel = try {
+                val info = pm.getApplicationInfo(plugin.appId, 0)
+                pm.getApplicationLabel(info).toString()
+            } catch (e: Exception) {
+                null
+            }
+
+            registerPlugin(object : NativePlugin {
+                override fun getPaths(): Array<String> = arrayOf(libDir)
+                override fun getJVMEnv(): Map<String, String> = emptyMap()
+                override val name: String? get() = appLabel
+            })
+            Log.i(TAG, "Discovered Pojav plugin: ${plugin.appId} (Type: $type)")
+        }
     }
 
     @JvmStatic
@@ -50,8 +79,10 @@ object NativePluginManager {
         val fclPlugins = LibraryPlugin.discoverAllPlugins(context)
         val pm = context.packageManager
         for (plugin in fclPlugins) {
-            val libDir = plugin.libraryPath
             val metaData = plugin.getMetaData()
+            if (!metaData.containsKey(LibraryPlugin.METADATA_FCL_PLUGIN) && !metaData.containsKey(LibraryPlugin.METADATA_FCL_PLUGIN_ALT)) continue
+            
+            val libDir = plugin.libraryPath
             val envString = metaData.getString(LibraryPlugin.METADATA_FCL_ENVIRONMENT)
             val boatEnv = metaData.getString(LibraryPlugin.METADATA_FCL_BOAT_ENV)
             val pojavEnv = metaData.getString(LibraryPlugin.METADATA_FCL_POJAV_ENV)

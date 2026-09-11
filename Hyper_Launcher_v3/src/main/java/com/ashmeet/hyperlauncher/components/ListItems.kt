@@ -22,12 +22,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.InsertDriveFile
 import androidx.compose.material.icons.automirrored.rounded.List
+import androidx.compose.material.icons.automirrored.rounded.Shortcut
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.Extension
 import androidx.compose.material.icons.rounded.Folder
 import androidx.compose.material.icons.rounded.FolderOpen
 import androidx.compose.material.icons.rounded.MoreVert
+import androidx.compose.material.icons.rounded.Shortcut
 import androidx.compose.material.icons.rounded.Update
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.CircularProgressIndicator
@@ -438,6 +440,7 @@ fun InstanceListItem(
     onEdit: () -> Unit,
     onRename: () -> Unit,
     onDelete: () -> Unit,
+    onAddShortcut: () -> Unit
 ) {
     val context = LocalContext.current
     val icon = remember(instance) {
@@ -564,6 +567,27 @@ fun InstanceListItem(
                         text = {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Icon(
+                                    imageVector = Icons.AutoMirrored.Rounded.Shortcut,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(20.dp),
+                                    tint = MaterialTheme.colorScheme.onSurface
+                                )
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Text(
+                                    text = translatedText("Add Shortcut"),
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
+                        },
+                        onClick = {
+                            menuExpanded = false
+                            onAddShortcut()
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
                                     imageVector = Icons.AutoMirrored.Rounded.List,
                                     contentDescription = null,
                                     modifier = Modifier.size(20.dp),
@@ -634,7 +658,8 @@ fun InstanceListItemPreviewContent(darkTheme: Boolean) {
                 onClick = {},
                 onEdit = {},
                 onRename = {},
-                onDelete = {}
+                onDelete = {},
+                onAddShortcut = {}
             )
             InstanceListItem(
                 instance = dummyInstance,
@@ -642,7 +667,8 @@ fun InstanceListItemPreviewContent(darkTheme: Boolean) {
                 onClick = {},
                 onEdit = {},
                 onRename = {},
-                onDelete = {}
+                onDelete = {},
+                onAddShortcut = {}
             )
         }
     }

@@ -8,6 +8,7 @@ import com.ashmeet.hyperlauncher.plugins.natives.ImGuiPlugin
 import com.ashmeet.hyperlauncher.plugins.natives.PhysicsPlugin
 import com.ashmeet.hyperlauncher.plugins.natives.RapierPlugin
 import com.ashmeet.hyperlauncher.plugins.natives.FCLRendererPlugin
+import com.ashmeet.hyperlauncher.plugins.natives.HpmPlugin
 import net.kdt.pojavlaunch.Tools
 import java.io.File
 import kotlin.collections.iterator
@@ -20,7 +21,8 @@ object HyperPluginManager {
         RapierPlugin(),
         ImGuiPlugin(),
         DhCompatPlugin(),
-        FCLRendererPlugin()
+        FCLRendererPlugin(),
+        HpmPlugin()
     )
 
     @JvmStatic

@@ -13,6 +13,7 @@ import com.ashmeet.hyperlauncher.fragments.installer.ContentInstallerFragment
 import com.ashmeet.hyperlauncher.fragments.selection.ProfileTypeSelectFragment
 import com.ashmeet.hyperlauncher.screens.instances.InstanceSelectionScreen
 import com.ashmeet.hyperlauncher.theme.PojavTheme
+import com.ashmeet.hyperlauncher.utils.ShortcutUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.PojavApplication
@@ -102,6 +103,9 @@ class InstanceSelectionFragment : Fragment() {
                                     Tools.runOnUiThread { Tools.showError(requireContext(), e) }
                                 }
                             }
+                        },
+                        onAddShortcut = { instance ->
+                            ShortcutUtils.createShortcut(requireContext(), instance)
                         }
                     )
                 }

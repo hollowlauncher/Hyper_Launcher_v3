@@ -25,6 +25,8 @@ class LibraryPlugin private constructor(
         const val METADATA_FCL_POJAV_ENV = "pojavEnv"
         const val METADATA_FCL_MIN_MC_VER = "minMCVer"
         const val METADATA_FCL_MAX_MC_VER = "maxMCVer"
+        const val METADATA_POJAV_PLUGIN_TYPE = "net.kdt.pojavlaunch.PLUGIN_TYPE"
+        const val METADATA_POJAV_PLUGIN_LIBS = "net.kdt.pojavlaunch.PLUGIN_LIBS"
         const val ID_ANGLE_PLUGIN = "git.mojo.angle"
         const val ID_FFMPEG_PLUGIN = "git.mojo.ffmpeg"
         const val ID_ZINK_PLUGIN = "git.mojo.zink"
@@ -62,7 +64,11 @@ class LibraryPlugin private constructor(
             }
 
             for (info in installedApps) {
-                if (info.metaData != null && (info.metaData.containsKey(METADATA_FCL_PLUGIN) || info.metaData.containsKey(METADATA_FCL_PLUGIN_ALT))) {
+                if (info.metaData != null && (
+                    info.metaData.containsKey(METADATA_FCL_PLUGIN) || 
+                    info.metaData.containsKey(METADATA_FCL_PLUGIN_ALT) ||
+                    info.metaData.containsKey(METADATA_POJAV_PLUGIN_TYPE)
+                )) {
                     plugins.add(fromApplicationInfo(info))
                 }
             }
