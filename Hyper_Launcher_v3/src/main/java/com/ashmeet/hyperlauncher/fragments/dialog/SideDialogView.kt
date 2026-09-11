@@ -6,7 +6,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.ashmeet.hyperlauncher.components.dialogs.SideDialog
+import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * Base class for side dialogs, rewritten in pure Compose.
@@ -16,6 +19,8 @@ abstract class SideDialogView {
 
     var isDisplaying by mutableStateOf(false)
     var isAtRight by mutableStateOf(false)
+    var dialogWidth by mutableStateOf(300.dp)
+    var verticalPadding by mutableStateOf(if (LauncherPreferences.PREF_FULLSCREEN_LAUNCHER) 4.dp else 32.dp)
 
     protected var mTitleRes: Int = 0
     protected var mStartButtonRes: Int = 0
@@ -65,11 +70,10 @@ abstract class SideDialogView {
     @Composable
     fun Content() {
         var visible by remember { mutableStateOf(false) }
-        
-        // Ensure the initial state is false and then becomes true to trigger the animation
+
         androidx.compose.runtime.LaunchedEffect(isDisplaying) {
             if (isDisplaying) {
-                kotlinx.coroutines.delay(50) // Tiny delay to ensure the enter animation triggers
+                kotlinx.coroutines.delay(50.milliseconds)
                 visible = true
             } else {
                 visible = false
@@ -81,6 +85,8 @@ abstract class SideDialogView {
             onDismissRequest = { disappear(false) },
             title = null,
             fromRight = isAtRight,
+            width = dialogWidth,
+            verticalPadding = verticalPadding,
             startText = if (mStartButtonRes != 0) stringResource(mStartButtonRes) else null,
             onStartClick = mStartButtonListener,
             endText = if (mEndButtonRes != 0) stringResource(mEndButtonRes) else null,

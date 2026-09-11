@@ -53,6 +53,7 @@ abstract class QuickSettingSideDialog : SideDialogView() {
 
     init {
         setTitle(R.string.quick_setting_title)
+        dialogWidth = 280.dp
     }
 
     override fun onDisappear() {

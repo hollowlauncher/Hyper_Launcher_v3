@@ -197,6 +197,8 @@ fun SideDialog(
     onDismissRequest: () -> Unit,
     title: String? = null,
     fromRight: Boolean = false,
+    width: Dp = 340.dp,
+    verticalPadding: Dp = 32.dp,
     startText: String? = null,
     onStartClick: (() -> Unit)? = null,
     endText: String? = null,
@@ -237,15 +239,21 @@ fun SideDialog(
             ),
             modifier = Modifier
                 .align(if (fromRight) Alignment.CenterEnd else Alignment.CenterStart)
-                .padding(horizontal = 20.dp, vertical = 32.dp)
+                .padding(horizontal = 20.dp, vertical = verticalPadding)
                 .fillMaxHeight()
                 .width(IntrinsicSize.Min)
         ) {
             Surface(
                 modifier = Modifier
-                    .width(340.dp)
+                    .width(width)
                     .clickable(enabled = false) {}, // Consume clicks
-                shape = RoundedCornerShape(32.dp),
+                shape = RoundedCornerShape(
+                    when {
+                        verticalPadding <= 0.dp -> 0.dp
+                        verticalPadding <= 4.dp -> 16.dp
+                        else -> 32.dp
+                    }
+                ),
                 color = MaterialTheme.colorScheme.surfaceContainerLowest,
                 tonalElevation = 0.dp,
                 shadowElevation = 8.dp

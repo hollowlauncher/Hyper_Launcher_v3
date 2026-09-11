@@ -54,6 +54,7 @@ class EditControlSideDialog : SideDialogView() {
 
     init {
         setTitle(R.string.mcl_option_customcontrol)
+        dialogWidth = 280.dp
     }
 
     @Composable
