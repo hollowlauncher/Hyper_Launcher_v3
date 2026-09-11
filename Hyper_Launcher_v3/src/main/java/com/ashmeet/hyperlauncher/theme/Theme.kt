@@ -118,7 +118,7 @@ fun PojavTheme(
                 inversePrimary = primaryColor,
                 surfaceDim = Color(0xFF1A1A1A),
                 surfaceBright = Color(0xFF3B3B3B),
-                surfaceContainerLowest = Color(0xFF0F0F0F),
+                surfaceContainerLowest = Color(0xFF0A0A0A),
                 surfaceContainerLow = Color(0xFF1A1A1A),
                 surfaceContainer = Color(0xFF212121),
                 surfaceContainerHigh = Color(0xFF2B2B2B),

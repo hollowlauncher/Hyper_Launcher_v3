@@ -1,6 +1,5 @@
 package com.ashmeet.hyperlauncher.screens.controls
 
-import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -21,13 +20,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.viewinterop.AndroidView
 import com.ashmeet.hyperlauncher.components.ActionRow
 import com.ashmeet.hyperlauncher.fragments.dialog.EditControlSideDialog
-import com.ashmeet.hyperlauncher.utils.translation.translatedText
 import com.ashmeet.hyperlauncher.utils.SideDialogUtils
+import com.ashmeet.hyperlauncher.utils.translation.translatedText
 import kotlinx.coroutines.launch
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.customcontrols.ControlData
@@ -42,7 +40,6 @@ fun ControlsEditorScreen(
     drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 ) {
     val scope = rememberCoroutineScope()
-    val context: Context = LocalContext.current
 
     var followedButton by remember { mutableStateOf<ControlInterface?>(null) }
     var showDeleteConfirm by remember { mutableStateOf(false) }
@@ -66,7 +63,7 @@ fun ControlsEditorScreen(
         })
     }
 
-    Box(modifier = Modifier.fillMaxSize().then(if (hostViews && !hostViews) Modifier.background(Color.Black) else Modifier)) {
+    Box(modifier = Modifier.fillMaxSize().background(Color.White.copy(alpha = 0.05f))) {
 
         if (hostViews) {
             AndroidView(

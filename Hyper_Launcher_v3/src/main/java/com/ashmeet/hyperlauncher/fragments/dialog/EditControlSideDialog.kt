@@ -5,23 +5,12 @@ import com.ashmeet.hyperlauncher.utils.translation.translatedText
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.view.View
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.animation.*
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.rounded.*
+import androidx.compose.material3.*
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -35,15 +24,16 @@ import androidx.compose.ui.graphics.Color as ComposeColor
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.ashmeet.hyperlauncher.screens.settings.layouts.CardPosition
-import com.ashmeet.hyperlauncher.screens.settings.layouts.SettingsCard
-import com.ashmeet.hyperlauncher.screens.settings.preferences.SettingsActionItem
-import com.ashmeet.hyperlauncher.screens.settings.preferences.SettingsSliderItem
-import com.ashmeet.hyperlauncher.screens.settings.preferences.SettingsSwitchItem
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.CustomControlsActivity
 import net.kdt.pojavlaunch.Tools
 import com.ashmeet.hyperlauncher.components.ColorSelectorContent
+import com.ashmeet.hyperlauncher.components.dialogs.CardPosition
+import com.ashmeet.hyperlauncher.components.dialogs.DialogActionItem
+import com.ashmeet.hyperlauncher.components.dialogs.DialogCard
+import com.ashmeet.hyperlauncher.components.dialogs.DialogSliderItem
+import com.ashmeet.hyperlauncher.components.dialogs.DialogSwitchItem
+import com.ashmeet.hyperlauncher.components.dialogs.DialogTextInput
 import net.kdt.pojavlaunch.customcontrols.ControlData
 import net.kdt.pojavlaunch.customcontrols.ControlJoystickData
 import net.kdt.pojavlaunch.customcontrols.buttons.ControlDrawer
@@ -60,9 +50,50 @@ class EditControlSideDialog : SideDialogView() {
     private var isAlphaEnabled by mutableStateOf(true)
     private var onColorSelected: ((Int) -> Unit)? = null
 
+    private var selectedTab by mutableIntStateOf(0)
+
     init {
         setTitle(R.string.mcl_option_customcontrol)
-        setEndButtonListener(android.R.string.ok) { disappear(true) }
+    }
+
+    @Composable
+    override fun DialogHeader() {
+        TabRow(
+            selectedTabIndex = selectedTab,
+            containerColor = androidx.compose.ui.graphics.Color.Transparent,
+            divider = {},
+            modifier = Modifier.fillMaxWidth(),
+            indicator = { tabPositions ->
+                if (selectedTab < tabPositions.size) {
+                    TabRowDefaults.SecondaryIndicator(
+                        modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTab]),
+                        height = 3.dp,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+        ) {
+            Tab(
+                selected = selectedTab == 0,
+                onClick = { selectedTab = 0 },
+                icon = { Icon(Icons.Rounded.Settings, null) }
+            )
+            Tab(
+                selected = selectedTab == 1,
+                onClick = { selectedTab = 1 },
+                icon = { Icon(Icons.Rounded.Gamepad, null) }
+            )
+            Tab(
+                selected = selectedTab == 2,
+                onClick = { selectedTab = 2 },
+                icon = { Icon(Icons.Rounded.Palette, null) }
+            )
+            Tab(
+                selected = selectedTab == 3,
+                onClick = { selectedTab = 3 },
+                icon = { Icon(Icons.Rounded.Visibility, null) }
+            )
+        }
     }
 
     @Composable
@@ -85,12 +116,14 @@ class EditControlSideDialog : SideDialogView() {
                 mCurrentlyEditedButton?.let { button ->
                     EditControlContent(
                         button = button,
+                        selectedTab = selectedTab,
                         onShowColorPicker = { color, alpha, onSelected ->
                             colorSelectorColor = color
                             isAlphaEnabled = alpha
                             onColorSelected = onSelected
                             isColorSelectorVisible = true
-                        }
+                        },
+                        onClose = { disappear(true) }
                     )
                 }
             }
@@ -125,7 +158,9 @@ class EditControlSideDialog : SideDialogView() {
 @Composable
 private fun EditControlContent(
     button: ControlInterface,
-    onShowColorPicker: (Int, Boolean, (Int) -> Unit) -> Unit
+    selectedTab: Int,
+    onShowColorPicker: (Int, Boolean, (Int) -> Unit) -> Unit,
+    onClose: () -> Unit
 ) {
     val context = LocalContext.current
     val properties = button.properties
@@ -144,6 +179,10 @@ private fun EditControlContent(
     
     var displayInGame by remember(properties) { mutableStateOf(properties.displayInGame) }
     var displayInMenu by remember(properties) { mutableStateOf(properties.displayInMenu) }
+
+    var showNameDialog by remember { mutableStateOf(false) }
+    var showWidthDialog by remember { mutableStateOf(false) }
+    var showHeightDialog by remember { mutableStateOf(false) }
 
     val isJoystick = properties is ControlJoystickData
     val isDrawer = button is ControlDrawer
@@ -170,274 +209,374 @@ private fun EditControlContent(
     }
 
     Column(
-        modifier = Modifier
-            .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        // Name Section
-        if (!isJoystick) {
-            OutlinedTextField(
-                value = name ?: "",
-                onValueChange = {
-                    name = it
-                    properties.name = it
-                    button.updateProperties()
-                },
-                label = { Text(translatedText(stringResource(R.string.global_name))) },
-                modifier = Modifier.fillMaxWidth()
+        var cardIndex = 0
+
+        DialogCard(useSurface = true, delayIndex = cardIndex++) {
+            DialogActionItem(
+                title = translatedText(stringResource(R.string.close)),
+                onClick = onClose
             )
         }
 
-        // Size Section
-        if (!isSubButton) {
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedTextField(
-                    value = widthText,
-                    onValueChange = {
-                        widthText = it
-                        it.toFloatOrNull()?.let { v ->
-                            properties.width = v
-                            if (isJoystick) properties.height = v
-                            button.updateProperties()
-                        }
-                    },
-                    label = { Text(translatedText(stringResource(R.string.customctrl_size)) + " X") },
-                    modifier = Modifier.weight(1f)
-                )
-                if (!isJoystick) {
-                    OutlinedTextField(
-                        value = heightText,
-                        onValueChange = {
-                            heightText = it
-                            it.toFloatOrNull()?.let { v ->
-                                properties.height = v
-                                button.updateProperties()
-                            }
-                        },
-                        label = { Text(translatedText(stringResource(R.string.customctrl_size)) + " Y") },
-                        modifier = Modifier.weight(1f)
-                    )
+        @OptIn(ExperimentalAnimationApi::class)
+        AnimatedContent(
+            targetState = selectedTab,
+            transitionSpec = {
+                if (targetState > initialState) {
+                    slideInHorizontally { it } + fadeIn() togetherWith slideOutHorizontally { -it } + fadeOut()
+                } else {
+                    slideInHorizontally { -it } + fadeIn() togetherWith slideOutHorizontally { it } + fadeOut()
                 }
             }
-        }
+        ) { targetTab ->
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                when (targetTab) {
+                    0 -> {
+                        // Name Section
+                        if (!isJoystick) {
+                            DialogCard(useSurface = true, delayIndex = cardIndex++) {
+                                DialogActionItem(
+                                    title = translatedText(stringResource(R.string.global_name)),
+                                    summary = name ?: "",
+                                    onClick = { showNameDialog = true }
+                                )
+                            }
 
-        // Mapping Section (Keycodes)
-        if (!isJoystick && !isDrawer) {
-            Text(
-                text = translatedText(stringResource(R.string.customctrl_mapping)),
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.primary
-            )
-            val specialArray = remember { ControlData.buildSpecialButtonArray() }
-            val keyNames = remember { KeycodeUtils.generateKeyName() }
-            val allKeyNames = remember { specialArray + keyNames }
-
-            properties.keycodes.forEachIndexed { index, keycode ->
-                var expanded by remember { mutableStateOf(false) }
-                val selectedIndex = if (keycode < 0) {
-                    keycode + specialArray.size
-                } else {
-                    KeycodeUtils.getIndexByValue(keycode) + specialArray.size
-                }
-
-                Box {
-                    OutlinedTextField(
-                        value = allKeyNames.getOrElse(selectedIndex) { "" },
-                        onValueChange = { },
-                        readOnly = true,
-                        label = { Text("Key ${index + 1}") },
-                        modifier = Modifier.fillMaxWidth(),
-                        trailingIcon = {
-                            IconButton(onClick = { expanded = true }) {
-                                Icon( Icons.Default.ArrowDropDown, null)
+                            if (showNameDialog) {
+                                DialogTextInput(
+                                    title = translatedText(stringResource(R.string.global_name)),
+                                    initialValue = name ?: "",
+                                    onConfirm = {
+                                        name = it
+                                        properties.name = it
+                                        button.updateProperties()
+                                        showNameDialog = false
+                                    },
+                                    onDismiss = { showNameDialog = false }
+                                )
                             }
                         }
-                    )
-                    DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                        allKeyNames.forEachIndexed { i, keyName ->
-                            DropdownMenuItem(
-                                text = { Text(keyName) },
-                                onClick = {
-                                    val newKeycode = if (i < specialArray.size) {
-                                        i - specialArray.size
-                                    } else {
-                                        KeycodeUtils.getValueByIndex(i - specialArray.size)
+
+                        // Size Section
+                        if (!isSubButton) {
+                            DialogCard(useSurface = true, delayIndex = cardIndex++) {
+                                DialogActionItem(
+                                    title = translatedText(stringResource(R.string.customctrl_size)) + " X",
+                                    summary = widthText,
+                                    onClick = { showWidthDialog = true }
+                                )
+                            }
+
+                            if (showWidthDialog) {
+                                DialogTextInput(
+                                    title = translatedText(stringResource(R.string.customctrl_size)) + " X",
+                                    initialValue = widthText,
+                                    onConfirm = {
+                                        widthText = it
+                                        it.toFloatOrNull()?.let { v ->
+                                            properties.width = v
+                                            if (isJoystick) properties.height = v
+                                            button.updateProperties()
+                                        }
+                                        showWidthDialog = false
+                                    },
+                                    onDismiss = { showWidthDialog = false }
+                                )
+                            }
+
+                            if (!isJoystick) {
+                                DialogCard(useSurface = true, delayIndex = cardIndex++) {
+                                    DialogActionItem(
+                                        title = translatedText(stringResource(R.string.customctrl_size)) + " Y",
+                                        summary = heightText,
+                                        onClick = { showHeightDialog = true }
+                                    )
+                                }
+
+                                if (showHeightDialog) {
+                                    DialogTextInput(
+                                        title = translatedText(stringResource(R.string.customctrl_size)) + " Y",
+                                        initialValue = heightText,
+                                        onConfirm = {
+                                            heightText = it
+                                            it.toFloatOrNull()?.let { v ->
+                                                properties.height = v
+                                                button.updateProperties()
+                                            }
+                                            showHeightDialog = false
+                                        },
+                                        onDismiss = { showHeightDialog = false }
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    1 -> {
+                        // Mapping Section (Keycodes)
+                        if (!isJoystick && !isDrawer) {
+                            val specialArray = remember { ControlData.buildSpecialButtonArray() }
+                            val keyNames = remember { KeycodeUtils.generateKeyName() }
+                            val allKeyNames = remember { specialArray + keyNames }
+
+                            properties.keycodes.forEachIndexed { index, keycode ->
+                                var expanded by remember { mutableStateOf(false) }
+                                val selectedIndex = if (keycode < 0) {
+                                    keycode + specialArray.size
+                                } else {
+                                    KeycodeUtils.getIndexByValue(keycode) + specialArray.size
+                                }
+
+                                DialogCard(useSurface = true, delayIndex = cardIndex++) {
+                                    Box {
+                                        DialogActionItem(
+                                            title = "Key ${index + 1}",
+                                            summary = allKeyNames.getOrElse(selectedIndex) { "" },
+                                            onClick = { expanded = true }
+                                        )
+                                        DropdownMenu(
+                                            expanded = expanded,
+                                            onDismissRequest = { expanded = false }) {
+                                            allKeyNames.forEachIndexed { i, keyName ->
+                                                DropdownMenuItem(
+                                                    text = { Text(keyName) },
+                                                    onClick = {
+                                                        val newKeycode =
+                                                            if (i < specialArray.size) {
+                                                                i - specialArray.size
+                                                            } else {
+                                                                KeycodeUtils.getValueByIndex(i - specialArray.size)
+                                                            }
+                                                        properties.keycodes[index] = newKeycode
+                                                        button.updateProperties()
+                                                        expanded = false
+                                                    }
+                                                )
+                                            }
+                                        }
                                     }
-                                    properties.keycodes[index] = newKeycode
-                                    button.updateProperties()
-                                    expanded = false
+                                }
+                            }
+                        }
+
+                        // Switches
+                        if (!isJoystick && !isDrawer) {
+                            DialogCard(
+                                position = CardPosition.SINGLE,
+                                useSurface = true,
+                                delayIndex = cardIndex++
+                            ) {
+                                DialogSwitchItem(
+                                    title = translatedText(stringResource(R.string.customctrl_toggle)),
+                                    checked = isToggle,
+                                    onCheckedChange = {
+                                        isToggle = it
+                                        properties.isToggle = it
+                                    }
+                                )
+                            }
+                            DialogCard(
+                                position = CardPosition.SINGLE,
+                                useSurface = true,
+                                delayIndex = cardIndex++
+                            ) {
+                                DialogSwitchItem(
+                                    title = translatedText(stringResource(R.string.customctrl_passthru)),
+                                    checked = passThruEnabled,
+                                    onCheckedChange = {
+                                        passThruEnabled = it
+                                        properties.passThruEnabled = it
+                                    }
+                                )
+                            }
+                            DialogCard(
+                                position = CardPosition.SINGLE,
+                                useSurface = true,
+                                delayIndex = cardIndex++
+                            ) {
+                                DialogSwitchItem(
+                                    title = translatedText(stringResource(R.string.customctrl_swipeable)),
+                                    checked = isSwipeable,
+                                    onCheckedChange = {
+                                        isSwipeable = it
+                                        properties.isSwipeable = it
+                                    }
+                                )
+                            }
+                        }
+
+                        if (isJoystick) {
+                            var forwardLock by remember(properties) { mutableStateOf(properties.forwardLock) }
+                            var absolute by remember(properties) { mutableStateOf(properties.absolute) }
+
+                            DialogCard(
+                                position = CardPosition.SINGLE,
+                                useSurface = true,
+                                delayIndex = cardIndex++
+                            ) {
+                                DialogSwitchItem(
+                                    title = translatedText(stringResource(R.string.customctrl_forward_lock)),
+                                    checked = forwardLock,
+                                    onCheckedChange = {
+                                        forwardLock = it
+                                        properties.forwardLock = it
+                                    }
+                                )
+                            }
+                            DialogCard(
+                                position = CardPosition.SINGLE,
+                                useSurface = true,
+                                delayIndex = cardIndex++
+                            ) {
+                                DialogSwitchItem(
+                                    title = translatedText(stringResource(R.string.customctrl_absolute_tracking)),
+                                    checked = absolute,
+                                    onCheckedChange = {
+                                        absolute = it
+                                        properties.absolute = it
+                                    }
+                                )
+                            }
+                        }
+                    }
+                    2 -> {
+                        // Appearance Section
+                        if (context is CustomControlsActivity && !isJoystick) {
+                            DialogCard(useSurface = true, delayIndex = cardIndex++) {
+                                DialogActionItem(
+                                    title = translatedText(stringResource(R.string.customctrl_background_bitmap)),
+                                    onClick = {
+                                        val receiver = object : CropperUtils.CropperReceiver {
+                                            override fun getAspectRatio() =
+                                                button.controlView.width.toFloat() / button.controlView.height
+
+                                            override fun getTargetMaxSide() = maxOf(
+                                                button.controlView.width,
+                                                button.controlView.height
+                                            )
+
+                                            override fun onCropped(contentBitmap: Bitmap) {
+                                                val storage = button.controlLayoutParent.bitmaps
+                                                properties.bitmapTag = storage.putBitmap(
+                                                    contentBitmap,
+                                                    properties.bitmapTag
+                                                )
+                                                button.setBackground()
+                                            }
+
+                                            override fun onFailed(e: Exception) =
+                                                Tools.showError(context, e)
+                                        }
+                                        context.startCropping(receiver)
+                                    }
+                                )
+                            }
+                        }
+
+                        DialogCard(useSurface = true, delayIndex = cardIndex++) {
+                            DialogActionItem(
+                                title = translatedText(stringResource(R.string.customctrl_background_color)),
+                                summary = if (properties.bitmapTag != null) translatedText(
+                                    stringResource(R.string.customctrl_background_color_warning)
+                                ) else null,
+                                onClick = {
+                                    onShowColorPicker(properties.bgColor, true) {
+                                        properties.bitmapTag = null
+                                        properties.bgColor = it
+                                        button.setBackground()
+                                    }
+                                }
+                            )
+                        }
+
+                        if (properties.bitmapTag == null) {
+                            DialogCard(useSurface = true, delayIndex = cardIndex++) {
+                                DialogActionItem(
+                                    title = translatedText(stringResource(R.string.customctrl_stroke_color)),
+                                    onClick = {
+                                        onShowColorPicker(properties.strokeColor, false) {
+                                            properties.strokeColor = it
+                                            button.setBackground()
+                                        }
+                                    }
+                                )
+                            }
+                            DialogCard(useSurface = true, delayIndex = cardIndex++) {
+                                DialogSliderItem(
+                                    title = translatedText(stringResource(R.string.customctrl_stroke_width)),
+                                    value = strokeWidth,
+                                    valueRange = 0f..100f,
+                                    onValueChange = {
+                                        strokeWidth = it
+                                        properties.strokeWidth = it / 10f
+                                        button.setBackground()
+                                    }
+                                )
+                            }
+                            DialogCard(useSurface = true, delayIndex = cardIndex++) {
+                                DialogSliderItem(
+                                    title = translatedText(stringResource(R.string.customctrl_corner_radius)),
+                                    value = cornerRadius,
+                                    valueRange = 0f..100f,
+                                    onValueChange = {
+                                        cornerRadius = it
+                                        properties.cornerRadius = it
+                                        button.setBackground()
+                                    }
+                                )
+                            }
+                        }
+
+                        DialogCard(useSurface = true, delayIndex = cardIndex++) {
+                            DialogSliderItem(
+                                title = translatedText(stringResource(R.string.customctrl_button_opacity)),
+                                value = opacity,
+                                valueRange = 0f..100f,
+                                onValueChange = {
+                                    opacity = it
+                                    properties.opacity = it / 100f
+                                    button.controlView.alpha = it / 100f
                                 }
                             )
                         }
                     }
-                }
-            }
-        }
-
-        // Switches
-        if (!isJoystick && !isDrawer) {
-            SettingsCard(position = CardPosition.TOP, useSurface = true) {
-                SettingsSwitchItem(
-                    title = translatedText(stringResource(R.string.customctrl_toggle)),
-                    checked = isToggle,
-                    onCheckedChange = {
-                        isToggle = it
-                        properties.isToggle = it
-                    }
-                )
-            }
-            SettingsCard(position = CardPosition.MIDDLE, useSurface = true) {
-                SettingsSwitchItem(
-                    title = translatedText(stringResource(R.string.customctrl_passthru)),
-                    checked = passThruEnabled,
-                    onCheckedChange = {
-                        passThruEnabled = it
-                        properties.passThruEnabled = it
-                    }
-                )
-            }
-            SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {
-                SettingsSwitchItem(
-                    title = translatedText(stringResource(R.string.customctrl_swipeable)),
-                    checked = isSwipeable,
-                    onCheckedChange = {
-                        isSwipeable = it
-                        properties.isSwipeable = it
-                    }
-                )
-            }
-        }
-
-        if (isJoystick) {
-            var forwardLock by remember(properties) { mutableStateOf(properties.forwardLock) }
-            var absolute by remember(properties) { mutableStateOf(properties.absolute) }
-
-            SettingsCard(position = CardPosition.TOP, useSurface = true) {
-                SettingsSwitchItem(
-                    title = translatedText(stringResource(R.string.customctrl_forward_lock)),
-                    checked = forwardLock,
-                    onCheckedChange = {
-                        forwardLock = it
-                        properties.forwardLock = it
-                    }
-                )
-            }
-            SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {
-                SettingsSwitchItem(
-                    title = translatedText(stringResource(R.string.customctrl_absolute_tracking)),
-                    checked = absolute,
-                    onCheckedChange = {
-                        absolute = it
-                        properties.absolute = it
-                    }
-                )
-            }
-        }
-
-        // Appearance Section
-        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-        
-        if (context is CustomControlsActivity && !isJoystick) {
-            SettingsActionItem(
-                title = translatedText(stringResource(R.string.customctrl_background_bitmap)),
-                onClick = {
-                    val receiver = object : CropperUtils.CropperReceiver {
-                        override fun getAspectRatio() = button.controlView.width.toFloat() / button.controlView.height
-                        override fun getTargetMaxSide() = maxOf(button.controlView.width, button.controlView.height)
-                        override fun onCropped(contentBitmap: Bitmap) {
-                            val storage = button.controlLayoutParent.bitmaps
-                            properties.bitmapTag = storage.putBitmap(contentBitmap, properties.bitmapTag)
-                            button.setBackground()
+                    3 -> {
+                        // Visibility Section
+                        if (!isSubButton) {
+                            DialogCard(
+                                position = CardPosition.SINGLE,
+                                useSurface = true,
+                                delayIndex = cardIndex++
+                            ) {
+                                DialogSwitchItem(
+                                    title = translatedText(stringResource(R.string.customctrl_visibility_ingame)),
+                                    checked = displayInGame,
+                                    onCheckedChange = {
+                                        displayInGame = it
+                                        properties.displayInGame = it
+                                    }
+                                )
+                            }
+                            DialogCard(
+                                position = CardPosition.SINGLE,
+                                useSurface = true,
+                                delayIndex = cardIndex++
+                            ) {
+                                DialogSwitchItem(
+                                    title = translatedText(stringResource(R.string.customctrl_visibility_in_menus)),
+                                    checked = displayInMenu,
+                                    onCheckedChange = {
+                                        displayInMenu = it
+                                        properties.displayInMenu = it
+                                    }
+                                )
+                            }
                         }
-                        override fun onFailed(e: Exception) = Tools.showError(context, e)
-                    }
-                    context.startCropping(receiver)
-                }
-            )
-        }
-
-        SettingsActionItem(
-            title = translatedText(stringResource(R.string.customctrl_background_color)),
-            summary = if (properties.bitmapTag != null) translatedText(stringResource(R.string.customctrl_background_color_warning)) else null,
-            onClick = {
-                onShowColorPicker(properties.bgColor, true) {
-                    properties.bitmapTag = null
-                    properties.bgColor = it
-                    button.setBackground()
-                }
-            }
-        )
-
-        if (properties.bitmapTag == null) {
-            SettingsActionItem(
-                title = translatedText(stringResource(R.string.customctrl_stroke_color)),
-                onClick = {
-                    onShowColorPicker(properties.strokeColor, false) {
-                        properties.strokeColor = it
-                        button.setBackground()
                     }
                 }
-            )
-            SettingsSliderItem(
-                title = translatedText(stringResource(R.string.customctrl_stroke_width)),
-                value = strokeWidth,
-                valueRange = 0f..100f,
-                onValueChange = {
-                    strokeWidth = it
-                    properties.strokeWidth = it / 10f
-                    button.setBackground()
-                }
-            )
-            SettingsSliderItem(
-                title = translatedText(stringResource(R.string.customctrl_corner_radius)),
-                value = cornerRadius,
-                valueRange = 0f..100f,
-                onValueChange = {
-                    cornerRadius = it
-                    properties.cornerRadius = it
-                    button.setBackground()
-                }
-            )
-        }
-
-        SettingsSliderItem(
-            title = translatedText(stringResource(R.string.customctrl_button_opacity)),
-            value = opacity,
-            valueRange = 0f..100f,
-            onValueChange = {
-                opacity = it
-                properties.opacity = it / 100f
-                button.controlView.alpha = it / 100f
-            }
-        )
-
-        // Visibility Section
-        if (!isSubButton) {
-            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-            Text(
-                text = translatedText(stringResource(R.string.customctrl_visibility_title)),
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.primary
-            )
-            SettingsCard(position = CardPosition.TOP, useSurface = true) {
-                SettingsSwitchItem(
-                    title = translatedText(stringResource(R.string.customctrl_visibility_ingame)),
-                    checked = displayInGame,
-                    onCheckedChange = {
-                        displayInGame = it
-                        properties.displayInGame = it
-                    }
-                )
-            }
-            SettingsCard(position = CardPosition.BOTTOM, useSurface = true) {
-                SettingsSwitchItem(
-                    title = translatedText(stringResource(R.string.customctrl_visibility_in_menus)),
-                    checked = displayInMenu,
-                    onCheckedChange = {
-                        displayInMenu = it
-                        properties.displayInMenu = it
-                    }
-                )
             }
         }
     }

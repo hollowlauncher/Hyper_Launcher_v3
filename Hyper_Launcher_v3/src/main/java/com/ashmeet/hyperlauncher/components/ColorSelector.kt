@@ -123,5 +123,12 @@ fun ColorSelectorContent(
                 textStyle = MaterialTheme.typography.bodySmall
             )
         }
+
+        Button(
+            onClick = onClose,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Close")
+        }
     }
 }

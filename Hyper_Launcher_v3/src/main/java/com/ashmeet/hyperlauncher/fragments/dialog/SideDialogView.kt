@@ -1,6 +1,7 @@
 package com.ashmeet.hyperlauncher.fragments.dialog
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -63,15 +64,28 @@ abstract class SideDialogView {
      */
     @Composable
     fun Content() {
+        var visible by remember { mutableStateOf(false) }
+        
+        // Ensure the initial state is false and then becomes true to trigger the animation
+        androidx.compose.runtime.LaunchedEffect(isDisplaying) {
+            if (isDisplaying) {
+                kotlinx.coroutines.delay(50) // Tiny delay to ensure the enter animation triggers
+                visible = true
+            } else {
+                visible = false
+            }
+        }
+
         SideDialog(
-            visible = isDisplaying,
+            visible = visible,
             onDismissRequest = { disappear(false) },
-            title = if (mTitleRes != 0) stringResource(mTitleRes) else null,
+            title = null,
             fromRight = isAtRight,
             startText = if (mStartButtonRes != 0) stringResource(mStartButtonRes) else null,
             onStartClick = mStartButtonListener,
             endText = if (mEndButtonRes != 0) stringResource(mEndButtonRes) else null,
-            onEndClick = mEndButtonListener
+            onEndClick = mEndButtonListener,
+            header = { DialogHeader() }
         ) {
             DialogContent()
         }
@@ -79,6 +93,9 @@ abstract class SideDialogView {
 
     @Composable
     abstract fun DialogContent()
+
+    @Composable
+    open fun DialogHeader() {}
 
     protected open fun onAppear() {}
     protected open fun onDisappear() {}

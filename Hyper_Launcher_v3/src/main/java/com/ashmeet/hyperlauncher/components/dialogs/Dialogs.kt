@@ -3,6 +3,9 @@ package com.ashmeet.hyperlauncher.components.dialogs
 import android.R
 import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -25,6 +28,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -34,34 +38,58 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.ashmeet.hyperlauncher.components.DefaultSwitch
+import com.ashmeet.hyperlauncher.components.SimpleTextSlider
+import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences
+import com.ashmeet.hyperlauncher.utils.translation.translatedText
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun MarqueeText(text: String, modifier: Modifier = Modifier) {
@@ -139,12 +167,6 @@ fun SimpleAlertDialog(
         onDismissRequest = {
             if (dismissByDialog) onDismiss()
         },
-        title = {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleLarge
-            )
-        },
         text = {
             val scrollState = rememberScrollState()
             Column(
@@ -164,7 +186,8 @@ fun SimpleAlertDialog(
             FilledTonalButton(onClick = onDismiss) {
                 MarqueeText(text = dismissText)
             }
-        }
+        },
+        containerColor = MaterialTheme.colorScheme.surfaceContainerLowest
     )
 }
 
@@ -178,6 +201,7 @@ fun SideDialog(
     onStartClick: (() -> Unit)? = null,
     endText: String? = null,
     onEndClick: (() -> Unit)? = null,
+    header: @Composable (ColumnScope.() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit
 ) {
     Box(
@@ -219,29 +243,22 @@ fun SideDialog(
         ) {
             Surface(
                 modifier = Modifier
-                    .width(280.dp)
+                    .width(340.dp)
                     .clickable(enabled = false) {}, // Consume clicks
-                shape = MaterialTheme.shapes.extraLarge,
-                color = MaterialTheme.colorScheme.surface,
-                tonalElevation = 6.dp,
+                shape = RoundedCornerShape(32.dp),
+                color = MaterialTheme.colorScheme.surfaceContainerLowest,
+                tonalElevation = 0.dp,
                 shadowElevation = 8.dp
             ) {
                 Column(modifier = Modifier.fillMaxSize()) {
-                    title?.let {
-                        Text(
-                            text = it,
-                            modifier = Modifier.padding(16.dp),
-                            style = MaterialTheme.typography.titleLarge
-                        )
-                        HorizontalDivider()
-                    }
+                    header?.invoke(this)
 
                     val scrollState = rememberScrollState()
                     Column(
                         modifier = Modifier
                             .weight(1f)
                             .verticalScroll(scrollState)
-                            .padding(16.dp)
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
                     ) {
                         content()
                     }
@@ -272,6 +289,357 @@ fun SideDialog(
             }
         }
     }
+}
+
+@Composable
+fun DialogCard(
+    modifier: Modifier = Modifier,
+    position: CardPosition = CardPosition.SINGLE,
+    outerShape: Dp = 20.dp,
+    innerShape: Dp = 6.dp,
+    useSurface: Boolean = false,
+    containerColor: Color? = null,
+    animate: Boolean = true,
+    delayIndex: Int = 0,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    val topRadius = if (position == CardPosition.TOP || position == CardPosition.SINGLE) outerShape else innerShape
+    val bottomRadius = if (position == CardPosition.BOTTOM || position == CardPosition.SINGLE) outerShape else innerShape
+
+    val isMatte = LauncherPreferences.PREF_BLURRED_ELEMENTS_ENABLED
+
+    val cardColor = containerColor ?: if (useSurface) {
+        if (isMatte) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
+        else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+    } else {
+        if (isMatte) MaterialTheme.colorScheme.surface.copy(alpha = 0.3f)
+        else MaterialTheme.colorScheme.background
+    }
+
+    val scale = remember { Animatable(if (animate) 0.95f else 1f) }
+    val alpha = remember { Animatable(if (animate) 0f else 1f) }
+
+    if (animate) {
+        LaunchedEffect(Unit) {
+            delay((delayIndex * 40L).milliseconds)
+            launch { 
+                scale.animateTo(
+                    targetValue = 1f, 
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioLowBouncy,
+                        stiffness = Spring.StiffnessLow
+                    )
+                ) 
+            }
+            launch { 
+                alpha.animateTo(
+                    targetValue = 1f, 
+                    animationSpec = tween(durationMillis = 300)
+                ) 
+            }
+        }
+    }
+
+    Surface(
+        modifier = modifier
+            .fillMaxWidth()
+            .graphicsLayer {
+                this.scaleX = scale.value
+                this.scaleY = scale.value
+                this.alpha = alpha.value
+            },
+        shape = RoundedCornerShape(
+            topStart = topRadius,
+            topEnd = topRadius,
+            bottomStart = bottomRadius,
+            bottomEnd = bottomRadius
+        ),
+        color = cardColor,
+        content = {
+            Box(modifier = Modifier.fillMaxWidth()) {
+                if (isMatte) {
+                    Box(
+                        modifier = Modifier
+                            .matchParentSize()
+                            .blur(12.dp)
+                            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.1f))
+                    )
+                }
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    content = content
+                )
+            }
+        }
+    )
+}
+
+enum class CardPosition {
+    TOP, MIDDLE, BOTTOM, SINGLE
+}
+
+@Composable
+fun DialogTitleAndSummary(
+    title: String,
+    summary: String? = null,
+    titleStyle: TextStyle = MaterialTheme.typography.titleMedium,
+    summaryStyle: TextStyle = MaterialTheme.typography.bodySmall
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(text = title, style = titleStyle, color = MaterialTheme.colorScheme.onSurface)
+        if (summary != null) {
+            Text(
+                text = summary,
+                style = summaryStyle,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DialogActionItem(
+    title: String,
+    summary: String? = null,
+    icon: ImageVector? = null,
+    iconPainter: Painter? = null,
+    enabled: Boolean = true,
+    warningTooltip: String? = null,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(enabled = enabled, onClick = onClick)
+            .alpha(if (enabled) 1f else 0.5f)
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        if (icon != null || iconPainter != null) {
+            if (icon != null) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    modifier = Modifier.size(28.dp),
+                    tint = MaterialTheme.colorScheme.onSurface
+                )
+            } else {
+                Icon(
+                    painter = iconPainter!!,
+                    contentDescription = null,
+                    modifier = Modifier.size(28.dp),
+                    tint = MaterialTheme.colorScheme.onSurface
+                )
+            }
+            Spacer(modifier = Modifier.width(20.dp))
+        }
+        Column(modifier = Modifier.weight(1f)) {
+            DialogTitleAndSummary(title = title, summary = summary)
+        }
+
+        if (warningTooltip != null) {
+            val tooltipState = rememberTooltipState()
+            val scope = rememberCoroutineScope()
+            TooltipBox(
+                positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                tooltip = { PlainTooltip { Text(warningTooltip) } },
+                state = tooltipState
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Warning,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.error,
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clickable { scope.launch { tooltipState.show() } }
+                )
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DialogSwitchItem(
+    title: String,
+    summary: String? = null,
+    icon: ImageVector? = null,
+    iconPainter: Painter? = null,
+    enabled: Boolean = true,
+    checked: Boolean,
+    warningTooltip: String? = null,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(enabled = enabled) { onCheckedChange(!checked) }
+            .alpha(if (enabled) 1f else 0.5f)
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        if (icon != null || iconPainter != null) {
+            if (icon != null) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    modifier = Modifier.size(28.dp),
+                    tint = MaterialTheme.colorScheme.onSurface
+                )
+            } else {
+                Icon(
+                    painter = iconPainter!!,
+                    contentDescription = null,
+                    modifier = Modifier.size(28.dp),
+                    tint = MaterialTheme.colorScheme.onSurface
+                )
+            }
+            Spacer(modifier = Modifier.width(20.dp))
+        }
+        Column(modifier = Modifier.weight(1f)) {
+            DialogTitleAndSummary(title = title, summary = summary)
+        }
+
+        if (warningTooltip != null) {
+            val tooltipState = rememberTooltipState()
+            val scope = rememberCoroutineScope()
+            TooltipBox(
+                positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                tooltip = { PlainTooltip { Text(warningTooltip) } },
+                state = tooltipState
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Warning,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.error,
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clickable { scope.launch { tooltipState.show() } }
+                )
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+        }
+
+        DefaultSwitch(
+            checked = checked,
+            enabled = enabled,
+            onCheckedChange = onCheckedChange
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DialogSliderItem(
+    title: String,
+    summary: String? = null,
+    icon: ImageVector? = null,
+    iconPainter: Painter? = null,
+    enabled: Boolean = true,
+    warningTooltip: String? = null,
+    value: Float,
+    valueRange: ClosedFloatingPointRange<Float> = 0f..100f,
+    onValueChange: (Float) -> Unit,
+    valueSuffix: String? = null
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .alpha(if (enabled) 1f else 0.5f)
+            .padding(horizontal = 16.dp, vertical = 12.dp)
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            if (icon != null || iconPainter != null) {
+                if (icon != null) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        modifier = Modifier.size(28.dp),
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                } else {
+                    Icon(
+                        painter = iconPainter!!,
+                        contentDescription = null,
+                        modifier = Modifier.size(28.dp),
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+                Spacer(modifier = Modifier.width(20.dp))
+            }
+            Column(modifier = Modifier.weight(1f)) {
+                DialogTitleAndSummary(title = title, summary = summary)
+            }
+
+            if (warningTooltip != null) {
+                val tooltipState = rememberTooltipState()
+                val scope = rememberCoroutineScope()
+                TooltipBox(
+                    positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                    tooltip = { PlainTooltip { Text(warningTooltip) } },
+                    state = tooltipState
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.Warning,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.error,
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clickable { scope.launch { tooltipState.show() } }
+                    )
+                }
+            }
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        SimpleTextSlider(
+            value = value,
+            enabled = enabled,
+            onValueChange = onValueChange,
+            valueRange = valueRange,
+            toInt = true,
+            modifier = Modifier.fillMaxWidth(),
+            suffix = valueSuffix
+        )
+    }
+}
+
+@Composable
+fun DialogTextInput(
+    title: String,
+    initialValue: String,
+    onConfirm: (String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    var text by remember { mutableStateOf(initialValue) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = title) },
+        text = {
+            OutlinedTextField(
+                value = text,
+                onValueChange = { text = it },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true
+            )
+        },
+        confirmButton = {
+            TextButton(onClick = { onConfirm(text) }) {
+                Text(stringResource(android.R.string.ok))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(android.R.string.cancel))
+            }
+        }
+    )
 }
 
 @Composable
@@ -372,8 +740,8 @@ fun <T> SimpleListDialog(
                     .heightIn(max = (maxHeight - 6.dp).coerceAtMost(rememberDialogMaxHeight()))
                     .wrapContentHeight(),
                 shape = MaterialTheme.shapes.extraLarge,
-                color = cardColor(),
-                contentColor = onCardColor(),
+                color = MaterialTheme.colorScheme.surfaceContainerLowest,
+                contentColor = MaterialTheme.colorScheme.onSurface,
                 shadowElevation = 3.dp
             ) {
                 Column(
@@ -382,12 +750,6 @@ fun <T> SimpleListDialog(
                         .wrapContentHeight(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(
-                        text = title,
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Spacer(modifier = Modifier.size(16.dp))
-
                     val state = rememberLazyListState()
                     LazyColumn(
                         modifier = Modifier
