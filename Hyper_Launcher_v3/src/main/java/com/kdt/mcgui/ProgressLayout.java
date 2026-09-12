@@ -14,8 +14,8 @@ import androidx.compose.runtime.snapshots.SnapshotStateList;
 import androidx.compose.ui.platform.ComposeView;
 import androidx.compose.ui.platform.ViewCompositionStrategy;
 
-import com.ashmeet.hyperlauncher.components.LegacyMigratedComponentsBridge;
-import com.ashmeet.hyperlauncher.components.ProgressTaskState;
+import com.ashmeet.hyperlauncher.components.text.LegacyMigratedComponentsBridge;
+import com.ashmeet.hyperlauncher.components.text.ProgressTaskState;
 
 import net.ashmeet.hyperlauncher.R;
 

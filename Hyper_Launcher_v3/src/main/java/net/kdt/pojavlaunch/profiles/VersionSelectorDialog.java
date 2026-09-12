@@ -8,7 +8,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.compose.ui.platform.ComposeView;
 import androidx.compose.ui.platform.ViewCompositionStrategy;
 
-import com.ashmeet.hyperlauncher.components.LegacyMigratedComponentsBridge;
+
+import com.ashmeet.hyperlauncher.components.text.LegacyMigratedComponentsBridge;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import net.kdt.pojavlaunch.JVersionList;
