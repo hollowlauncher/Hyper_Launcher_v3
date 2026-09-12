@@ -2,6 +2,7 @@ package com.ashmeet.hyperlauncher.components.dialogs
 
 import android.R
 import android.annotation.SuppressLint
+import android.view.KeyEvent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
@@ -36,6 +37,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -46,6 +48,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
@@ -87,6 +90,7 @@ import com.ashmeet.hyperlauncher.components.DefaultSwitch
 import com.ashmeet.hyperlauncher.components.SimpleTextSlider
 import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences
 import com.ashmeet.hyperlauncher.utils.translation.translatedText
+import net.kdt.pojavlaunch.utils.KeycodeUtils
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
@@ -393,12 +397,15 @@ fun DialogTitleAndSummary(
     titleStyle: TextStyle = MaterialTheme.typography.titleMedium,
     summaryStyle: TextStyle = MaterialTheme.typography.bodySmall
 ) {
-    Row(
+    Column(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalArrangement = Arrangement.Center
     ) {
-        Text(text = title, style = titleStyle, color = MaterialTheme.colorScheme.onSurface)
+        Text(
+            text = title,
+            style = titleStyle,
+            color = MaterialTheme.colorScheme.onSurface
+        )
         if (summary != null) {
             Text(
                 text = summary,
@@ -795,4 +802,57 @@ fun <T> SimpleListDialog(
             }
         }
     }
+}
+
+@Composable
+fun KeycodePickerDialog(
+    title: String,
+    initialValue: Int,
+    onKeycodePicked: (Int) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val keyNames = remember { KeycodeUtils.generateKeyName() }
+    val initialIndex = remember {
+        val idx = KeycodeUtils.getIndexByValue(initialValue)
+        if (idx < 0) 0 else idx
+    }
+    val listState = rememberLazyListState(initialFirstVisibleItemIndex = initialIndex)
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = title) },
+        text = {
+            Box(modifier = Modifier.height(300.dp)) {
+                LazyColumn(state = listState) {
+                    itemsIndexed(keyNames) { index, name ->
+                        val value = KeycodeUtils.getValueByIndex(index)
+                        DropdownMenuItem(
+                            text = {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text(name)
+                                    Text(
+                                        text = value.toString(),
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.secondary
+                                    )
+                                }
+                            },
+                            onClick = {
+                                onKeycodePicked(value)
+                                onDismiss()
+                            }
+                        )
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(android.R.string.cancel))
+            }
+        }
+    )
 }

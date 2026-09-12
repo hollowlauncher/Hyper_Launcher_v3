@@ -3,10 +3,13 @@ package com.ashmeet.hyperlauncher.fragments.dialog
 import com.ashmeet.hyperlauncher.utils.translation.translatedText
 
 import android.content.SharedPreferences
+import android.view.KeyEvent
 import androidx.compose.animation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
+import androidx.compose.material.icons.automirrored.rounded.VolumeUp
+import androidx.compose.material.icons.rounded.Tune
 import androidx.compose.material3.*
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.Composable
@@ -29,6 +32,7 @@ import com.ashmeet.hyperlauncher.components.dialogs.DialogSwitchItem
 import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.Tools
+import net.kdt.pojavlaunch.utils.KeycodeUtils
 
 /**
  * Side dialog for quick settings that you can change in game.
@@ -48,6 +52,10 @@ abstract class QuickSettingSideDialog : SideDialogView() {
     private var mOriginalResolution = 0f
     private var mOriginalGestureDelay = 0
     private var mOriginalButtonTransparency = 0f
+
+    private var mOriginalVolumeEnabled = false
+    private var mOriginalVolumeUp = 24
+    private var mOriginalVolumeDown = 25
 
     private var selectedTab by mutableIntStateOf(0)
 
@@ -73,6 +81,10 @@ abstract class QuickSettingSideDialog : SideDialogView() {
         mOriginalGestureDelay = LauncherPreferences.PREF_LONGPRESS_TRIGGER
         mOriginalResolution = LauncherPreferences.PREF_SCALE_FACTOR
         mOriginalButtonTransparency = LauncherPreferences.PREF_BUTTON_TRANSPARENCY
+
+        mOriginalVolumeEnabled = LauncherPreferences.PREF_VOLUME_KEYS_CONTROL_ENABLED
+        mOriginalVolumeUp = LauncherPreferences.PREF_VOLUME_UP_KEYBIND
+        mOriginalVolumeDown = LauncherPreferences.PREF_VOLUME_DOWN_KEYBIND
     }
 
     @Composable
@@ -107,6 +119,11 @@ abstract class QuickSettingSideDialog : SideDialogView() {
                 onClick = { selectedTab = 2 },
                 icon = { Icon(Icons.Rounded.ScreenRotation, null) }
             )
+            Tab(
+                selected = selectedTab == 3,
+                onClick = { selectedTab = 3 },
+                icon = { Icon(Icons.Rounded.Tune, null) }
+            )
         }
     }
 
@@ -121,6 +138,9 @@ abstract class QuickSettingSideDialog : SideDialogView() {
                 onResolutionChanged = { onResolutionChanged() },
                 onGyroStateChanged = { onGyroStateChanged() },
                 onButtonTransparencyChanged = { onButtonTransparencyChanged() },
+                onForceClose = { onForceClose() },
+                onViewOutput = { onViewOutput() },
+                onCustomKey = { onCustomKey() },
                 onClose = { disappear(true) }
             ) { key, value ->
                 when (value) {
@@ -144,6 +164,9 @@ abstract class QuickSettingSideDialog : SideDialogView() {
             LauncherPreferences.PREF_LONGPRESS_TRIGGER = mOriginalGestureDelay
             LauncherPreferences.PREF_SCALE_FACTOR = mOriginalResolution
             LauncherPreferences.PREF_BUTTON_TRANSPARENCY = mOriginalButtonTransparency
+            LauncherPreferences.PREF_VOLUME_KEYS_CONTROL_ENABLED = mOriginalVolumeEnabled
+            LauncherPreferences.PREF_VOLUME_UP_KEYBIND = mOriginalVolumeUp
+            LauncherPreferences.PREF_VOLUME_DOWN_KEYBIND = mOriginalVolumeDown
             onGyroStateChanged()
             onResolutionChanged()
             onButtonTransparencyChanged()
@@ -163,6 +186,15 @@ abstract class QuickSettingSideDialog : SideDialogView() {
 
     /** Called when the button transparency is changed. */
     open fun onButtonTransparencyChanged() {}
+
+    /** Called to force close the game */
+    abstract fun onForceClose()
+
+    /** Called to view the game output */
+    abstract fun onViewOutput()
+
+    /** Called to send a custom key */
+    abstract fun onCustomKey()
 }
 
 @Composable
@@ -171,6 +203,9 @@ private fun QuickSettingContent(
     onResolutionChanged: () -> Unit,
     onGyroStateChanged: () -> Unit,
     onButtonTransparencyChanged: () -> Unit,
+    onForceClose: () -> Unit,
+    onViewOutput: () -> Unit,
+    onCustomKey: () -> Unit,
     onClose: () -> Unit,
     onPreferenceChanged: (String, Any) -> Unit
 ) {
@@ -187,6 +222,22 @@ private fun QuickSettingContent(
 
     var resolutionScaler by remember { mutableFloatStateOf(LauncherPreferences.PREF_SCALE_FACTOR * 100f) }
     var buttonTransparency by remember { mutableFloatStateOf(LauncherPreferences.PREF_BUTTON_TRANSPARENCY) }
+
+    var volumeKeysControlEnabled by remember { mutableStateOf(LauncherPreferences.PREF_VOLUME_KEYS_CONTROL_ENABLED) }
+    var volumeUpKeybind by remember { mutableIntStateOf(LauncherPreferences.PREF_VOLUME_UP_KEYBIND) }
+    var volumeDownKeybind by remember { mutableIntStateOf(LauncherPreferences.PREF_VOLUME_DOWN_KEYBIND) }
+
+    var showKeyPickerFor by remember { mutableStateOf<String?>(null) }
+
+    val keyNames = remember { KeycodeUtils.generateKeyName() }
+    fun getKeyName(keycode: Int): String {
+        val index = KeycodeUtils.getIndexByValue(keycode)
+        return if (index >= 0 && index < keyNames.size && (KeycodeUtils.getValueByIndex(index) == keycode)) {
+            keyNames[index]
+        } else {
+            KeyEvent.keyCodeToString(keycode).replace("KEYCODE_", "")
+        }
+    }
 
     val isGyroAvailable = remember { Tools.deviceSupportsGyro(context) }
 
@@ -364,8 +415,85 @@ private fun QuickSettingContent(
                             }
                         }
                     }
+                    3 -> {
+                        DialogCard(position = CardPosition.SINGLE, useSurface = true, delayIndex = cardIndex++) {
+                            DialogSwitchItem(
+                                title = translatedText("Enable Volume Key Controls"),
+                                icon = Icons.AutoMirrored.Rounded.VolumeUp,
+                                checked = volumeKeysControlEnabled,
+                                onCheckedChange = {
+                                    volumeKeysControlEnabled = it
+                                    LauncherPreferences.PREF_VOLUME_KEYS_CONTROL_ENABLED = it
+                                    onPreferenceChanged("volume_keys_control_enabled", it)
+                                }
+                            )
+                        }
+
+                        DialogCard(position = CardPosition.SINGLE, useSurface = true, delayIndex = cardIndex++) {
+                            DialogActionItem(
+                                title = translatedText("Volume Up Keybind"),
+                                summary = translatedText("Current Key: ${getKeyName(volumeUpKeybind)} ($volumeUpKeybind)"),
+                                icon = Icons.AutoMirrored.Rounded.VolumeUp,
+                                enabled = volumeKeysControlEnabled,
+                                onClick = { showKeyPickerFor = "up" }
+                            )
+                        }
+
+                        DialogCard(position = CardPosition.SINGLE, useSurface = true, delayIndex = cardIndex++) {
+                            DialogActionItem(
+                                title = translatedText("Volume Down Keybind"),
+                                summary = translatedText("Current Key: ${getKeyName(volumeDownKeybind)} ($volumeDownKeybind)"),
+                                icon = Icons.AutoMirrored.Rounded.VolumeUp,
+                                enabled = volumeKeysControlEnabled,
+                                onClick = { showKeyPickerFor = "down" }
+                            )
+                        }
+
+                        DialogCard(position = CardPosition.SINGLE, useSurface = true, delayIndex = cardIndex++) {
+                            DialogActionItem(
+                                title = translatedText(stringResource(R.string.control_forceclose)),
+                                icon = Icons.Rounded.Close,
+                                onClick = onForceClose
+                            )
+                        }
+
+                        DialogCard(position = CardPosition.SINGLE, useSurface = true, delayIndex = cardIndex++) {
+                            DialogActionItem(
+                                title = translatedText(stringResource(R.string.control_viewout)),
+                                icon = Icons.Rounded.Description,
+                                onClick = onViewOutput
+                            )
+                        }
+
+                        DialogCard(position = CardPosition.SINGLE, useSurface = true, delayIndex = cardIndex++) {
+                            DialogActionItem(
+                                title = translatedText(stringResource(R.string.control_customkey)),
+                                icon = Icons.Rounded.Keyboard,
+                                onClick = onCustomKey
+                            )
+                        }
+                    }
                 }
             }
         }
+    }
+
+    if (showKeyPickerFor != null) {
+        com.ashmeet.hyperlauncher.components.dialogs.KeycodePickerDialog(
+            title = if (showKeyPickerFor == "up") translatedText("Volume Up Keybind") else translatedText("Volume Down Keybind"),
+            initialValue = if (showKeyPickerFor == "up") volumeUpKeybind else volumeDownKeybind,
+            onKeycodePicked = { keyCode ->
+                if (showKeyPickerFor == "up") {
+                    volumeUpKeybind = keyCode
+                    LauncherPreferences.PREF_VOLUME_UP_KEYBIND = keyCode
+                    onPreferenceChanged("volume_up_keybind", keyCode)
+                } else {
+                    volumeDownKeybind = keyCode
+                    LauncherPreferences.PREF_VOLUME_DOWN_KEYBIND = keyCode
+                    onPreferenceChanged("volume_down_keybind", keyCode)
+                }
+            },
+            onDismiss = { showKeyPickerFor = null }
+        )
     }
 }

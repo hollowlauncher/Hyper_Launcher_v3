@@ -538,6 +538,21 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
                 public void onButtonTransparencyChanged() {
                     mControlLayout.updateButtonOpacity();
                 }
+
+                @Override
+                public void onForceClose() {
+                    dialogForceClose(GameActivity.this);
+                }
+
+                @Override
+                public void onViewOutput() {
+                    openLogOutput();
+                }
+
+                @Override
+                public void onCustomKey() {
+                    dialogSendCustomKey();
+                }
             };
         }
         SideDialogUtils.show(mQuickSettingSideDialog, true);

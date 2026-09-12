@@ -51,6 +51,7 @@ import com.ashmeet.hyperlauncher.screens.settings.preferences.PreferenceCategory
 import com.ashmeet.hyperlauncher.screens.settings.preferences.SettingsActionItem
 import com.ashmeet.hyperlauncher.screens.settings.preferences.SettingsSliderItem
 import com.ashmeet.hyperlauncher.screens.settings.preferences.SettingsSwitchItem
+import com.ashmeet.hyperlauncher.components.dialogs.KeycodePickerDialog
 import com.ashmeet.hyperlauncher.utils.translation.translatedText
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.utils.KeycodeUtils
@@ -468,57 +469,4 @@ fun ControlSettingsScreen(
             onDismiss = { showKeyPickerFor = null }
         )
     }
-}
-
-@Composable
-fun KeycodePickerDialog(
-    title: String,
-    initialValue: Int,
-    onKeycodePicked: (Int) -> Unit,
-    onDismiss: () -> Unit
-) {
-    val keyNames = remember { KeycodeUtils.generateKeyName() }
-    val initialIndex = remember {
-        val idx = KeycodeUtils.getIndexByValue(initialValue)
-        if (idx < 0) 0 else idx
-    }
-    val listState = rememberLazyListState(initialFirstVisibleItemIndex = initialIndex)
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(text = title) },
-        text = {
-            Box(modifier = Modifier.height(300.dp)) {
-                LazyColumn(state = listState) {
-                    itemsIndexed(keyNames) { index, name ->
-                        val value = KeycodeUtils.getValueByIndex(index)
-                        DropdownMenuItem(
-                            text = {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween
-                                ) {
-                                    Text(name)
-                                    Text(
-                                        text = value.toString(),
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.secondary
-                                    )
-                                }
-                            },
-                            onClick = {
-                                onKeycodePicked(value)
-                                onDismiss()
-                            }
-                        )
-                    }
-                }
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(android.R.string.cancel))
-            }
-        }
-    )
 }
