@@ -24,29 +24,31 @@ object SkinUtils {
 
     fun getSkinUrl(account: Account?): String? {
         if (account == null) return null
-
-        if (account.authType == AuthType.LOCAL) {
-            return account.skinPath?.let { "file://$it" }
+        if (account.authType == AuthType.LOCAL && !account.skinPath.isNullOrEmpty()) {
+            return "file://${account.skinPath}"
         }
 
-        return when (account.authType) {
-            AuthType.ELY_BY -> {
-                val idToUse = if (account.profileId != null && !account.profileId.contains("00000000")) {
-                    account.profileId
-                } else {
-                    account.username
-                }
-                "https://skinsystem.ely.by/skins/$idToUse.png"
-            }
+        val template = account.authType.skinUrl ?: return null
+        
+        val idToUse = when (account.authType) {
             AuthType.MICROSOFT -> {
-                val idToUse = if (account.profileId != null && !account.profileId.contains("00000000")) {
+                if (!account.profileId.isNullOrEmpty() && !account.profileId.contains("00000000")) {
                     account.profileId
                 } else {
                     account.username
                 }
-                "https://minotar.net/skin/$idToUse"
             }
-            else -> null
+            AuthType.ELY_BY, AuthType.LOCAL -> {
+                account.username
+            }
+            else -> account.username
+        }
+
+        return try {
+            String.format(template, idToUse)
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to format skin URL", e)
+            null
         }
     }
 

@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.viewinterop.AndroidView
 import com.ashmeet.hyperlauncher.components.ActionRow
+import com.ashmeet.hyperlauncher.components.LauncherBackground
 import com.ashmeet.hyperlauncher.fragments.dialog.EditControlSideDialog
 import com.ashmeet.hyperlauncher.utils.SideDialogUtils
 import com.ashmeet.hyperlauncher.utils.translation.translatedText
@@ -63,9 +64,9 @@ fun ControlsEditorScreen(
         })
     }
 
-    Box(modifier = Modifier.fillMaxSize().background(Color.White.copy(alpha = 0.05f))) {
-
+    Box(modifier = Modifier.fillMaxSize()) {
         if (hostViews) {
+            LauncherBackground()
             AndroidView(
                 factory = { controlLayout },
                 modifier = Modifier.fillMaxSize()

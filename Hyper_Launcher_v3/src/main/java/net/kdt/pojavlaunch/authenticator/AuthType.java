@@ -12,23 +12,24 @@ import net.ashmeet.hyperlauncher.R;
 public enum AuthType {
     @SerializedName("microsoft")
     MICROSOFT(
-            MicrosoftBackgroundLogin.CREATOR,
-            R.drawable.ic_auth_ms,
-            null,
-            "https://mineskin.eu/skin/%s" // Switched from mc-heads.net cause blocked in Russia
+             MicrosoftBackgroundLogin.CREATOR,
+             R.drawable.ic_auth_ms,
+             null,
+            "https://mineskin.eu/skin/%s"
     ),
     @SerializedName("elyby")
     ELY_BY(
-            ElyByBackgroundLogin.CREATOR,
-            R.drawable.ic_auth_elyby,
-            "ely.by",
-            "http://skinsystem.ely.by/skins/%s.png"
+          ElyByBackgroundLogin.CREATOR,
+          R.drawable.ic_auth_elyby,
+          "ely.by",
+          "https://skinsystem.ely.by/skins/%s.png"
     ),
     @SerializedName("local")
-    LOCAL(null,
-            0, 
-            null, 
-            "http://skinsystem.ely.by/skins/%s.png"
+    LOCAL(
+          null,
+          0,
+          null,
+          "https://skinsystem.ely.by/skins/%s.png"
     );
 
     private final BackgroundLogin.Creator mCreator;
