@@ -32,7 +32,7 @@ class ElyByLoginFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 PojavTheme {
-                    _root_ide_package_.com.ashmeet.hyperlauncher.screens.auth.methods.MicrosoftLoginScreen(
+                    MicrosoftLoginScreen(
                         authUrl = mAuthUrl,
                         trackedUrl = mTrackedUrl,
                         onCompletion = { fullUrl -> handleCompletion(fullUrl) },

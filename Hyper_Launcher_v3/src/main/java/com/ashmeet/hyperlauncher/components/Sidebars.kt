@@ -165,8 +165,8 @@ fun SearchFiltersSidebar(
             modifier = Modifier.padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            _root_ide_package_.com.ashmeet.hyperlauncher.screens.settings.layouts.SettingsCard(
-                position = _root_ide_package_.com.ashmeet.hyperlauncher.screens.settings.layouts.CardPosition.TOP,
+            SettingsCard(
+                position = CardPosition.TOP,
                 useSurface = true
             ) {
                 FilterSourceItem(
@@ -175,8 +175,8 @@ fun SearchFiltersSidebar(
                 )
             }
 
-            _root_ide_package_.com.ashmeet.hyperlauncher.screens.settings.layouts.SettingsCard(
-                position = if (showLoaderFilter) _root_ide_package_.com.ashmeet.hyperlauncher.screens.settings.layouts.CardPosition.MIDDLE else _root_ide_package_.com.ashmeet.hyperlauncher.screens.settings.layouts.CardPosition.BOTTOM,
+            SettingsCard(
+                position = if (showLoaderFilter) CardPosition.MIDDLE else CardPosition.BOTTOM,
                 useSurface = true
             ) {
                 FilterSectionItem(
@@ -188,8 +188,8 @@ fun SearchFiltersSidebar(
             }
 
             if (showLoaderFilter) {
-                _root_ide_package_.com.ashmeet.hyperlauncher.screens.settings.layouts.SettingsCard(
-                    position = _root_ide_package_.com.ashmeet.hyperlauncher.screens.settings.layouts.CardPosition.BOTTOM,
+                SettingsCard(
+                    position = CardPosition.BOTTOM,
                     useSurface = true
                 ) {
                     FilterSectionItem(
@@ -207,11 +207,11 @@ fun SearchFiltersSidebar(
             Column(
                 modifier = Modifier.padding(horizontal = 16.dp)
             ) {
-                _root_ide_package_.com.ashmeet.hyperlauncher.screens.settings.layouts.SettingsCard(
-                    position = _root_ide_package_.com.ashmeet.hyperlauncher.screens.settings.layouts.CardPosition.SINGLE,
+                SettingsCard(
+                    position = CardPosition.SINGLE,
                     useSurface = true
                 ) {
-                    _root_ide_package_.com.ashmeet.hyperlauncher.screens.settings.preferences.SettingsActionItem(
+                    SettingsActionItem(
                         title = translatedText("Import Modpack"),
                         summary = translatedText("Install a local modpack file (.zip, .mrpack)"),
                         icon = Icons.Rounded.FileUpload,
@@ -288,7 +288,7 @@ fun FilterSourceItem(
         )
     }
 
-    _root_ide_package_.com.ashmeet.hyperlauncher.screens.settings.preferences.SettingsActionItem(
+    SettingsActionItem(
         title = translatedText("Source"),
         summary = currentSource.displayName,
         icon = Icons.Rounded.Language,
@@ -344,7 +344,7 @@ fun FilterSectionItem(
         )
     }
 
-    _root_ide_package_.com.ashmeet.hyperlauncher.screens.settings.preferences.SettingsActionItem(
+    SettingsActionItem(
         title = title,
         summary = current,
         icon = icon,

@@ -14,6 +14,7 @@ import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.utils.FilteredSubList;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -61,6 +62,18 @@ public class VersionListAdapter extends BaseExpandableListAdapter implements Exp
             mData = new List[]{Arrays.asList(mInstalledVersions), releaseList, snapshotList, betaList, alphaList};
             mSnapshotListPosition = 2;
         }
+    }
+
+    public String getGroupName(int groupPosition) {
+        return mGroups[groupPosition];
+    }
+
+    public List<String> getGroupChildren(int groupPosition) {
+        List<String> children = new ArrayList<>();
+        for (int i = 0; i < getChildrenCount(groupPosition); i++) {
+            children.add(getChild(groupPosition, i));
+        }
+        return children;
     }
 
     @Override

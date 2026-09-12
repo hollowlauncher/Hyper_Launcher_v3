@@ -147,8 +147,7 @@ public class CommonApi implements ModpackApi {
             case Constants.SOURCE_MODRINTH:
                 return mModrinthApi;
             case Constants.SOURCE_CURSEFORGE:
-                if (mCurseforgeApi == null) return null;
-                else return mCurseforgeApi;
+                return mCurseforgeApi;
             default:
                 throw new UnsupportedOperationException("Unknown API source: " + apiSource);
         }

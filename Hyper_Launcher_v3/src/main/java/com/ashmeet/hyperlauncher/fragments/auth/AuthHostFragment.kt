@@ -35,7 +35,7 @@ class AuthHostFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 PojavTheme {
-                    _root_ide_package_.com.ashmeet.hyperlauncher.screens.auth.AuthLayout(
+                    AuthLayout(
                         title = translatedText("Login"),
                         onBack = { requireActivity().onBackPressedDispatcher.onBackPressed() },
                         onFragmentViewCreated = {

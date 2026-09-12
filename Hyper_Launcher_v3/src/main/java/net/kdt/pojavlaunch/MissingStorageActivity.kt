@@ -1,15 +1,14 @@
-package net.kdt.pojavlaunch;
+package net.kdt.pojavlaunch
 
-import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle
+import androidx.activity.compose.setContent
+import com.ashmeet.hyperlauncher.screens.activity.MissingStorageScreen
 
-import android.os.Bundle;
-
-import net.ashmeet.hyperlauncher.R;
-
-public class MissingStorageActivity extends AppCompatActivity {
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.storage_test_no_sdcard);
+class MissingStorageActivity : BaseActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            MissingStorageScreen()
+        }
     }
 }

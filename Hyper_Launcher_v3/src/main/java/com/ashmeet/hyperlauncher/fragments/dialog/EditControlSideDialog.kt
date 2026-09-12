@@ -61,7 +61,7 @@ class EditControlSideDialog : SideDialogView() {
     override fun DialogHeader() {
         TabRow(
             selectedTabIndex = selectedTab,
-            containerColor = androidx.compose.ui.graphics.Color.Transparent,
+            containerColor = Color.Transparent,
             divider = {},
             modifier = Modifier.fillMaxWidth(),
             indicator = { tabPositions ->

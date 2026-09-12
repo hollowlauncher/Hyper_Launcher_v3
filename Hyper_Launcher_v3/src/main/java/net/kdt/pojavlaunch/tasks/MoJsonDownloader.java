@@ -390,9 +390,7 @@ public class MoJsonDownloader extends Downloader {
 
             String libraryTrimmedName = MavenNameUtils.mavenBaseName(dependentLibrary.name);
             // Move the more recent library to the front of the list
-            if (mAllLibraries.containsKey(libraryTrimmedName)) {
-                mAllLibraries.remove(libraryTrimmedName);
-            }
+            mAllLibraries.remove(libraryTrimmedName);
             mAllLibraries.put(libraryTrimmedName, dependentLibrary);
         }
     }

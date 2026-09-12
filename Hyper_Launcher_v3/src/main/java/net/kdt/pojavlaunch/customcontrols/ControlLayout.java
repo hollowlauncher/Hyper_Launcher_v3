@@ -105,7 +105,7 @@ public class ControlLayout extends FrameLayout {
 	}
 
 	public void loadLayout(CustomControls controlLayout) {
-		this.mButtonsOpacity = (float) LauncherPreferences.PREF_BUTTON_TRANSPARENCY / 100;
+		this.mButtonsOpacity = LauncherPreferences.PREF_BUTTON_TRANSPARENCY / 100;
 		boolean sanitizedModified = false;
 		if(controlLayout != null) {
 			sanitizedModified = LayoutSanitizer.sanitizeLayout(controlLayout);
@@ -724,7 +724,7 @@ public class ControlLayout extends FrameLayout {
 	}
 
 	public void updateButtonOpacity() {
-		mButtonsOpacity = Math.clamp((float) LauncherPreferences.PREF_BUTTON_TRANSPARENCY / 100, 0, 1);
+		mButtonsOpacity = Math.clamp(LauncherPreferences.PREF_BUTTON_TRANSPARENCY / 100, 0, 1);
 		for(ControlInterface button : getButtonChildren()) {
 			// In edit mode, all controls have to be shown
 			if(mModifiable) button.setVisible(true);

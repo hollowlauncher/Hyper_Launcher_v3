@@ -115,7 +115,7 @@ public class InstanceIconProvider {
         return drawable;
     }
 
-    private static int getStaticIconResource(String icon) {
+    public static int getStaticIconResource(String icon) {
         Integer iconResource = sStaticIcons.get(icon);
         if(iconResource == null) return -1;
         return iconResource;

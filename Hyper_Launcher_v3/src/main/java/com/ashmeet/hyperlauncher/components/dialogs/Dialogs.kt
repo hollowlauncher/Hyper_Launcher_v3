@@ -646,12 +646,12 @@ fun DialogTextInput(
         },
         confirmButton = {
             TextButton(onClick = { onConfirm(text) }) {
-                Text(stringResource(android.R.string.ok))
+                Text(stringResource(R.string.ok))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(stringResource(android.R.string.cancel))
+                Text(stringResource(R.string.cancel))
             }
         }
     )
@@ -851,7 +851,7 @@ fun KeycodePickerDialog(
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text(stringResource(android.R.string.cancel))
+                Text(stringResource(R.string.cancel))
             }
         }
     )

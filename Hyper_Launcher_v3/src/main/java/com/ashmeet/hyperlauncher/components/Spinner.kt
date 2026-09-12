@@ -219,6 +219,74 @@ fun AccountSpinnerCompose(
 }
 
 @Composable
+fun <T> HyperSpinner(
+    options: List<T>,
+    selectedOption: T,
+    onOptionSelected: (T) -> Unit,
+    modifier: Modifier = Modifier,
+    labelProvider: (T) -> String = { it.toString() },
+    enabled: Boolean = true
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Box(modifier = modifier) {
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .clickable(enabled = enabled) { expanded = true },
+            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f),
+            shape = RoundedCornerShape(8.dp),
+            border = if (enabled) null else androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.1f))
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = labelProvider(selectedOption),
+                    color = if (enabled) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
+                    style = MaterialTheme.typography.bodyLarge
+                )
+                Icon(
+                    painter = painterResource(id = R.drawable.spinner_arrow),
+                    contentDescription = null,
+                    tint = if (enabled) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
+                    modifier = Modifier.size(16.dp)
+                )
+            }
+        }
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.surface)
+                .clip(RoundedCornerShape(12.dp))
+        ) {
+            options.forEach { option ->
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            text = labelProvider(option),
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    },
+                    onClick = {
+                        onOptionSelected(option)
+                        expanded = false
+                    }
+                )
+            }
+        }
+    }
+}
+
+@Composable
 fun AccountSpinnerUI(
     selectedAccount: Account?,
     accounts: List<Account>,
