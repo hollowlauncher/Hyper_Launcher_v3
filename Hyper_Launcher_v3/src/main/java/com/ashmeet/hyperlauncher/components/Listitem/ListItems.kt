@@ -1,4 +1,4 @@
-package com.ashmeet.hyperlauncher.components
+package com.ashmeet.hyperlauncher.components.Listitem
 
 import android.util.Log
 import androidx.compose.animation.core.Animatable
@@ -29,7 +29,6 @@ import androidx.compose.material.icons.rounded.Extension
 import androidx.compose.material.icons.rounded.Folder
 import androidx.compose.material.icons.rounded.FolderOpen
 import androidx.compose.material.icons.rounded.MoreVert
-import androidx.compose.material.icons.rounded.Shortcut
 import androidx.compose.material.icons.rounded.Update
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.CircularProgressIndicator
@@ -71,6 +70,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
+import com.ashmeet.hyperlauncher.components.DefaultSwitch
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 import com.ashmeet.hyperlauncher.utils.ModMetadataReader
 import com.ashmeet.hyperlauncher.utils.WorldMetadataReader
@@ -83,8 +83,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.ashmeet.hyperlauncher.R
-import net.kdt.pojavlaunch.Tools
 import net.kdt.pojavlaunch.instances.DisplayInstance
+import net.kdt.pojavlaunch.instances.Instance
 import net.kdt.pojavlaunch.instances.InstanceIconProvider
 import net.kdt.pojavlaunch.modloaders.modpacks.api.ModrinthService
 import java.io.File
@@ -98,7 +98,7 @@ import java.util.Locale
 fun FileListItem(
     modifier: Modifier = Modifier,
     file: File,
-    selectedInstance: net.kdt.pojavlaunch.instances.Instance?,
+    selectedInstance: Instance?,
     instanceVersion: String?,
     instanceLoader: String?,
     onClick: () -> Unit,

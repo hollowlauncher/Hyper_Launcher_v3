@@ -61,7 +61,7 @@ class EditControlSideDialog : SideDialogView() {
     override fun DialogHeader() {
         TabRow(
             selectedTabIndex = selectedTab,
-            containerColor = Color.Transparent,
+            containerColor = ComposeColor.Transparent,
             divider = {},
             modifier = Modifier.fillMaxWidth(),
             indicator = { tabPositions ->

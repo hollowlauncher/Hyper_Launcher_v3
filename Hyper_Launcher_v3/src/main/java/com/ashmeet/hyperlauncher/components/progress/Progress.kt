@@ -1,6 +1,5 @@
-package com.ashmeet.hyperlauncher.components
+package com.ashmeet.hyperlauncher.components.progress
 
-import android.R.attr.left
 import androidx.compose.animation.AnimatedVisibility
 import com.ashmeet.hyperlauncher.utils.translation.translatedText
 import androidx.compose.foundation.background
@@ -12,7 +11,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.border
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.clip

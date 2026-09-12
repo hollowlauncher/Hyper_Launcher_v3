@@ -4,7 +4,7 @@ import android.content.Context
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.recyclerview.widget.RecyclerView
-import com.ashmeet.hyperlauncher.components.ControllerMappingItem
+import com.ashmeet.hyperlauncher.components.gamepad.ControllerMappingItem
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.game.platform.input.PlatformGrabListener
 import net.kdt.pojavlaunch.utils.KeycodeUtils

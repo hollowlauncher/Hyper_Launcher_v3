@@ -59,11 +59,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ashmeet.hyperlauncher.components.ProjectItemView
+import com.ashmeet.hyperlauncher.components.Listitem.ProjectItemView
 import com.ashmeet.hyperlauncher.components.ScreenLayout
 import com.ashmeet.hyperlauncher.components.ProjectDetailsSidebar
 import com.ashmeet.hyperlauncher.components.SearchFiltersSidebar
-import com.ashmeet.hyperlauncher.components.VersionList
+import com.ashmeet.hyperlauncher.components.Listitem.VersionList
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 import com.ashmeet.hyperlauncher.utils.installer.ContentInstallerType
 import com.ashmeet.hyperlauncher.utils.installer.ContentSource

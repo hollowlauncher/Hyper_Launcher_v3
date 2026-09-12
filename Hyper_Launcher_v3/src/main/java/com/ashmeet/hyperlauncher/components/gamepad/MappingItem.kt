@@ -1,4 +1,4 @@
-package com.ashmeet.hyperlauncher.components
+package com.ashmeet.hyperlauncher.components.gamepad
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
@@ -16,6 +16,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.ashmeet.hyperlauncher.components.DefaultSwitch
+import com.ashmeet.hyperlauncher.components.HyperSpinner
 import net.ashmeet.hyperlauncher.R
 
 @Composable

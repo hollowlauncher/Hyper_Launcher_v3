@@ -1,4 +1,4 @@
-package com.ashmeet.hyperlauncher.components
+package com.ashmeet.hyperlauncher.components.multiRT
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*

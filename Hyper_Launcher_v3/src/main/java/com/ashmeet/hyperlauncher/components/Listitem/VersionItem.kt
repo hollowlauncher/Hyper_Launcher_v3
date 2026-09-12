@@ -1,4 +1,4 @@
-package com.ashmeet.hyperlauncher.components
+package com.ashmeet.hyperlauncher.components.Listitem
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween

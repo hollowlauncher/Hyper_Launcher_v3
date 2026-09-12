@@ -1,4 +1,4 @@
-package com.ashmeet.hyperlauncher.components
+package com.ashmeet.hyperlauncher.components.progress
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

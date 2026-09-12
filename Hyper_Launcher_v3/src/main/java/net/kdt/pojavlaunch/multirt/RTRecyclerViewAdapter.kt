@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.recyclerview.widget.RecyclerView
-import com.ashmeet.hyperlauncher.components.MultiRTRuntimeItem
+import com.ashmeet.hyperlauncher.components.multiRT.MultiRTRuntimeItem
 import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.Architecture
