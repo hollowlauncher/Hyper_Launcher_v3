@@ -1,4 +1,4 @@
-package com.ashmeet.hyperlauncher.components
+package com.ashmeet.hyperlauncher.components.rail
 
 import com.ashmeet.hyperlauncher.utils.translation.translatedText
 

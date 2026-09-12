@@ -34,9 +34,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
-import com.ashmeet.hyperlauncher.components.AccountSpinnerCompose
-import com.ashmeet.hyperlauncher.components.LauncherBackground
-import com.ashmeet.hyperlauncher.components.Progress.ProgressLayout
+import com.ashmeet.hyperlauncher.components.layout.LauncherBackground
+import com.ashmeet.hyperlauncher.components.layout.ProgressLayout
+import com.ashmeet.hyperlauncher.components.spinner.AccountSpinnerCompose
 import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 import com.ashmeet.hyperlauncher.utils.translation.translatedText

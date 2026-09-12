@@ -21,7 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.fragment.app.Fragment
-import com.ashmeet.hyperlauncher.components.MineButton
+import com.ashmeet.hyperlauncher.components.button.MineButton
 import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 import com.kdt.pickafile.FileListView
@@ -36,7 +36,6 @@ class FileSelectorFragment : Fragment() {
     companion object {
         const val TAG = "FileSelectorFragment"
         const val BUNDLE_SELECT_FOLDER = "select_folder"
-        const val BUNDLE_SELECT_FILE = "select_file"
         const val BUNDLE_SHOW_FILE = "show_file"
         const val BUNDLE_SHOW_FOLDER = "show_folder"
         const val BUNDLE_ROOT_PATH = "root_path"

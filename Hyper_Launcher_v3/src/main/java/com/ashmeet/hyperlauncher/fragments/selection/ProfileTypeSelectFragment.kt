@@ -20,7 +20,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
-import com.ashmeet.hyperlauncher.components.MineButton
+import com.ashmeet.hyperlauncher.components.button.MineButton
+
 import com.ashmeet.hyperlauncher.fragments.modloader.BTAInstallFragment
 import com.ashmeet.hyperlauncher.fragments.installer.ContentInstallerFragment
 import com.ashmeet.hyperlauncher.fragments.modloader.FabricInstallFragment

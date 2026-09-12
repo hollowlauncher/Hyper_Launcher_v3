@@ -1,8 +1,7 @@
-package com.ashmeet.hyperlauncher.components.dialogs
+package com.ashmeet.hyperlauncher.components.dialog
 
 import android.R
 import android.annotation.SuppressLint
-import android.view.KeyEvent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
@@ -51,7 +50,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -86,8 +84,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.ashmeet.hyperlauncher.components.DefaultSwitch
-import com.ashmeet.hyperlauncher.components.SimpleTextSlider
+import com.ashmeet.hyperlauncher.components.switch.DefaultSwitch
+import com.ashmeet.hyperlauncher.components.slider.SimpleTextSlider
 import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences
 import com.ashmeet.hyperlauncher.utils.translation.translatedText
 import net.kdt.pojavlaunch.utils.KeycodeUtils

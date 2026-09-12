@@ -1,4 +1,4 @@
-package com.ashmeet.hyperlauncher.components
+package com.ashmeet.hyperlauncher.components.layout
 
 import android.content.SharedPreferences
 import android.graphics.BitmapFactory

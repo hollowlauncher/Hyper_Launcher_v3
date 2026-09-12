@@ -1,6 +1,6 @@
 @file:JvmName("ColorSelectorKt")
 
-package com.ashmeet.hyperlauncher.components
+package com.ashmeet.hyperlauncher.components.color
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background

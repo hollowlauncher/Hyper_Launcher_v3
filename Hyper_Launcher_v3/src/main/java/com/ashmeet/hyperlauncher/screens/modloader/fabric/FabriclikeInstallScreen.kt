@@ -18,10 +18,11 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.ashmeet.hyperlauncher.components.switch.DefaultSwitch
 import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.modloaders.FabricVersion
-import com.ashmeet.hyperlauncher.components.DefaultSwitch
+
 import com.ashmeet.hyperlauncher.utils.installer.ModrinthVersion
 import net.kdt.pojavlaunch.modloaders.modpacks.api.ModrinthService
 

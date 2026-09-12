@@ -16,8 +16,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.ashmeet.hyperlauncher.components.DefaultSwitch
-import com.ashmeet.hyperlauncher.components.HyperSpinner
+import com.ashmeet.hyperlauncher.components.spinner.HyperSpinner
+import com.ashmeet.hyperlauncher.components.switch.DefaultSwitch
 import net.ashmeet.hyperlauncher.R
 
 @Composable

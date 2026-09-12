@@ -19,8 +19,8 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.viewinterop.AndroidView
-import com.ashmeet.hyperlauncher.components.LauncherBackground
-import com.ashmeet.hyperlauncher.components.SideNavigationRail
+import com.ashmeet.hyperlauncher.components.layout.LauncherBackground
+import com.ashmeet.hyperlauncher.components.rail.SideNavigationRail
 import com.ashmeet.hyperlauncher.utils.SideDialogUtils
 import com.ashmeet.hyperlauncher.screens.game.GameBasemainScreen
 import com.ashmeet.hyperlauncher.screens.game.LoggerView

@@ -7,7 +7,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.ashmeet.hyperlauncher.components.dialogs.SideDialog
+import com.ashmeet.hyperlauncher.components.dialog.SideDialog
+
 import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences
 import kotlin.time.Duration.Companion.milliseconds
 

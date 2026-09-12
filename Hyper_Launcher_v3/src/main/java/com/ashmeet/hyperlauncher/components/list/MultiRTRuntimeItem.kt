@@ -1,4 +1,4 @@
-package com.ashmeet.hyperlauncher.components.multiRT
+package com.ashmeet.hyperlauncher.components.list
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -46,7 +46,7 @@ fun MultiRTRuntimeItem(
                         modifier = Modifier.size(24.dp)
                     )
                 }
-                Spacer(modifier = Modifier.width(8.dp))
+                spacer(modifier = Modifier.width(8.dp))
             }
 
             Column(modifier = Modifier.weight(1f)) {
@@ -74,4 +74,9 @@ fun MultiRTRuntimeItem(
             }
         }
     }
+}
+
+@Composable
+private fun spacer(modifier: Modifier) {
+    Spacer(modifier = modifier)
 }

@@ -6,8 +6,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.ashmeet.hyperlauncher.components.ColorSelectorContent
-import com.ashmeet.hyperlauncher.components.colorselector.ColorSelectionListener
+import com.ashmeet.hyperlauncher.components.color.ColorSelectionListener
+import com.ashmeet.hyperlauncher.components.color.ColorSelectorContent
 
 
 class ColorSelectorFragment(private var colorSelectionListener: ColorSelectionListener?) :

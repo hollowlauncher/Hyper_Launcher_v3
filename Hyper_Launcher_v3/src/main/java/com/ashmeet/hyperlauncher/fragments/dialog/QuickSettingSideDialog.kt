@@ -24,11 +24,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.ashmeet.hyperlauncher.components.dialogs.CardPosition
-import com.ashmeet.hyperlauncher.components.dialogs.DialogActionItem
-import com.ashmeet.hyperlauncher.components.dialogs.DialogCard
-import com.ashmeet.hyperlauncher.components.dialogs.DialogSliderItem
-import com.ashmeet.hyperlauncher.components.dialogs.DialogSwitchItem
+import com.ashmeet.hyperlauncher.components.dialog.CardPosition
+import com.ashmeet.hyperlauncher.components.dialog.DialogActionItem
+import com.ashmeet.hyperlauncher.components.dialog.DialogCard
+import com.ashmeet.hyperlauncher.components.dialog.DialogSliderItem
+import com.ashmeet.hyperlauncher.components.dialog.DialogSwitchItem
 import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.Tools
@@ -472,7 +472,7 @@ private fun QuickSettingContent(
     }
 
     if (showKeyPickerFor != null) {
-        com.ashmeet.hyperlauncher.components.dialogs.KeycodePickerDialog(
+        com.ashmeet.hyperlauncher.components.dialog.KeycodePickerDialog(
             title = if (showKeyPickerFor == "up") translatedText("Volume Up Keybind") else translatedText("Volume Down Keybind"),
             initialValue = if (showKeyPickerFor == "up") volumeUpKeybind else volumeDownKeybind,
             onKeycodePicked = { keyCode ->

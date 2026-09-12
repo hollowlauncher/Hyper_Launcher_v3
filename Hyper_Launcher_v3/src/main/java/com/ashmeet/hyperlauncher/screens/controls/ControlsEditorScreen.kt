@@ -22,8 +22,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.viewinterop.AndroidView
-import com.ashmeet.hyperlauncher.components.ActionRow
-import com.ashmeet.hyperlauncher.components.LauncherBackground
+import com.ashmeet.hyperlauncher.components.layout.ActionRow
+import com.ashmeet.hyperlauncher.components.layout.LauncherBackground
 import com.ashmeet.hyperlauncher.fragments.dialog.EditControlSideDialog
 import com.ashmeet.hyperlauncher.utils.SideDialogUtils
 import com.ashmeet.hyperlauncher.utils.translation.translatedText
@@ -33,6 +33,7 @@ import net.kdt.pojavlaunch.customcontrols.ControlData
 import net.kdt.pojavlaunch.customcontrols.ControlLayout
 import net.kdt.pojavlaunch.customcontrols.buttons.ControlDrawer
 import net.kdt.pojavlaunch.customcontrols.buttons.ControlInterface
+
 
 @Composable
 fun ControlsEditorScreen(

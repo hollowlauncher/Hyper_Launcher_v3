@@ -51,7 +51,7 @@ import com.ashmeet.hyperlauncher.screens.settings.preferences.PreferenceCategory
 import com.ashmeet.hyperlauncher.screens.settings.preferences.SettingsActionItem
 import com.ashmeet.hyperlauncher.screens.settings.preferences.SettingsSliderItem
 import com.ashmeet.hyperlauncher.screens.settings.preferences.SettingsSwitchItem
-import com.ashmeet.hyperlauncher.components.dialogs.KeycodePickerDialog
+import com.ashmeet.hyperlauncher.components.dialog.KeycodePickerDialog
 import com.ashmeet.hyperlauncher.utils.translation.translatedText
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.utils.KeycodeUtils

@@ -1,4 +1,4 @@
-package com.ashmeet.hyperlauncher.components.Listitem
+package com.ashmeet.hyperlauncher.components.list
 
 import android.util.Log
 import androidx.compose.animation.core.Animatable
@@ -70,7 +70,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
-import com.ashmeet.hyperlauncher.components.DefaultSwitch
+import com.ashmeet.hyperlauncher.components.switch.DefaultSwitch
 import com.ashmeet.hyperlauncher.theme.PojavTheme
 import com.ashmeet.hyperlauncher.utils.ModMetadataReader
 import com.ashmeet.hyperlauncher.utils.WorldMetadataReader

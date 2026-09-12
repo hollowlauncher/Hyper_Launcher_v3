@@ -1,4 +1,4 @@
-package com.ashmeet.hyperlauncher.components.colorselector
+package com.ashmeet.hyperlauncher.components.color
 
 fun interface ColorSelectionListener {
 

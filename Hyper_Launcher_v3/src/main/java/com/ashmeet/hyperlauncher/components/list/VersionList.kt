@@ -1,4 +1,4 @@
-package com.ashmeet.hyperlauncher.components.Listitem
+package com.ashmeet.hyperlauncher.components.list
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

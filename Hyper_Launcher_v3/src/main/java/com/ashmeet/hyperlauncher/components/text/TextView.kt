@@ -1,4 +1,4 @@
-package com.ashmeet.hyperlauncher.components
+package com.ashmeet.hyperlauncher.components.text
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image

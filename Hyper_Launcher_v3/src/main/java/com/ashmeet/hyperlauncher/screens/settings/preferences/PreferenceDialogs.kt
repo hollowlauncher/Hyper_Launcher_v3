@@ -44,7 +44,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.ashmeet.hyperlauncher.components.SimpleTextSlider
+import com.ashmeet.hyperlauncher.components.slider.SimpleTextSlider
+
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.multirt.Runtime
 import java.io.File
