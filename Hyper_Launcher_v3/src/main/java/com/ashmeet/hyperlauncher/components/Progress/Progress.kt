@@ -1,4 +1,4 @@
-package com.ashmeet.hyperlauncher.components.progress
+package com.ashmeet.hyperlauncher.components.Progress
 
 import androidx.compose.animation.AnimatedVisibility
 import com.ashmeet.hyperlauncher.utils.translation.translatedText
