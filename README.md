@@ -95,7 +95,6 @@ Build the launcher (it will automatically download all required components):
 - [x] Enhanced renderer compatibility
 - [x] Download manager improvements
 - [x] MMC-compatible instance import
-- [ ] Replace Holy-GL4ES 1.1.5 with KW (maybe? need to figure out requirements)
 
 ---
 
