@@ -49,7 +49,7 @@ fun ActionRow(
     var y by remember(followedButton) { mutableFloatStateOf(view.y) }
     var width by remember(followedButton) { mutableIntStateOf(view.width) }
     var height by remember(followedButton) { mutableIntStateOf(view.height) }
-    
+
     var rowWidth by remember { mutableFloatStateOf(0f) }
 
     LaunchedEffect(followedButton) {
@@ -60,8 +60,8 @@ fun ActionRow(
             height = v.height
         }
         view.addOnLayoutChangeListener(listener)
-        
-        // Also poll for changes because setX/setY might not trigger layout change
+
+
         while(true) {
             if (x != view.x || y != view.y || width != view.width || height != view.height) {
                 x = view.x
@@ -77,22 +77,22 @@ fun ActionRow(
     val parent = view.parent as? android.view.ViewGroup
     val parentWidth = parent?.width ?: 0
 
-    var side = 1 // SIDE_TOP
+    var side = 1
     val futureY = y - rowHeight
     if (futureY < 0) {
-        side = 3 // SIDE_BOTTOM
+        side = 3
     }
-    
+
     val finalY = if (side == 1) y - rowHeight else y + height
 
     Surface(
         modifier = modifier
-            .onGloballyPositioned { 
+            .onGloballyPositioned {
                 rowWidth = it.size.width.toFloat()
             }
-            .offset { 
+            .offset {
                 val finalX = (x + width / 2f - rowWidth / 2f).coerceIn(0f, (parentWidth - rowWidth).coerceAtLeast(0f))
-                IntOffset(finalX.roundToInt(), finalY.roundToInt()) 
+                IntOffset(finalX.roundToInt(), finalY.roundToInt())
             }
             .wrapContentSize(),
         shape = RoundedCornerShape(8.dp),

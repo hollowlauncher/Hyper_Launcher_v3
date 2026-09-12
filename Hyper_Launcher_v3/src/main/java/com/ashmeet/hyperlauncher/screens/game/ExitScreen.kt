@@ -127,7 +127,7 @@ fun ExitScreen(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                /* Icon removed as requested */
+
 
                 Text(
                     text = if (crashReportPath != null) "Game crashed" else title,

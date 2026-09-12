@@ -5,9 +5,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.util.zip.GZIPInputStream
 
-/**
- * Minimal NBT reader for level.dat
- */
+
 object NBTUtils {
     const val TAG_END = 0
     const val TAG_BYTE = 1

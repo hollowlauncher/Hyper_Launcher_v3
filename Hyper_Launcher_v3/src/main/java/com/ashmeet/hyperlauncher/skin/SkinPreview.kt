@@ -40,7 +40,7 @@ fun SkinPreview(
         modifier = modifier,
         factory = { context ->
             WebView(context).apply {
-                // Clear any existing state
+
                 stopLoading()
                 loadUrl("about:blank")
 

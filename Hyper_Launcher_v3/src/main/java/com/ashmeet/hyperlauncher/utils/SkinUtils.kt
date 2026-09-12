@@ -29,7 +29,7 @@ object SkinUtils {
         }
 
         val template = account.authType.skinUrl ?: return null
-        
+
         val idToUse = when (account.authType) {
             AuthType.MICROSOFT -> {
                 if (!account.profileId.isNullOrEmpty() && !account.profileId.contains("00000000")) {
@@ -52,9 +52,7 @@ object SkinUtils {
         }
     }
 
-    /**
-     * Determines the model type for the skin viewer.
-     */
+
     fun getModelType(account: Account?): String {
         return when (account?.skinModel) {
             SkinModelType.ALEX -> "slim"
@@ -62,9 +60,7 @@ object SkinUtils {
         }
     }
 
-    /**
-     * Renders a 3D isometric head from a skin bitmap or file.
-     */
+
     suspend fun renderHead(context: Context, account: Account?): Bitmap? =
         withContext(Dispatchers.IO) {
             val skinUrl = getSkinUrl(account)
@@ -80,9 +76,7 @@ object SkinUtils {
             return@withContext head ?: loadSteveHead3D(context)
         }
 
-    /**
-     * Renders a 2D front face head from a skin bitmap or file.
-     */
+
     suspend fun renderHead2D(context: Context, account: Account?): Bitmap? =
         withContext(Dispatchers.IO) {
             val skinUrl = getSkinUrl(account)
@@ -140,7 +134,7 @@ object SkinUtils {
                     inSampleSize = calculateInSampleSize(this, 128, 128)
                     inJustDecodeBounds = false
                 }
-                // Need to re-open stream because it's consumed by decodeStream
+
                 context.assets.open("steve.png").use { innerInput ->
                     BitmapFactory.decodeStream(innerInput, null, options)
                 }
@@ -190,9 +184,7 @@ object SkinUtils {
         return head
     }
 
-    /**
-     * Composable helper to get a 3D skinhead state.
-     */
+
     @Composable
     fun rememberSkinHead(account: Account?): State<Bitmap?> {
         val context = LocalContext.current
@@ -202,9 +194,7 @@ object SkinUtils {
         }
     }
 
-    /**
-     * Composable helper to get a 2D skinhead state.
-     */
+
     @Composable
     fun rememberSkinHead2D(account: Account?): State<Bitmap?> {
         val context = LocalContext.current

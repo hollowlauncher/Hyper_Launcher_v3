@@ -65,7 +65,7 @@ class LibraryPlugin private constructor(
 
             for (info in installedApps) {
                 if (info.metaData != null && (
-                    info.metaData.containsKey(METADATA_FCL_PLUGIN) || 
+                    info.metaData.containsKey(METADATA_FCL_PLUGIN) ||
                     info.metaData.containsKey(METADATA_FCL_PLUGIN_ALT) ||
                     info.metaData.containsKey(METADATA_POJAV_PLUGIN_TYPE)
                 )) {

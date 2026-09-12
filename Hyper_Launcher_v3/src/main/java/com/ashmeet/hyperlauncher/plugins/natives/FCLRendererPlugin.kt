@@ -10,8 +10,8 @@ class FCLRendererPlugin : HyperPlugin {
         val selectedRenderer = LauncherPreferences.PREF_RENDERER
         Log.i("FCLRenderer", "HyperLauncher FCL Renderer selected: $selectedRenderer")
 
-        // FCL plugins are dynamically discovered by NativePluginManager.
-        // Their library paths and environment variables are automatically applied
-        // by HyperPluginManager during the launch hook process.
+
+
+
     }
 }

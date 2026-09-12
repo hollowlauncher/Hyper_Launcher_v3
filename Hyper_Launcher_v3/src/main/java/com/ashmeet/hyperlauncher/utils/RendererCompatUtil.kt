@@ -141,7 +141,7 @@ object RendererCompatUtil {
                     useGles = false
                     bypassNamespace = true
                     glesVersion = 3
-                    if (preloadVk) MojoExec.preloadVulkan() // Zink requires Vulkan library to be preloaded
+                    if (preloadVk) MojoExec.preloadVulkan()
                 }
                 "opengles3_ltw" -> {
                     renderLibrary = "libltw.so"
@@ -170,7 +170,7 @@ object RendererCompatUtil {
             Log.e("RENDER_LIBRARY", "Failed to load renderer $renderLibrary")
             return null
         }
-        MesaUtils.destroyZink() // Not needed anymore
+        MesaUtils.destroyZink()
         return renderLibrary
     }
 

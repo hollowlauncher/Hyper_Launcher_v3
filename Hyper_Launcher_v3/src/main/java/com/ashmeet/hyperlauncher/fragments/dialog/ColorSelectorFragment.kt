@@ -9,9 +9,7 @@ import androidx.compose.runtime.setValue
 import com.ashmeet.hyperlauncher.components.ColorSelectorContent
 import com.ashmeet.hyperlauncher.components.colorselector.ColorSelectionListener
 
-/**
- * Side dialog for color selection, rewritten in pure Compose.
- */
+
 class ColorSelectorFragment(private var colorSelectionListener: ColorSelectionListener?) :
     SideDialogView() {
 

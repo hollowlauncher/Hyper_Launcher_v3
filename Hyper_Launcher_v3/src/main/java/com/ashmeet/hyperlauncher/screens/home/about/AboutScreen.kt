@@ -173,7 +173,7 @@ fun AboutScreen(
                     SettingsActionItem(title = translatedText("Android Version"), summary = "API ${Build.VERSION.SDK_INT}", onClick = {})
                 }
             }
-            
+
             Spacer(modifier = Modifier.height(24.dp))
         }
     }

@@ -25,7 +25,7 @@ object ModMetadataReader {
             ZipFile(file).use { zip ->
                 val metadata = ModMetadata()
 
-                // Try fabric.mod.json
+
                 val fabricEntry = zip.getEntry("fabric.mod.json")
                 if (fabricEntry != null) {
                     zip.getInputStream(fabricEntry).use { isStream ->
@@ -55,7 +55,7 @@ object ModMetadataReader {
                     }
                 }
 
-                // Try mcmod.info (Forge)
+
                 if (metadata.name == null) {
                     val forgeEntry = zip.getEntry("mcmod.info")
                     if (forgeEntry != null) {

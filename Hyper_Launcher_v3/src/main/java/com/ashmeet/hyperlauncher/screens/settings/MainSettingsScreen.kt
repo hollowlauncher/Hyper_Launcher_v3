@@ -45,7 +45,7 @@ fun MainSettingsScreen(
 ) {
     var developerOptionsEnabled by remember { mutableStateOf(LauncherPreferences.PREF_DEVELOPER_OPTIONS) }
 
-    // Listen for preference changes to recompose when developer options are unlocked
+
     LaunchedEffect(Unit) {
         val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
             if (key == "developer_options") {

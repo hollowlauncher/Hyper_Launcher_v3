@@ -45,7 +45,7 @@ fun ColorSelectorContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        // Main Row: Square Picker and Sliders
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -60,7 +60,7 @@ fun ColorSelectorContent(
                     .clip(RoundedCornerShape(8.dp))
             )
 
-            // Vertical Hue Picker
+
             VerticalHueBarPicker(
                 controller = controller,
                 modifier = Modifier
@@ -70,7 +70,7 @@ fun ColorSelectorContent(
             )
 
             if (alphaEnabled) {
-                // Vertical Alpha Picker
+
                 VerticalAlphaBarPicker(
                     controller = controller,
                     modifier = Modifier
@@ -81,7 +81,7 @@ fun ColorSelectorContent(
             }
         }
 
-        // Bottom Row: Preview and HEX
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
@@ -100,8 +100,8 @@ fun ColorSelectorContent(
                 )
             }
 
-            var hexText by remember(currentColor) { 
-                mutableStateOf(String.format("%08X", currentColor.toArgb())) 
+            var hexText by remember(currentColor) {
+                mutableStateOf(String.format("%08X", currentColor.toArgb()))
             }
 
             OutlinedTextField(
@@ -114,7 +114,7 @@ fun ColorSelectorContent(
                             controller.setColor(Color(colorInt))
                         }
                     } catch (e: Exception) {
-                        // Ignore invalid hex
+
                     }
                 },
                 modifier = Modifier.weight(1f),

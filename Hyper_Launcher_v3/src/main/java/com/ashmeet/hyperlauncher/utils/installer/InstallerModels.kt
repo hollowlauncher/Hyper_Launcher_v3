@@ -48,5 +48,5 @@ data class ModDependency(
     val projectId: String?,
     val versionId: String?,
     val fileName: String?,
-    val dependencyType: String // "required", "optional", etc.
+    val dependencyType: String
 )

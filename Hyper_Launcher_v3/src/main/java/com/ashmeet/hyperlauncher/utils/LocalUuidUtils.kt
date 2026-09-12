@@ -2,13 +2,7 @@ package com.ashmeet.hyperlauncher.utils
 
 import com.ashmeet.hyperlauncher.skin.model.SkinModelType
 
-/**
- * Generates a deterministic offline UUID from a player's username.
- *
- * This implementation encodes the skin model type into the UUID parity
- * bits to ensure Minecraft uses the correct arm width by default.
- * Logic based on Drasl/Zalith implementation.
- */
+
 object LocalUuidUtils {
 
     private fun strFill(str: String, code: Char, length: Int): String =
@@ -29,9 +23,7 @@ object LocalUuidUtils {
         }
     }
 
-    /**
-     * Returns a 32-char hex UUID (no dashes) for [username] with [model] encoded.
-     */
+
     fun generateProfileId(username: String, model: SkinModelType): String {
         val base = baseUuid(username)
         if (model == SkinModelType.NONE) return base
@@ -54,7 +46,7 @@ object LocalUuidUtils {
         return prefix + suffix.toString(16).padStart(5, '0').uppercase()
     }
 
-    /** Inserts dashes into a 32-char hex UUID */
+
     fun String.toFormattedUuid(): String {
         val s = this.replace("-", "")
         if (s.length != 32) return this

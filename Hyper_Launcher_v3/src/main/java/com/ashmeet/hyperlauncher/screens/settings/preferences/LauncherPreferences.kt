@@ -183,7 +183,7 @@ object LauncherPreferences {
     var PREF_CUSTOM_THEME = false
 
     @JvmField
-    var PREF_THEME_COLOR = -0xc0ae4b // 0xFF3F51B5
+    var PREF_THEME_COLOR = -0xc0ae4b
 
     @JvmField
     var PREF_LAST_CONTENT_SOURCE = 0

@@ -35,19 +35,19 @@ data class TranslationResponse(
 
 @Serializable
 data class PersistentCache(
-    val translations: Map<String, Map<String, String>> = emptyMap() // language -> (original -> translated)
+    val translations: Map<String, Map<String, String>> = emptyMap()
 )
 
 object Translator {
-    // if we needed to add more services just in case
+
     private val TRANSLATION_SERVICES = listOf(
         "https://api.translate.zvo.cn/translate.json"
     )
 
     private val client = HttpClient(Android) {
         install(ContentNegotiation) {
-            json(Json { 
-                ignoreUnknownKeys = true 
+            json(Json {
+                ignoreUnknownKeys = true
                 encodeDefaults = true
             })
         }
@@ -92,7 +92,7 @@ object Translator {
     private const val PROGRESS_KEY = ProgressLayout.DOWNLOAD_TRANSLATIONS
     private var isInitialized = false
 
-    // State to trigger UI updates when a language is finished downloading
+
     private val _refreshTrigger = mutableIntStateOf(0)
     val refreshTrigger: State<Int> = _refreshTrigger
 
@@ -126,8 +126,8 @@ object Translator {
                 Log.e("Translator", "Failed to load cache", e)
             }
             isInitialized = true
-            
-            // Trigger prefetch on init if needed
+
+
             prefetchTranslations(context)
         }
     }
@@ -147,7 +147,7 @@ object Translator {
         if (text.isBlank()) return text
         val target = targetLanguage ?: getTargetLanguage()
         if (target == "english") return text
-        
+
         cache[target]?.get(text)?.let { return it }
 
         return withContext(Dispatchers.IO) {
@@ -183,10 +183,10 @@ object Translator {
                 val finalResult = translated ?: text
                 val langCache = cache.getOrPut(target) { ConcurrentHashMap() }
                 langCache[text] = finalResult
-                
-                // Save cache after individual translation
+
+
                 appContext?.let { saveCache(it) }
-                
+
                 finalResult
             } catch (e: Exception) {
                 Log.e("Translator", "Translation failed for: $text", e)
@@ -212,13 +212,13 @@ object Translator {
                 val langCache = cache.getOrPut(target) { ConcurrentHashMap() }
                 val toTranslate = strings.filter { !langCache.containsKey(it) }
                 if (toTranslate.isEmpty()) {
-                    _refreshTrigger.intValue++ // Already up to date
+                    _refreshTrigger.intValue++
                     return@launch
                 }
 
                 val totalCount = toTranslate.size
                 val capitalizedTarget = target.replaceFirstChar { it.uppercase() }
-                
+
                 ProgressKeeper.submitProgress(PROGRESS_KEY, 0, R.string.translation_prefetching, capitalizedTarget, 0, totalCount)
 
                 val batchSize = 20
@@ -233,7 +233,7 @@ object Translator {
                         ensureActive()
                         try {
                             val jsonArray = Json.encodeToString(batch)
-                            
+
                             var batchResults: List<String>? = null
                             var lastException: Exception? = null
 
@@ -281,20 +281,20 @@ object Translator {
                     completed += batch.size
                     val progress = (completed.toFloat() / totalCount * 100).toInt()
                     ProgressKeeper.submitProgress(PROGRESS_KEY, progress, R.string.translation_prefetching, capitalizedTarget, completed, totalCount)
-                    
-                    // Respect rate limit (2 requests per 2 seconds)
+
+
                     delay(1100L.milliseconds)
                 }
 
                 saveCache(context)
-                // Trigger UI refresh after prefetch is done
+
                 _refreshTrigger.intValue++
             } catch (e: Exception) {
                 if (e !is CancellationException) {
                     Log.e("Translator", "Prefetch failed", e)
                 }
             } finally {
-                // Only clear if this is still the active job
+
                 if (prefetchJob == myJob) {
                     ProgressKeeper.submitProgress(PROGRESS_KEY, -1, -1)
                 }
@@ -322,18 +322,16 @@ object Translator {
     }
 }
 
-/**
- * Composable that translates a given text to the current language.
- */
+
 @Composable
 fun translatedText(text: String): String {
-    // Session-fixed language for this composable instance.
-    // It will only update if the composable is re-created (e.g. screen reload)
+
+
     val target = remember { Translator.getTargetLanguage() }
-    
+
     if (target == "en" || target == "english") return text
 
-    // Use refreshTrigger to force re-evaluation when prefetch completes
+
     val trigger by Translator.refreshTrigger
 
     val translated by produceState(initialValue = text, text, target, trigger) {

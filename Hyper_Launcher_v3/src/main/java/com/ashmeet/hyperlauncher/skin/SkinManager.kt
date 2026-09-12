@@ -6,16 +6,12 @@ import com.ashmeet.hyperlauncher.utils.LocalUuidUtils
 import com.ashmeet.hyperlauncher.utils.LocalUuidUtils.toFormattedUuid
 import java.io.File
 
-/**
- * Facade over skin validation, UUID generation, and the Yggdrasil server.
- */
+
 class SkinManager(private val analyzer: SkinAnalyzerFacade) {
 
-    /**
-     * Platform-agnostic interface. Implement using [AndroidSkinAnalyzer]
-     */
+
     interface SkinAnalyzerFacade {
-        /** Return null if bytes are not a valid Minecraft skin (wrong dimensions). */
+
         fun prepareSkin(bytes: ByteArray): PlayerSkin?
         fun prepareCape(bytes: ByteArray): PlayerCape
     }
@@ -80,17 +76,17 @@ class SkinManager(private val analyzer: SkinAnalyzerFacade) {
         )
     }
 
-    /** Start the local server. Call this before launching the game. */
+
     fun startServer(): Int {
         port = server.start()
         return port
     }
 
-    /** The JVM argument base URL for authlib-injector. */
+
     val authlibUrl: String get() = "http://127.0.0.1:$port"
 }
 
-/** Returned by [SkinManager.prepareAccount]; pass these values to Minecraft's launch args. */
+
 data class PreparedAccount(
     val username: String,
     val profileId: String,

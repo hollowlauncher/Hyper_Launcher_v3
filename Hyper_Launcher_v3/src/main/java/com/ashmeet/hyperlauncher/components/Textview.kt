@@ -29,9 +29,7 @@ import net.ashmeet.hyperlauncher.R
 
 import androidx.compose.ui.platform.ComposeView
 
-/**
- * Bridge for Java interop.
- */
+
 object LegacyMigratedComponentsBridge {
     @JvmStatic
     fun setProgressLayoutContent(
@@ -82,7 +80,7 @@ object LegacyMigratedComponentsBridge {
                     SimpleListItem1(text = group, onClick = {})
                 },
                 itemContent = { item ->
-                    // Find group and item index for callback
+
                     var groupIdx = -1
                     var itemIdx = -1
                     for (i in groupData.indices) {
@@ -101,17 +99,13 @@ object LegacyMigratedComponentsBridge {
     }
 }
 
-/**
- * Helper state for ProgressLayout migration.
- */
+
 class ProgressTaskState(
     val progress: MutableState<Int>,
     val message: MutableState<String>,
 )
 
-/**
- * Migration of ProgressLayout content.
- */
+
 @Composable
 fun ProgressLayoutContent(
     progressText: String,
@@ -134,10 +128,7 @@ fun ProgressLayoutContent(
     }
 }
 
-/**
- * Migration of view_progress.xml
- * A bottom progress bar with an expandable content area above it.
- */
+
 @Composable
 fun ViewProgress(
     progressText: String,
@@ -147,7 +138,7 @@ fun ViewProgress(
     content: @Composable ColumnScope.() -> Unit = {}
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
-        // The collapsible LinearLayout (progress_linear_layout)
+
         AnimatedVisibility(visible = isExpanded) {
             Column(
                 modifier = Modifier
@@ -158,14 +149,14 @@ fun ViewProgress(
             )
         }
 
-        // The bottom bar (ProgressBar, TextView, spinner_arrow)
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(dimensionResource(R.dimen._40sdp)),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // progress_generic_progressbar
+
             CircularProgressIndicator(
                 modifier = Modifier
                     .padding(start = 8.dp)
@@ -178,7 +169,7 @@ fun ViewProgress(
                 color = MaterialTheme.colorScheme.primary
             )
 
-            // progress_textview
+
             Text(
                 text = progressText,
                 modifier = Modifier
@@ -191,7 +182,7 @@ fun ViewProgress(
                 overflow = TextOverflow.Ellipsis
             )
 
-            // progress_flip_arrow
+
             IconButton(
                 onClick = onExpandClick,
                 modifier = Modifier
@@ -209,10 +200,7 @@ fun ViewProgress(
     }
 }
 
-/**
- * Migration of item_simple_list_1.xml
- * A simple clickable text item with standard list padding.
- */
+
 @Composable
 fun SimpleListItem1(
     text: String,
@@ -241,10 +229,7 @@ fun SimpleListItem1(
     }
 }
 
-/**
- * Migration of item_centered_textview.xml
- * A single-line centered text view.
- */
+
 @Composable
 fun CenteredTextView(
     text: String,
@@ -262,10 +247,7 @@ fun CenteredTextView(
     )
 }
 
-/**
- * Migration of item_centered_textview_large.xml
- * Same as CenteredTextView but with 48dp min height.
- */
+
 @Composable
 fun CenteredTextViewLarge(
     text: String,
@@ -287,14 +269,11 @@ fun CenteredTextViewLarge(
     }
 }
 
-/**
- * Migration of item_version_profile_layout.xml
- * A row with an icon and text, using selectable background.
- */
+
 @Composable
 fun VersionProfileItem(
     text: String,
-    icon: Any?, // Can be Int (resource ID) or Painter
+    icon: Any?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -319,7 +298,7 @@ fun VersionProfileItem(
             modifier = Modifier.size(dimensionResource(R.dimen._36sdp)),
             contentScale = ContentScale.Fit
         )
-        
+
         Spacer(modifier = Modifier.width(dimensionResource(R.dimen._19sdp)))
 
         Text(
@@ -331,9 +310,7 @@ fun VersionProfileItem(
     }
 }
 
-/**
- * Migration of TextProgressBar custom view.
- */
+
 @Composable
 fun TextProgressBar(
     progress: Int,
@@ -364,10 +341,7 @@ fun TextProgressBar(
     }
 }
 
-/**
- * Migration of dialog_expendable_list_view.xml
- * A wrapper for a LazyColumn that supports grouping.
- */
+
 @Composable
 fun <G, I> ExpandableVersionList(
     groups: List<G>,
@@ -392,7 +366,7 @@ fun <G, I> ExpandableVersionList(
                     groupContent(group, isExpanded)
                 }
             }
-            
+
             if (expandedStates[index] == true) {
                 items(getItems(group)) { item ->
                     itemContent(item)

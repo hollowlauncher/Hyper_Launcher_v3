@@ -213,7 +213,7 @@ fun SideDialog(
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        // Scrim
+
         AnimatedVisibility(
             visible = visible,
             enter = fadeIn(),
@@ -250,7 +250,7 @@ fun SideDialog(
             Surface(
                 modifier = Modifier
                     .width(width)
-                    .clickable(enabled = false) {}, // Consume clicks
+                    .clickable(enabled = false) {},
                 shape = RoundedCornerShape(
                     when {
                         verticalPadding <= 0.dp -> 0.dp
@@ -334,20 +334,20 @@ fun DialogCard(
     if (animate) {
         LaunchedEffect(Unit) {
             delay((delayIndex * 40L).milliseconds)
-            launch { 
+            launch {
                 scale.animateTo(
-                    targetValue = 1f, 
+                    targetValue = 1f,
                     animationSpec = spring(
                         dampingRatio = Spring.DampingRatioLowBouncy,
                         stiffness = Spring.StiffnessLow
                     )
-                ) 
+                )
             }
-            launch { 
+            launch {
                 alpha.animateTo(
-                    targetValue = 1f, 
+                    targetValue = 1f,
                     animationSpec = tween(durationMillis = 300)
-                ) 
+                )
             }
         }
     }

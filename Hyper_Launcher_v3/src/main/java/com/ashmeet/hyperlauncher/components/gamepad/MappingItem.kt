@@ -24,7 +24,7 @@ import net.ashmeet.hyperlauncher.R
 fun ControllerMappingItem(
     iconRes: Int,
     keyCodeLabel: String,
-    currentKeys: List<String>, // Up to 4 keys
+    currentKeys: List<String>,
     isToggle: Boolean,
     onKeySelected: (Int, String) -> Unit,
     onToggleChanged: (Boolean) -> Unit,
@@ -34,7 +34,7 @@ fun ControllerMappingItem(
     var isExpanded by remember { mutableStateOf(false) }
 
     Column(modifier = modifier.fillMaxWidth()) {
-        // Default View
+
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
@@ -71,7 +71,7 @@ fun ControllerMappingItem(
             }
         }
 
-        // Expanded View
+
         AnimatedVisibility(visible = isExpanded) {
             Column(
                 modifier = Modifier
@@ -79,7 +79,7 @@ fun ControllerMappingItem(
                     .fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // Key Spinners Row 1
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
@@ -100,7 +100,7 @@ fun ControllerMappingItem(
                     )
                 }
 
-                // Key Spinners Row 2
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
@@ -121,7 +121,7 @@ fun ControllerMappingItem(
                     )
                 }
 
-                // Toggle Switch Row
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,

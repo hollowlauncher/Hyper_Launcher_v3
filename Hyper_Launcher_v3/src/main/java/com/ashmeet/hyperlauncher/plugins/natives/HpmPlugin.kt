@@ -17,7 +17,7 @@ class HpmPlugin : HyperPlugin {
                     val parts = libEntry.split(":")
                     if (parts.isEmpty()) continue
                     val libName = parts[0].trim()
-                    
+
                     when (libName) {
                         "discord-rpc" -> {
                             val rpcLib = File(plugin.libraryPath, "libdiscord-rpc.so")

@@ -33,7 +33,7 @@ fun GameControlsScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         if (hostViews) {
             AndroidView(
-                factory = { 
+                factory = {
                     controlLayout.apply {
                         val parent = parent as? ViewGroup
                         parent?.removeView(this)
@@ -43,7 +43,7 @@ fun GameControlsScreen(
             )
 
             AndroidView(
-                factory = { 
+                factory = {
                     loggerView.apply {
                         val parent = parent as? ViewGroup
                         parent?.removeView(this)

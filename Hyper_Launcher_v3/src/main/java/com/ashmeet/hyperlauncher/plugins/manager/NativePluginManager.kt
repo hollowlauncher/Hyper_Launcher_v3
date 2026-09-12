@@ -53,7 +53,7 @@ object NativePluginManager {
         for (plugin in allPlugins) {
             val metaData = plugin.getMetaData()
             if (!metaData.containsKey(LibraryPlugin.METADATA_POJAV_PLUGIN_TYPE)) continue
-            
+
             val type = metaData.getString(LibraryPlugin.METADATA_POJAV_PLUGIN_TYPE)
             if (type != "native-bundle") continue
 
@@ -81,7 +81,7 @@ object NativePluginManager {
         for (plugin in fclPlugins) {
             val metaData = plugin.getMetaData()
             if (!metaData.containsKey(LibraryPlugin.METADATA_FCL_PLUGIN) && !metaData.containsKey(LibraryPlugin.METADATA_FCL_PLUGIN_ALT)) continue
-            
+
             val libDir = plugin.libraryPath
             val envString = metaData.getString(LibraryPlugin.METADATA_FCL_ENVIRONMENT)
             val boatEnv = metaData.getString(LibraryPlugin.METADATA_FCL_BOAT_ENV)

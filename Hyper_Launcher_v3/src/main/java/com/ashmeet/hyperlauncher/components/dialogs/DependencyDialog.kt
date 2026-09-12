@@ -58,9 +58,9 @@ fun DependencyDialog(
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.bodyMedium
                 )
-                
+
                 Spacer(modifier = Modifier.height(16.dp))
-                
+
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -85,7 +85,7 @@ fun DependencyDialog(
                                         .clip(MaterialTheme.shapes.extraSmall),
                                     contentScale = ContentScale.Crop
                                 )
-                                
+
                                 Spacer(modifier = Modifier.width(8.dp))
 
                                 Text(

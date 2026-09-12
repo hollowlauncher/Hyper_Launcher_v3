@@ -34,10 +34,7 @@ import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.Tools
 import net.kdt.pojavlaunch.utils.KeycodeUtils
 
-/**
- * Side dialog for quick settings that you can change in game.
- * Rewritten in pure Compose.
- */
+
 abstract class QuickSettingSideDialog : SideDialogView() {
 
     private var mEditor: SharedPreferences.Editor? = null
@@ -152,7 +149,7 @@ abstract class QuickSettingSideDialog : SideDialogView() {
         }
     }
 
-    /** Resets all settings to their original values */
+
     fun cancel() {
         if (isDisplaying) {
             LauncherPreferences.PREF_ENABLE_GYRO = mOriginalGyroEnabled
@@ -174,26 +171,22 @@ abstract class QuickSettingSideDialog : SideDialogView() {
         disappear(true)
     }
 
-    /** Called when the resolution is changed. Use [LauncherPreferences.PREF_SCALE_FACTOR] */
+
     abstract fun onResolutionChanged()
 
-    /** Called when the gyro state is changed.
-     * Use [LauncherPreferences.PREF_ENABLE_GYRO]
-     * Use [LauncherPreferences.PREF_GYRO_INVERT_X]
-     * Use [LauncherPreferences.PREF_GYRO_INVERT_Y]
-     */
+
     abstract fun onGyroStateChanged()
 
-    /** Called when the button transparency is changed. */
+
     open fun onButtonTransparencyChanged() {}
 
-    /** Called to force close the game */
+
     abstract fun onForceClose()
 
-    /** Called to view the game output */
+
     abstract fun onViewOutput()
 
-    /** Called to send a custom key */
+
     abstract fun onCustomKey()
 }
 

@@ -146,7 +146,7 @@ fun SidebarRailButton(
         blue = primaryColor.blue * 0.2f + 0.8f,
         alpha = 1f
     )
-    
+
     val finalContentColor = if (isCustomTheme) {
         if (isLightMode) {
             if (containerColor == Color.Transparent) darkenedPrimary else contentColor

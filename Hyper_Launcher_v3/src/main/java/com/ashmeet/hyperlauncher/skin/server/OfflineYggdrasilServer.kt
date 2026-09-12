@@ -38,10 +38,7 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
-/**
- * A localhost Yggdrasil-compatible API server for offline Minecraft accounts.
- * Improved to be more compatible with Drasl (https://github.com/unmojang/drasl).
- */
+
 class OfflineYggdrasilServer(
     private val serverName: String = "HyperLauncher",
     private val implName: String   = "drasl",

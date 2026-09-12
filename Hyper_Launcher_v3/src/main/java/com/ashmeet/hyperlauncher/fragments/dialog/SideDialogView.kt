@@ -11,10 +11,7 @@ import com.ashmeet.hyperlauncher.components.dialogs.SideDialog
 import com.ashmeet.hyperlauncher.screens.settings.preferences.LauncherPreferences
 import kotlin.time.Duration.Companion.milliseconds
 
-/**
- * Base class for side dialogs, rewritten in pure Compose.
- * This class now acts as a state holder and content provider for side dialogs.
- */
+
 abstract class SideDialogView {
 
     var isDisplaying by mutableStateOf(false)
@@ -43,30 +40,21 @@ abstract class SideDialogView {
         mEndButtonListener = listener
     }
 
-    /**
-     * Show the dialog.
-     * @param fromRight whether to slide in from the right side.
-     */
+
     open fun appear(fromRight: Boolean) {
         isAtRight = fromRight
         isDisplaying = true
         onAppear()
     }
 
-    /**
-     * Hide the dialog.
-     * @param destroy whether to perform cleanup (kept for compatibility).
-     */
+
     open fun disappear(destroy: Boolean) {
         isDisplaying = false
         onDisappear()
         if (destroy) onDestroy()
     }
 
-    /**
-     * The Composable content of the dialog.
-     * This should be called within a Composable tree.
-     */
+
     @Composable
     fun Content() {
         var visible by remember { mutableStateOf(false) }

@@ -72,21 +72,21 @@ class LoggerView @JvmOverloads constructor(
 
 private fun parseLog(text: String): LogLine {
     val lowerText = text.lowercase()
-    
+
     val color = when {
-        lowerText.contains("error") -> Color(0xFFF44336) // Red
-        lowerText.contains("warn") -> Color(0xFFFFB300)  // Amber/Darker Yellow for better contrast
-        lowerText.contains("success") -> Color(0xFF4CAF50) // Green
+        lowerText.contains("error") -> Color(0xFFF44336)
+        lowerText.contains("warn") -> Color(0xFFFFB300)
+        lowerText.contains("success") -> Color(0xFF4CAF50)
         else -> Color.Unspecified
     }
 
-    // Remove metadata like L<logs:, thread:WARN>, <logs>, etc.
+
     val cleanText = text
-        .replace(Regex("^.*?<.*?:"), "") // Remove L<logs:
-        .replace(Regex("^.*?:.*?>"), "") // Remove thread:WARN>
-        .replace(Regex("<.*?>"), "")      // Remove standard tags like <logs>
+        .replace(Regex("^.*?<.*?:"), "")
+        .replace(Regex("^.*?:.*?>"), "")
+        .replace(Regex("<.*?>"), "")
         .trim()
-    
+
     return LogLine(cleanText, color)
 }
 
@@ -115,7 +115,7 @@ fun LoggerViewCompose(
                 }
             }
             LoggerProxy.addListener(listener)
-            
+
             onDispose {
                 LoggerProxy.removeListener(listener)
             }

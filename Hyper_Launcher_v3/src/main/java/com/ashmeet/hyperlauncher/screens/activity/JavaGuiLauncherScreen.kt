@@ -153,7 +153,7 @@ fun JavaGuiLauncherScreen(
             )
         }
 
-        // Top Left Controls
+
         Column(
             modifier = Modifier
                 .align(Alignment.TopStart)
@@ -174,7 +174,7 @@ fun JavaGuiLauncherScreen(
             )
         }
 
-        // Bottom Left Mouse Buttons
+
         Column(
             modifier = Modifier
                 .align(Alignment.BottomStart)
@@ -191,7 +191,7 @@ fun JavaGuiLauncherScreen(
             )
         }
 
-        // Bottom Right Directional Arrows
+
         Box(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
@@ -222,7 +222,7 @@ fun JavaGuiLauncherScreen(
             }
         }
 
-        // Logger View
+
         if (isLoggerVisible) {
             AndroidView(
                 factory = { context ->
@@ -234,7 +234,7 @@ fun JavaGuiLauncherScreen(
             )
         }
 
-        // Hidden TouchCharInput for keyboard
+
         AndroidView(
             factory = { context ->
                 TouchCharInput(context).apply {

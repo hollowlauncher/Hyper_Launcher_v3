@@ -88,7 +88,7 @@ object GameComposeHelper {
                         ) {
                             CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                                 Box(modifier = Modifier.fillMaxSize()) {
-                                    // Persistent Legacy View Layer
+
                                     if (hostViews) {
                                         AndroidView(
                                             factory = {
@@ -114,7 +114,7 @@ object GameComposeHelper {
                                         ControlsEditorScreen(
                                             controlLayout = controlLayout,
                                             drawerState = drawerState,
-                                            hostViews = false // Already hosted above
+                                            hostViews = false
                                         )
                                     } else {
                                         GameControlsScreen(
@@ -122,7 +122,7 @@ object GameComposeHelper {
                                             controlLayout = controlLayout,
                                             loggerView = loggerView,
                                             gameView = gameView,
-                                            hostViews = false // Already hosted above
+                                            hostViews = false
                                         )
                                     }
 

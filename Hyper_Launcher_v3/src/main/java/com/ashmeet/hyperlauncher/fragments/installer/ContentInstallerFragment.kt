@@ -295,7 +295,7 @@ class ContentInstallerFragment : Fragment() {
                             scope.launch(Dispatchers.IO) {
                                 val progressKey = "download_content"
                                 if (selectedType == ContentInstallerType.MODPACKS) {
-                                    // ... existing modpack logic ...
+
                                     try {
                                         val modpackApi =
                                             if (selectedSource == ContentSource.MODRINTH) {
@@ -592,7 +592,7 @@ class ContentInstallerFragment : Fragment() {
                             bytesCopied += bytes
                             if (totalSize > 0) {
                                 val currentTime = System.currentTimeMillis()
-                                if (currentTime - lastProgressUpdate > 100) { // Update every 100ms
+                                if (currentTime - lastProgressUpdate > 100) {
                                     val progress = ((bytesCopied * 100) / totalSize).toInt()
                                     ProgressKeeper.submitProgress(
                                         progressKey,
@@ -708,7 +708,7 @@ class ContentInstallerFragment : Fragment() {
                             bytesCopied += bytes
                             if (totalSize > 0) {
                                 val currentTime = System.currentTimeMillis()
-                                if (currentTime - lastProgressUpdate > 100) { // Update every 100ms
+                                if (currentTime - lastProgressUpdate > 100) {
                                     val progress = ((bytesCopied * 100) / totalSize).toInt()
                                     ProgressKeeper.submitProgress(
                                         progressKey,

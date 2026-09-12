@@ -166,7 +166,7 @@ private fun EditControlContent(
     val context = LocalContext.current
     val properties = button.properties
 
-    // Key states to force recomposition when properties change
+
     var name by remember(properties) { mutableStateOf(properties.name) }
     var widthText by remember(properties) { mutableStateOf(if (properties.width % 1f == 0f) properties.width.toInt().toString() else properties.width.toString()) }
     var heightText by remember(properties) { mutableStateOf(if (properties.height % 1f == 0f) properties.height.toInt().toString() else properties.height.toString()) }
@@ -177,7 +177,7 @@ private fun EditControlContent(
     var isToggle by remember(properties) { mutableStateOf(properties.isToggle) }
     var passThruEnabled by remember(properties) { mutableStateOf(properties.passThruEnabled) }
     var isSwipeable by remember(properties) { mutableStateOf(properties.isSwipeable) }
-    
+
     var displayInGame by remember(properties) { mutableStateOf(properties.displayInGame) }
     var displayInMenu by remember(properties) { mutableStateOf(properties.displayInMenu) }
 
@@ -237,7 +237,7 @@ private fun EditControlContent(
             ) {
                 when (targetTab) {
                     0 -> {
-                        // Name Section
+
                         if (!isJoystick) {
                             DialogCard(useSurface = true, delayIndex = cardIndex++) {
                                 DialogActionItem(
@@ -262,7 +262,7 @@ private fun EditControlContent(
                             }
                         }
 
-                        // Size Section
+
                         if (!isSubButton) {
                             DialogCard(useSurface = true, delayIndex = cardIndex++) {
                                 DialogActionItem(
@@ -317,7 +317,7 @@ private fun EditControlContent(
                         }
                     }
                     1 -> {
-                        // Mapping Section (Keycodes)
+
                         if (!isJoystick && !isDrawer) {
                             val specialArray = remember { ControlData.buildSpecialButtonArray() }
                             val keyNames = remember { KeycodeUtils.generateKeyName() }
@@ -363,7 +363,7 @@ private fun EditControlContent(
                             }
                         }
 
-                        // Switches
+
                         if (!isJoystick && !isDrawer) {
                             DialogCard(
                                 position = CardPosition.SINGLE,
@@ -444,7 +444,7 @@ private fun EditControlContent(
                         }
                     }
                     2 -> {
-                        // Appearance Section
+
                         if (context is CustomControlsActivity && !isJoystick) {
                             DialogCard(useSurface = true, delayIndex = cardIndex++) {
                                 DialogActionItem(
@@ -545,7 +545,7 @@ private fun EditControlContent(
                         }
                     }
                     3 -> {
-                        // Visibility Section
+
                         if (!isSubButton) {
                             DialogCard(
                                 position = CardPosition.SINGLE,
