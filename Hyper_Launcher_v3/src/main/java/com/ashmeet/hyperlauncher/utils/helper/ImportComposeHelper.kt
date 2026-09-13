@@ -1,4 +1,4 @@
-package com.ashmeet.hyperlauncher.helper
+package com.ashmeet.hyperlauncher.utils.helper
 
 import androidx.compose.ui.platform.ComposeView
 import com.ashmeet.hyperlauncher.screens.controls.ImportControlScreen

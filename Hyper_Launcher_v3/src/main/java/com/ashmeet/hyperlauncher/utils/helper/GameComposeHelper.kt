@@ -1,5 +1,6 @@
-package com.ashmeet.hyperlauncher.helper
+package com.ashmeet.hyperlauncher.utils.helper
 
+import android.view.ViewGroup
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -93,7 +94,7 @@ object GameComposeHelper {
                                         AndroidView(
                                             factory = {
                                                 controlLayout.apply {
-                                                    val parent = parent as? android.view.ViewGroup
+                                                    val parent = parent as? ViewGroup
                                                     parent?.removeView(this)
                                                 }
                                             },
@@ -102,7 +103,7 @@ object GameComposeHelper {
                                         AndroidView(
                                             factory = {
                                                 loggerView.apply {
-                                                    val parent = parent as? android.view.ViewGroup
+                                                    val parent = parent as? ViewGroup
                                                     parent?.removeView(this)
                                                 }
                                             },
@@ -193,7 +194,7 @@ object GameComposeHelper {
                                     AndroidView(
                                         factory = {
                                             controlLayout.apply {
-                                                val parent = parent as? android.view.ViewGroup
+                                                val parent = parent as? ViewGroup
                                                 parent?.removeView(this)
                                             }
                                         },

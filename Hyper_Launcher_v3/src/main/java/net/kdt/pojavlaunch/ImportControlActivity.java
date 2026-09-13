@@ -9,7 +9,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.compose.ui.platform.ComposeView;
 
-import com.ashmeet.hyperlauncher.helper.LauncherComposeHelper;
+import com.ashmeet.hyperlauncher.utils.helper.LauncherComposeHelper;
 
 import net.ashmeet.hyperlauncher.R;
 import net.kdt.pojavlaunch.customcontrols.LayoutBitmaps;
